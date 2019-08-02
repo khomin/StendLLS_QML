@@ -33,7 +33,7 @@ private:
     eSearch_ip_State mSearch_ip_state;
     int mSearch_ip_timeout;
     int mPacket_counter;
-    const int mSearch_ip_const_time = 10;
+    const int mSearch_ip_const_time = 2;
 };
 
 #endif // FINDSTEND_H

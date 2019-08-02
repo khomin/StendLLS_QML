@@ -1,9 +1,20 @@
 {
-	"language":"ru",
-	"activeStend":"192.168.15.199",
-	"databaseName":"manufacture_v2",
-	"databaseHost":"31.10.4.158",
-	"databaseUser":"postgres",
-	"databasePassword":"1qaz@WSX3edc$RFV",
-	"databasePort":"5432"
+  "activeStend": "192.168.15.83",
+  "databaseHost": "192.168.15.74",
+  "databaseName": "manufacture_v2",
+  "databasePassword": "1qaz@WSX3edc$RFV",
+  "databasePort": "5432",
+  "databaseUser": "postgres",
+  "language": "ru",
+  "cap1_min": "22000001",
+  "cap2_min": "14000000",
+  "cap3_min": "14000000",
+  "cap1_max": "27900000",
+  "cap2_max": "19900000",
+  "cap3_max": "16500000",
+  "cur_min": "7.0",
+  "cur_max": "12.0",
+  "firmare_stlink_path": "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe",
+  "firmare_dut_path": "C:/firmware_dut/dut_tmk24_v10_3.hex",
+  "firmare_bootloader_path": "C:/firmware_dut/BootLoader_tmk24_v10_3.hex"
 }

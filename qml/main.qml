@@ -26,8 +26,7 @@ ApplicationWindow {
     property int propertyCentralSwipeLastIndex: 0
 
     Component.onCompleted: {
-        translate.qmlReady();
-        //        applocation.showMaximized()
+        translate.qmlReady(); // applocation.showMaximized()
     }
 
     FontLoader { id: fontAwesome; source: "qrc:/font/resources/fonts/awesome_900.ttf" }
@@ -35,58 +34,34 @@ ApplicationWindow {
     SwipeView {
         id:rootSwipeView
         anchors.fill: parent
-        currentIndex: 3
-
+        currentIndex: 0//3
+        interactive: false
         Item{
             RowLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                Rectangle{
-                    width: 200
-                    height: 200
-                    color: "red"
-                    MouseArea {
-                        anchors.fill: parent
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: qsTr("QCH1")
-                        }
-                        onClicked: {
-                            rootSwipeView.currentIndex = 1
-                        }
+                Button {
+                    implicitWidth: 200; implicitHeight: 200
+                    text: qsTr("QCH1"); font.pointSize: 22
+                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
+                    onClicked: {
+                        rootSwipeView.currentIndex = 1
                     }
                 }
-                Rectangle{
-                    width: 200
-                    height: 200
-                    color: "blue"
-                    MouseArea {
-                        anchors.fill: parent
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: qsTr("QCH2")
-                        }
-                        onClicked: {
-                            rootSwipeView.currentIndex = 2
-                        }
+                Button {
+                    implicitWidth: 200; implicitHeight: 200
+                    text: qsTr("QCH2"); font.pointSize: 22
+                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
+                    onClicked: {
+                        rootSwipeView.currentIndex = 2
                     }
                 }
-                Rectangle{
-                    width: 200
-                    height: 200
-                    color: "green"
-                    MouseArea {
-                        anchors.fill: parent
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: qsTr("Firmware")
-                        }
-                        onClicked: {
-                            rootSwipeView.currentIndex = 3
-                        }
+                Button {
+                    implicitWidth: 200; implicitHeight: 200
+                    text: qsTr("Firmware"); font.pointSize: 22
+                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
+                    onClicked: {
+                        rootSwipeView.currentIndex = 3
                     }
                 }
             }

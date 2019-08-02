@@ -31,6 +31,8 @@ public slots:
 
     Q_INVOKABLE LogModel* getStendLogModel();
 
+    Q_INVOKABLE void startTestStend();
+
 signals:
     void signalStendLost();
     void signalStendReady();
@@ -41,7 +43,9 @@ signals:
     void signalInterfaceClosed();
     void signalInterfaceReady();
 
-    void signalTestComplete(QString json);
+    void signalTestFinished(QString json);
+    void signalTestError(QString json);
+    void signalTestUpdateStatus(QString json);
 
     void signalAppendLog(QString text);
 
@@ -51,7 +55,6 @@ private:
     Connection connection;
     StendApi stendApi;
     Log log;
-    Settings settings;
     FindStend findStend;
 };
 

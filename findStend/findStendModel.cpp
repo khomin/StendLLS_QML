@@ -18,7 +18,7 @@ bool FindStendModel::addItem(sConnectSettings value) {
 
 void FindStendModel::removeAll() {
     for(int index = 0; index<tableItems.size(); index++) {
-        beginRemoveRows( QModelIndex(), index, index+1);
+        beginRemoveRows( QModelIndex(), index, index);
         endRemoveRows();
     }
     tableItems.clear();

@@ -14,11 +14,16 @@ Loader {
         messages.source = Qt.resolvedUrl("InfoBannerComponent.qml");
         messages.item.message = message;
         messages.item.type = type
-        timer.interval = type === "normal" ? 3000 : 8000;
+        timer.interval = type === "normal" ? 3000 : 99999999;
         timer.restart()
         messages.item.clickedHide.connect(function() {
             messages.state = ""
         });
+    }
+
+    function flush() {
+        timer.interval = 0
+        timer.restart()
     }
 
     width: parent.width

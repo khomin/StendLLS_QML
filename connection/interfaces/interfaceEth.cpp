@@ -10,8 +10,6 @@
 
 InterfaceEth::InterfaceEth() {
     this->isManualClosed = false;
-    tcpSocket = new QTcpSocket();
-    tcpServer = new QTcpServer();
 }
 
 void InterfaceEth::initInterface()  {}
@@ -20,12 +18,20 @@ InterfaceEth::~InterfaceEth() {
     if(isOpen()) {
         closeInterface();
     }
-    delete tcpSocket;
-    delete tcpServer;
+    if(tcpSocket != nullptr) {
+        delete tcpSocket;
+        tcpSocket = nullptr;
+    }
+    if(tcpServer != nullptr) {
+        delete tcpServer;
+        tcpServer = nullptr;
+    }
 }
 
 bool InterfaceEth::openInterface(QString name, const QString & parameters) {
     bool res = false;
+    tcpSocket = new QTcpSocket();
+    tcpServer = new QTcpServer();
     this->parametersJson = QJsonDocument::fromJson(parameters.toUtf8()).object();
     tcpSocket->connectToHost(QHostAddress(name), parametersJson.value("port").toInt());
     tcpSocket->waitForConnected(1000);
@@ -46,15 +52,25 @@ bool InterfaceEth::openInterface(QString name, const QString & parameters) {
 }
 
 bool InterfaceEth::isOpen() {
-    return tcpSocket->state() == QAbstractSocket::ConnectedState;
+    if(tcpSocket != nullptr) {
+        return tcpSocket->state() == QAbstractSocket::ConnectedState;
+    }
+    return false;
 }
 
 void InterfaceEth::closeInterface() {
     if(isOpen()) {
+        tcpSocket->disconnectFromHost();
         tcpSocket->close();
         isManualClosed = true;
-        disconnect(tcpSocket, SIGNAL(readyRead));
-        disconnect(tcpSocket, SIGNAL(aboutToClose));
+        if(tcpSocket != nullptr) {
+            delete tcpSocket;
+            tcpSocket = nullptr;
+        }
+        if(tcpServer != nullptr) {
+            delete tcpServer;
+            tcpServer = nullptr;
+        }
     }
 }
 

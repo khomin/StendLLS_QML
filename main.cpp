@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("viewControl", &viewControl);
     engine.rootContext()->setContextProperty("translate", &translater);
-    engine.rootContext()->setContextProperty("settings", viewControl.getSettings());
+    qmlRegisterSingletonType<Settings>("Settings", 1, 0, "Settings", Settings::qmlInstance);
     engine.rootContext()->setContextProperty("logStendModel", QVariant::fromValue(viewControl.getStendLogModel()));
     engine.rootContext()->setContextProperty("stendFindModel", QVariant::fromValue(viewControl.getFindStendModel()));
 

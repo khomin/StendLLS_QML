@@ -3,7 +3,6 @@
 
 #include <QtGui>
 #include <QQmlApplicationEngine>
-#include <QSettings>
 
 class Translation : public QObject
 {
@@ -30,7 +29,6 @@ private:
     QTranslator *translator2;
     QTranslator *translator3;
     QQmlApplicationEngine * engine;
-    QSettings * settings;
     QString currentLanguage;
 
     static constexpr char const * defaultLanguage = "en";

@@ -9,10 +9,20 @@ Item {
 
     property string type: "normal"
 
+    function getColorType(messageType) {
+        switch(type) {
+        case "normal": return "#406D9E";
+        case "bad": return Material.color(Material.Red);
+        case "neutral" : return Material.color(Material.Grey);
+        case "good" : return Material.color(Material.Green);
+        }
+        return Material.color(Material.Red);
+    }
+
     Rectangle {
         id: background
         anchors.fill: banner
-        color: type==="normal" ? "#406D9E" : Material.color(Material.Red)
+        color: getColorType(type)
         smooth: true
         opacity: 0.8
     }

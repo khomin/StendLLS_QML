@@ -2,9 +2,9 @@
 #include <QFile>
 #include <QDebug>
 
-Settings::Settings(QObject *parent) : QObject(parent) {
-    getSettings();
-}
+Settings::Settings() { getSettings(); }
+
+Settings::~Settings() {}
 
 QJsonObject Settings::getSettings() {
     QFile file("./conf/settings.json");
@@ -33,7 +33,7 @@ void Settings::setStendActiveIp(QString ip) {
     if(file.open(QFile::WriteOnly | QFile::Text)) {
         QTextStream in(&file);
         QJsonDocument doc(settingsJson);
-        in << doc.toJson(QJsonDocument::Compact) << endl;
+        in << doc.toJson(QJsonDocument::Indented) << endl;
         getSettings();
     } else {
         qDebug() << "Cannot write file" << file.errorString();

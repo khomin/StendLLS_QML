@@ -1,5 +1,6 @@
 #include "translation.h"
 #include "storeMisc.h"
+#include "settings.h"
 
 Translation::Translation(QQmlApplicationEngine * engine) {
     translator1 = new QTranslator(this);
@@ -13,18 +14,10 @@ Translation::~Translation() {
     delete translator1;
     delete translator2;
     delete translator3;
-    delete settings;
 }
 
 void Translation::qmlReady() {
-    this->settings = new QSettings("qrc:/conf/language.conf", QSettings::IniFormat);
-    if(settings->value("magic_word") == StoreMisc::magic_word) {
-        currentLanguage = settings->value("language").toString();
-    } else { // default settings
-        settings->setValue("language", currentLanguage);
-        settings->setValue("magic_word", StoreMisc::magic_word);
-    }
-
+    currentLanguage = Settings::Instance().getLanguage();
     selectLanguage(currentLanguage);
 }
 
@@ -48,9 +41,7 @@ void Translation::selectLanguage(QString language) {
 
     engine->retranslate();
 
-    if(settings != nullptr) {
-        settings->setValue("language", language);
-    }
+    // TODO: change language
 
     emit signalLanguageChanged(langIndex);
 }

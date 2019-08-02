@@ -2,12 +2,13 @@
 #include <QNetworkInterface>
 #include <QHostInfo>
 #include <string>
+#include <QDataStream>
 
 FindStend::FindStend(QObject *parent) : QObject(parent) {
     this->mFindStendModel = new FindStendModel(100);
 
     mSearchTimer = new QTimer();
-    mSearchTimer->setInterval(300);
+    mSearchTimer->setInterval(1500);
     mSearchTimer->start();
 
     mUdpSocket = new QUdpSocket(this);
@@ -49,31 +50,33 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
     mSearch_ip_state = idle;
 
     QObject::connect(mUdpSocket, &QUdpSocket::readyRead, this, [&]() {
-        QHostAddress address;
-        quint16 port;
-        while(mUdpSocket->hasPendingDatagrams()) {
-            QByteArray datagram;
-            datagram.resize(mUdpSocket->pendingDatagramSize());
-            mUdpSocket->readDatagram(datagram.data(), datagram.size(), &address, &port);
+        QHostAddress hostAddr;
+        quint16 hostPort;
+        while (mUdpSocket->hasPendingDatagrams()) {
+            QByteArray buf(mUdpSocket->pendingDatagramSize(), Qt::Uninitialized);
+            QDataStream str(&buf, QIODevice::ReadOnly);
+            mUdpSocket->readDatagram(buf.data(), buf.size(), &hostAddr, &hostPort);
+            qDebug() << "udp from: " << hostAddr;
+            qDebug() << "udp port: " << hostPort;
 
-            QString dataStr = datagram.data();
+            QString dataStr(buf);
             if(dataStr.toUtf8().contains(QByteArray(broadcast_call_reply))) {
                 sConnectSettings dest;
                 dest.dateReply = QDateTime::currentDateTime();
-                quint32 addr32 = address.toIPv4Address();
+                quint32 addr32 = hostAddr.toIPv4Address();
                 dest.ip.ip_addr[3] = (addr32 & 0xFF);
                 dest.ip.ip_addr[2] = ((addr32 & 0xFF00)>>8);
                 dest.ip.ip_addr[1] = ((addr32 & 0xFF0000)>>16);
                 dest.ip.ip_addr[0] = ((addr32 & 0xFF000000)>>24);
 
-                QHostInfo hostInfo = QHostInfo::fromName(address.toString());
-                QString mac = hostInfo.hostName();
-
                 /* ищем ответы раньше */
                 auto modelList = mFindStendModel->getAll();
                 for(auto i: modelList) {
                     // if it copy -> return
-                    if(memcmp(i->getValue().ip.ip_addr, dest.ip.ip_addr, sizeof(dest.ip.ip_addr)) == 0) {
+                    if((i->getValue().ip.ip_addr[0] == dest.ip.ip_addr[0])
+                            && (i->getValue().ip.ip_addr[1] == dest.ip.ip_addr[1])
+                            && (i->getValue().ip.ip_addr[2] == dest.ip.ip_addr[2])
+                            && (i->getValue().ip.ip_addr[3] == dest.ip.ip_addr[3]) ) {
                         return;
                     }
                 }

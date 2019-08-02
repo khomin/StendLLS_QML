@@ -3,10 +3,10 @@ import QtQuick.Layouts 1.1
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
-
 import "qrc:/qml" as QmlCustomize
 import "qrc:/qml/delegates/" as Delegates
 import "qrc:/qml/toast/" as Toast
+import Settings 1.0
 
 Rectangle {
     Connections {
@@ -55,13 +55,6 @@ Rectangle {
                     background: Rectangle {
                         width: tabBar.width
                         color: "#406D9F"
-                    }
-                    TabButton {
-                        text: qsTr("Communication"); font.pointSize: 8
-                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/satellite-dish.svg"
-                        icon.width: 10; icon.height: 10; height: 40
-                        onClicked: { firmwareSwipeView.setCurrentIndex(0)}
-                        contentItem: Delegates.TabButtonDelegate {}
                     }
                     TabButton {
                         text: qsTr("Communication"); font.pointSize: 8
@@ -124,6 +117,7 @@ Rectangle {
                     spacing: 50
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    interactive: false
                     FirmwarePanel {
                         id:firmwareTestItem
                     }
@@ -151,7 +145,7 @@ Rectangle {
                                 RowLayout {
                                     spacing: 15
                                     Label {text: qsTr("Active stend:")}
-                                    Label {id:stendFindActiveLabel; text: settings.activeStend; }
+                                    Label {id:stendFindActiveLabel; text: Settings.activeStend; }
                                 }
                                 RowLayout {
                                     spacing: 15

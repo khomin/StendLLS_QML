@@ -6,8 +6,14 @@
 #include "globals.h"
 #include "stendProperty.h"
 #include <QTimer>
+#include <tuple>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include "programming.h"
+#include "dataBase.h"
 
 class StendApi : public QObject
 {
@@ -19,6 +25,8 @@ public:
 public slots:
     /* send command to execute */
     void sendCommand(StendProperty::eTypeCommand cmd);
+
+    void startTest();
 
     /* status */
     void setStatusConnected();
@@ -36,32 +44,39 @@ signals:
     /* test or update state */
     void testError(QString json);
     void testFinihed(QString json);
+    void testUpdateStep(QString json);
     void updateRealTimeData(QString json);
-    void powerDutDisabled();
-    void powerDutEnabed();
 
 private slots:
     bool parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx);
     bool headerIsValid(QByteArray & dataRx);
     void packetInsert(StendProperty::sOutputTcpTempStruct pOut, QByteArray & pArray, QByteArray packHeader);
-
+    QJsonObject evaluateTestStatus(sDutTestStruct & tests);
+    QJsonObject convertDataToJson(sDutBaseStruct & dutStruct);
+    void copyInputData(sDutBaseStruct & dutStruct, const StendProperty::sInputTcpTempStruct* pinputTemp);
+    QString convertTestStateToString(eTestState state);
+    bool testIsFinished(sDutTestStruct & tests);
 private:
     sIp_list ip;
     int interval_read_info_counter;
     QTimer *handlerStendTimer;
     QTimer *timeoutCommandTimer;
+    DataBase *dataBase;
 
     int transferTimeoutId;
     StendProperty::eConnetState connect_state;
     sDutBaseStruct dutInfoStruct;
     /* указатель на структуру из настроек тестирования */
     /* настройки теста частоты отправляются в каждом пакете */
-    StendProperty::sCapTestValues *capValues;
+    StendProperty::sCapTestValues capValues;
     float curLlsMinValue;
     float curLlsMaxValue;
-
+    bool mTestIsFinished = false;
     QVector <StendProperty::eTypeCommand> command;
     QVector <S_curves_data>curves_data_vector;
+
+    Programming* programming;
+    QThread * programmingThread;
 
     static constexpr int maxCollectArrayData = 30;
 };

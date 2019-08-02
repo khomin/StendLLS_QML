@@ -5,12 +5,27 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QQmlEngine>
 
 class Settings : public QObject
 {
     Q_OBJECT
 public:
-    explicit Settings(QObject *parent = nullptr);
+    static Settings & Instance() {
+        static Settings myInstance;
+        return myInstance;
+    }
+
+    static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine) {
+        Q_UNUSED(engine);
+        Q_UNUSED(scriptEngine);
+        return new Settings;
+    }
+
+    Settings(Settings const &) = delete;
+    Settings(Settings &&) = delete;
+    Settings& operator=(Settings const &) = delete;
+    Settings& operator=(Settings &&) = delete;
 
     QJsonObject getSettings();
     void setStendActiveIp(QString ip);
@@ -30,6 +45,21 @@ public:
     QString getDatabaseUser() { return settingsJson.value("databaseUser").toString(); }
     QString getDatabasePassword() { return settingsJson.value("databasePassword").toString(); }
     QString getDatabasePort() { return settingsJson.value("databasePort").toString(); }
+    QString getCap1Min() { return settingsJson.value("cap1_min").toString(); }
+    QString getCap2Min() { return settingsJson.value("cap2_min").toString(); }
+    QString getCap3Min() { return settingsJson.value("cap3_min").toString(); }
+    QString getCap1Max() { return settingsJson.value("cap1_max").toString(); }
+    QString getCap2Max() { return settingsJson.value("cap2_max").toString(); }
+    QString getCap3Max() { return settingsJson.value("cap3_max").toString(); }
+    QString getCurMin() { return settingsJson.value("cur_min").toString(); }
+    QString getCurMax() { return settingsJson.value("cur_max").toString(); }
+    QString getFimrwareStLinkPath() { return settingsJson.value("firmare_stlink_path").toString(); }
+    QString getFirmwareDutPath() { return settingsJson.value("firmare_dut_path").toString(); }
+    QString getFirmwareBootPath() { return settingsJson.value("firmare_bootloader_path").toString(); }
+
+protected:
+    Settings();
+    virtual ~Settings();
 
 signals:
     void languageIsChanged();
@@ -41,16 +71,7 @@ signals:
     void databasePortIsChanged();
 
 private:
-//    QString mLanguage;
-//    QString mActiveStend;
-//    QString mDatabaseName;
-//    QString mDatabaseHost;
-//    QString mDatabaseUser;
-//    QString mDatabasePassword;
-//    QString mDatabasePort;
-
     QJsonObject settingsJson;
-
 };
 
 #endif // SETTINGS_H

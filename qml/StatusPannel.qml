@@ -8,7 +8,7 @@ import QtQuick.Window 2.12
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
-
+import Settings 1.0
 import "qrc:/qml/delegates/" as Delegates
 
 Pane {
@@ -51,7 +51,7 @@ Pane {
         RowLayout { spacing: 10;
             id:statusOpenPortButton
             Label {text: qsTr("Stend") }
-            Label {text: settings.activeStend; }
+            Label {text: Settings.activeStend; }
             Button { id:connectButton;
                 Material.background: statusConnected ? Material.Green : "#406D9E";
                 Material.foreground: "white";
@@ -66,7 +66,7 @@ Pane {
                         var params = {};
                         params.port = 45454;
                         connectActivated();
-                        viewControl.addConnection(settings.activeStend, JSON.stringify(params));
+                        viewControl.addConnection(Settings.activeStend, JSON.stringify(params));
                     }
                 }
             }

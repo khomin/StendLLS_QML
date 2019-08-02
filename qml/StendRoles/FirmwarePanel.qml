@@ -9,6 +9,7 @@ SwipeView {
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
+    interactive: false
 
     function drawChart(dataArray, chartLine, chart) {
         chartLine.clear();
@@ -21,6 +22,27 @@ SwipeView {
         }
         for(i=0; i<dataArray.length; i++) {
             chartLine.append(i, parseInt(dataArray[i]));
+        }
+    }
+
+    function setTestIndicationg(testStatus, testProgressBar, testRectangle) {
+        switch(testStatus) {
+        case "idle":
+            testProgressBar.value = 0;
+            testRectangle.color = "red"
+            break;
+        case "process":
+            testProgressBar.value = 50;
+            testRectangle.color = "yellow"
+            break;
+        case "fail":
+            testProgressBar.value = 100;
+            testRectangle.color = "red"
+            break;
+        case "finished":
+            testProgressBar.value = 100;
+            testRectangle.color = "green"
+            break;
         }
     }
 
@@ -104,30 +126,72 @@ SwipeView {
                         columnSpacing: 10
                         rowSpacing: 10
 
-                        Rectangle {
-                            width: 32; height: 32
-                            color: "red"
+                        RowLayout{
+                            Rectangle {
+                                id:addToDatabaseRectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+                            ProgressBar {
+                                id:addToDatabaseProgressBar
+                                implicitWidth: 70; from: 0; to: 100;
+                            }
                         }
                         Label {
                             text: qsTr("Add device to database")
                         }
-                        Rectangle {
-                            width: 32; height: 32
-                            color: "red"
+                        RowLayout {
+                            Rectangle {
+                                id:programmingRectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+                            ProgressBar {
+                                id:programmingProgressBar
+                                implicitWidth: 70; from: 0; to: 100;
+                            }
+                        }
+                        Label {
+                            text: qsTr("Programming")
+                        }
+                        RowLayout {
+                            Rectangle {
+                                id:test232Rectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+                            ProgressBar {
+                                id:test232ProgressBar
+                                implicitWidth: 70; from: 0; to: 100;
+                            }
                         }
                         Label {
                             text: qsTr("Test 232")
                         }
-                        Rectangle {
-                            width: 32; height: 32
-                            color: "red"
+                        RowLayout{
+                            Rectangle {
+                                id:test485Rectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+                            ProgressBar {
+                                id:test485ProgressBar
+                                implicitWidth: 70; from: 0; to: 100;
+                            }
                         }
                         Label {
                             text: qsTr("Test 485")
                         }
-                        Rectangle {
-                            width: 32; height: 32
-                            color: "red"
+                        RowLayout {
+                            Rectangle {
+                                id:testFreqRectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+                            ProgressBar {
+                                id:testFreqProgressBar
+                                implicitWidth: 70; from: 0; to: 100;
+                            }
                         }
                         Label {
                             text: qsTr("Test frequency")
@@ -167,6 +231,57 @@ SwipeView {
                                 text: "---"
                             }
                         }
+
+                        Connections {
+                            target: viewControl
+
+                            onSignalTestFinished: {
+                                var jsonData = JSON.parse(json)
+                                if(jsonData.testResult === false) {
+                                    addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+                                    programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+                                    test232Rectangle.color = "red"; test232ProgressBar.value = 0;
+                                    test485Rectangle.color = "red"; test485ProgressBar.value = 0;
+                                    testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
+                                    toast.displayMessage(jsonData.message, "bad");
+                                } else {
+                                    addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
+                                    programmingRectangle.color = "green"; programmingProgressBar.value = 100;
+                                    test232Rectangle.color = "green"; test232ProgressBar.value = 100;
+                                    test485Rectangle.color = "green"; test485ProgressBar.value = 100;
+                                    testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
+                                    toast.displayMessage(qsTr("Test completed successfully"), "good")
+                                }
+                            }
+                            onSignalTestError: {
+                                var jsonData = JSON.parse(json)
+                                addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+                                programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+                                test232Rectangle.color = "red"; test232ProgressBar.value = 0;
+                                test485Rectangle.color = "red"; test485ProgressBar.value = 0;
+                                testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
+                                toast.displayMessage(jsonData.message, "bad");
+                            }
+
+                            onSignalTestUpdateStatus: {
+                                var jsonData = JSON.parse(json)
+                                if(jsonData.testStep === "programming") {
+                                    addToDatabaseRectangle.color = "green"
+                                    addToDatabaseProgressBar.value = parseInt(jsonData.percent)
+                                    if(parseInt(jsonData.percent) < 100) {
+                                        programmingRectangle.color = "yellow"
+                                    } else {
+                                        programmingRectangle.color = "green"
+                                    }
+                                    programmingProgressBar.value = parseInt(jsonData.percent)
+                                }
+                                if(jsonData.testStep === "waitTestNotEnd") {
+                                    setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
+                                    setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
+                                    setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
+                                }
+                            }
+                        }
                     }
                     Button { id:llsStartTestButton;
                         Material.background: Material.Green;
@@ -176,7 +291,12 @@ SwipeView {
                         implicitHeight: 50;
                         implicitWidth: 150
                         onClicked: {
-
+                            if(viewControl.isConnected()) {
+                                viewControl.startTestStend()
+                                toast.flush()
+                            } else {
+                                toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
+                            }
                         }
                     }
                 }
