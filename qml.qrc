@@ -1,16 +1,21 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/StatusPannel.qml</file>
-        <file>qml/SettingsPannel.qml</file>
         <file>qml/main.qml</file>
         <file>qml/delegates/ComboxDelegateTypical.qml</file>
-        <file>qml/ValidatePassDialog.qml</file>
         <file>qml/delegates/TabButtonDelegate.qml</file>
         <file>qml/toast/Toast.qml</file>
         <file>qml/toast/InfoBannerComponent.qml</file>
         <file>qml/StendRoles/Qch2.qml</file>
         <file>qml/StendRoles/Qch1.qml</file>
         <file>qml/StendRoles/Firmware.qml</file>
-        <file>qml/StendRoles/FirmwarePanel.qml</file>
+        <file>qml/StendRoles/OtherItems/StendTestSettings.qml</file>
+        <file>qml/StendRoles/OtherItems/StendFirmwareProgrammingSettings.qml</file>
+        <file>qml/StendRoles/OtherItems/SettingsPannel.qml</file>
+        <file>qml/StendRoles/OtherItems/Language.qml</file>
+        <file>qml/StendRoles/OtherItems/FindStend.qml</file>
+        <file>qml/StendRoles/OtherItems/About.qml</file>
+        <file>qml/StendRoles/OtherItems/FirmwarePanel.qml</file>
+        <file>qml/StendRoles/OtherItems/StendDataBaseSettings.qml</file>
     </qresource>
 </RCC>

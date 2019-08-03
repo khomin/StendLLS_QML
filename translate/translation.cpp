@@ -41,7 +41,7 @@ void Translation::selectLanguage(QString language) {
 
     engine->retranslate();
 
-    // TODO: change language
+    Settings::Instance().setLanguage(language);
 
     emit signalLanguageChanged(langIndex);
 }

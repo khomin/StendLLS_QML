@@ -20,21 +20,27 @@ QJsonObject Settings::getSettings() {
         emit databaseUserIsChanged();
         emit databasePasswordIsChanged();
         emit databasePortIsChanged();
+        emit cap1MinIsChanged();
+        emit cap2MinIsChanged();
+        emit cap3MinIsChanged();
+        emit cap1MaxIsChanged();
+        emit cap2MaxIsChanged();
+        emit cap3MaxIsChanged();
+        emit fimrwareStLinkPathIsChanged();
+        emit firmwareDutPathIsChanged();
+        emit frmwareBootPathIsChanged();
     } else {
         qDebug() << "Cannot read file" << file.errorString();
     }
     return settingsJson;
 }
 
-void Settings::setStendActiveIp(QString ip) {
-    settingsJson.insert("activeStend", ip);
-
+void Settings::saveSettingsToFile() {
     QFile file("./conf/settings.json");
     if(file.open(QFile::WriteOnly | QFile::Text)) {
         QTextStream in(&file);
         QJsonDocument doc(settingsJson);
         in << doc.toJson(QJsonDocument::Indented) << endl;
-        getSettings();
     } else {
         qDebug() << "Cannot write file" << file.errorString();
     }

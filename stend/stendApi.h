@@ -37,6 +37,7 @@ public slots:
     /* insert error from tcp */
     void insertErrorFromInterface(QString data);
 
+    bool testDatabaseConnect();
 signals:
     /* send data through tcp */
     void readyWriteDataToInterface(QByteArray data);
@@ -56,6 +57,7 @@ private slots:
     void copyInputData(sDutBaseStruct & dutStruct, const StendProperty::sInputTcpTempStruct* pinputTemp);
     QString convertTestStateToString(eTestState state);
     bool testIsFinished(sDutTestStruct & tests);
+
 private:
     sIp_list ip;
     int interval_read_info_counter;

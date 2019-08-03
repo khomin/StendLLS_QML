@@ -33,6 +33,8 @@ public slots:
 
     Q_INVOKABLE void startTestStend();
 
+    Q_INVOKABLE bool testDatabaseConnect();
+
 signals:
     void signalStendLost();
     void signalStendReady();

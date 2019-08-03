@@ -53,7 +53,7 @@ void View::setStendActiveIp(int indexModel) {
     log.insertLog(tr("Set default stend"), "grey");
     auto model = findStend.getModel()->getAll();
     if(model.length() >= indexModel){
-        Settings::Instance().setStendActiveIp(model.at(indexModel).get()->getIp());
+        Settings::Instance().setActiveStend(model.at(indexModel).get()->getIp());
     }
 }
 
@@ -71,4 +71,7 @@ LogModel* View::getStendLogModel() {
 
 void View::startTestStend() {
     stendApi.startTest();
+}
+bool View::testDatabaseConnect() {
+    return stendApi.testDatabaseConnect();
 }

@@ -352,6 +352,10 @@ bool StendApi::testIsFinished(sDutTestStruct & tests) {
     return false;
 }
 
+bool StendApi::testDatabaseConnect() {
+    return dataBase->testCconnect();
+}
+
 QJsonObject StendApi::evaluateTestStatus(sDutTestStruct & tests) {
     QJsonObject json;
     QJsonObject json232;
