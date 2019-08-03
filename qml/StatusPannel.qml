@@ -58,6 +58,7 @@ Pane {
                 text: statusConnected ? qsTr("Disconnect") : qsTr("Connect");
                 font.pointSize: 8
                 implicitHeight: 45;
+                focus: false
                 onClicked: {
                     if(statusConnected) {
                         disconnectActivated();

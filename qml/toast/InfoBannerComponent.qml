@@ -4,7 +4,7 @@ import QtQuick.Controls.Material 2.12
 Item {
     id: banner
     property alias message : messageText.text
-
+    property int fullHeight: background.height
     signal clickedHide();
 
     property string type: "normal"
@@ -21,34 +21,33 @@ Item {
 
     Rectangle {
         id: background
-        anchors.fill: banner
+        width: parent.width
+        height: messageText.paintedHeight > 70 ? messageText.paintedHeight : 70
         color: getColorType(type)
         smooth: true
         opacity: 0.8
-    }
-    Text {
-        font.pixelSize: 24
-        renderType: Text.QtRendering
-        width: 150
-        height: 40
-
-        id: messageText
-        anchors.fill: banner
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        wrapMode: Text.WordWrap
-        color: "white"
+        MouseArea {
+            anchors.fill: parent
+            Text {
+                id: messageText
+                font.pixelSize: 24
+                renderType: Text.QtRendering
+                width: parent.width
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                color: "white"
+            }
+            onClicked: {
+                clickedHide()
+            }
+        }
     }
 
     states: State {
         name: "portrait"
         PropertyChanges { target: banner; height: 50 }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            clickedHide()
-        }
     }
 }

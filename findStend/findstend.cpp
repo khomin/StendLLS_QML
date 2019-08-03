@@ -31,16 +31,6 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
             } else {
                 mSearch_ip_timeout = 0;
                 mSearch_ip_state = idle;
-
-                //--- test
-                sConnectSettings connt;
-                connt.ip.ip_addr[0] = 192;
-                connt.ip.ip_addr[1] = 168;
-                connt.ip.ip_addr[2] = 15;
-                connt.ip.ip_addr[3] = 22;
-                mFindStendModel->addItem(connt);
-                //--- test
-
                 mFindStendModel->getAll().empty() ? emit searchComplete("error") : emit searchComplete("normal");
             }
         }

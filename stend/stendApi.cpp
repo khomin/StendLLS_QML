@@ -346,13 +346,7 @@ QString StendApi::convertTestStateToString(eTestState state) {
 }
 
 bool StendApi::testIsFinished(sDutTestStruct & tests) {
-    if((tests.rs232_state == test_ok)
-            && (tests.rs485_state == test_ok)
-            && (tests.freq_state == test_ok)) {
-        return true;
-    } else if((tests.rs232_state == test_err)
-              && (tests.rs485_state == test_err)
-              && (tests.freq_state == test_err)) {
+    if((tests.state == test_ok) || (tests.state == test_err)) {
         return true;
     }
     return false;
@@ -363,13 +357,24 @@ QJsonObject StendApi::evaluateTestStatus(sDutTestStruct & tests) {
     QJsonObject json232;
     QJsonObject json485;
     QJsonObject jsonFreq;
+    //-- rs232
     json232.insert("testResult", convertTestStateToString(tests.rs232_state));
+    json232.insert("sendPackets", tests.rs232_send_packet);
+    json232.insert("receivePackets", tests.rs232_receive_packet);
+    //-- rs485
     json485.insert("testResult", convertTestStateToString(tests.rs485_state));
+    json485.insert("sendPackets", tests.rs485_send_packet);
+    json485.insert("receivePackets", tests.rs485_receive_packet);
+    //-- freq
     jsonFreq.insert("testResult", convertTestStateToString(tests.freq_state));
+    jsonFreq.insert("capStep1", (int)tests.cap_test_result[0]);
+    jsonFreq.insert("capStep2", (int)tests.cap_test_result[1]);
+    jsonFreq.insert("capStep3", (int)tests.cap_test_result[2]);
+    //-- result
     json.insert("testStep", "waitTestNotEnd");
     json.insert("test232", json232);
     json.insert("test485", json485);
     json.insert("testFreq", jsonFreq);
-    json.insert("finished", testIsFinished(tests));
+    json.insert("result", convertTestStateToString(tests.state));
     return json;
 }

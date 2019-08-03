@@ -114,7 +114,7 @@ SwipeView {
             Pane {
                 Material.elevation: 6
                 Layout.leftMargin: 10
-                implicitWidth: 290
+                implicitWidth: 330
                 Layout.alignment: Qt.AlignTop
                 Column {
                     width: parent.width
@@ -237,22 +237,39 @@ SwipeView {
 
                             onSignalTestFinished: {
                                 var jsonData = JSON.parse(json)
-                                if(jsonData.testResult === false) {
-                                    addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-                                    programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-                                    test232Rectangle.color = "red"; test232ProgressBar.value = 0;
-                                    test485Rectangle.color = "red"; test485ProgressBar.value = 0;
-                                    testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
-                                    toast.displayMessage(jsonData.message, "bad");
-                                } else {
+                                if(jsonData.result === "finished") {
                                     addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
                                     programmingRectangle.color = "green"; programmingProgressBar.value = 100;
                                     test232Rectangle.color = "green"; test232ProgressBar.value = 100;
                                     test485Rectangle.color = "green"; test485ProgressBar.value = 100;
                                     testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
-                                    toast.displayMessage(qsTr("Test completed successfully"), "good")
+                                    toast.displayMessage(qsTr("Test completed successfully") + "\r\n" +
+                                                         "rs232: tx " + jsonData.test232.sendPackets +
+                                                         ", rx " + jsonData.test232.receivePackets + "\r\n" +
+                                                         "rs485: tx " + jsonData.test485.sendPackets +
+                                                         ", rx " + jsonData.test485.receivePackets + "\r\n" +
+                                                         "cnt test: " +
+                                                         "step1: " + jsonData.testFreq.capStep1 +
+                                                         ", step2: " + jsonData.testFreq.capStep2 +
+                                                         ", step3: " + jsonData.testFreq.capStep3, "good");
+                                } else {
+                                    //addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+                                    //programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+                                    test232Rectangle.color = jsonData.test232.testResult === "finished" ? "green" : "red"; test232ProgressBar.value = 0;
+                                    test485Rectangle.color = jsonData.test485.testResult === "finished" ? "green" : "red"; test485ProgressBar.value = 0;
+                                    testFreqRectangle.color = jsonData.testFreq.testResult === "finished" ? "green" : "red"; testFreqProgressBar.value = 0;
+                                    toast.displayMessage(qsTr("Test completed failed") + "\r\n" +
+                                                         "rs232: tx " + jsonData.test232.sendPackets +
+                                                         ", rx " + jsonData.test232.receivePackets + "\r\n" +
+                                                         "rs485: tx " + jsonData.test485.sendPackets +
+                                                         ", rx " + jsonData.test485.receivePackets + "\r\n" +
+                                                         "cnt test: " +
+                                                         "step1: " + jsonData.testFreq.capStep1 +
+                                                         ", step2: " + jsonData.testFreq.capStep2 +
+                                                         ", step3: " + jsonData.testFreq.capStep3, "bad");
                                 }
                             }
+
                             onSignalTestError: {
                                 var jsonData = JSON.parse(json)
                                 addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
@@ -290,6 +307,7 @@ SwipeView {
                         font.pointSize: 8
                         implicitHeight: 50;
                         implicitWidth: 150
+                        focus: true
                         onClicked: {
                             if(viewControl.isConnected()) {
                                 viewControl.startTestStend()
@@ -297,6 +315,18 @@ SwipeView {
                             } else {
                                 toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
                             }
+                        }
+
+                        Shortcut {
+                          sequence: "Space"
+                          onActivated: {
+                              if(viewControl.isConnected()) {
+                                  viewControl.startTestStend()
+                                  toast.flush()
+                              } else {
+                                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
+                              }
+                          }
                         }
                     }
                 }
@@ -410,7 +440,7 @@ SwipeView {
         Pane {
             id:mcuSnPanel
             Material.elevation: 6
-            implicitWidth: firmwarePannelScroll.width - 20
+            implicitWidth: firmwarePannelScroll.width
             Column {
                 width: parent.width
                 spacing: 30

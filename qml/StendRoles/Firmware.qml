@@ -70,6 +70,20 @@ Rectangle {
                         onClicked: { firmwareSwipeView.setCurrentIndex(1)}
                         contentItem: Delegates.TabButtonDelegate {}
                     }
+                    TabButton {
+                        text: qsTr("Testing"); font.pointSize: 8
+                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
+                        icon.width: 10; icon.height: 10; height: 40
+                        onClicked: { firmwareSwipeView.setCurrentIndex(2)}
+                        contentItem: Delegates.TabButtonDelegate {}
+                    }
+                    TabButton {
+                        text: qsTr("Firmware programming"); font.pointSize: 8
+                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
+                        icon.width: 10; icon.height: 10; height: 40
+                        onClicked: { firmwareSwipeView.setCurrentIndex(3)}
+                        contentItem: Delegates.TabButtonDelegate {}
+                    }
                 }
                 ToolBar {
                     id:toolBarButtonControl
@@ -87,6 +101,14 @@ Rectangle {
                             Menu {
                                 id: toolButtonMenu
                                 MenuItem { text: qsTr("About")
+                                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/address-card.svg"
+                                    icon.width: 14; icon.height: 14
+                                    font.pointSize: 8;
+                                    onClicked: {
+                                        settingsPannel.setCurrentWidget("about")
+                                    }
+                                }
+                                MenuItem { text: qsTr("Language")
                                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/address-card.svg"
                                     icon.width: 14; icon.height: 14
                                     font.pointSize: 8;
@@ -207,6 +229,87 @@ Rectangle {
                                         }
                                         ScrollIndicator.horizontal: ScrollIndicator {}
                                         ScrollIndicator.vertical: ScrollIndicator {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //-- language
+                    Item {
+                        id:settingsWidget
+                        ScrollView {
+                            anchors.fill: parent
+                            //-- settings
+                            ColumnLayout {
+                                spacing: 5
+                                anchors.fill: parent
+                                Pane {
+                                    Material.elevation: 2
+                                    Layout.leftMargin: 10
+                                    implicitWidth: propertyPanelSwipe.width - 15
+                                    Column {
+                                        spacing: 30
+                                        Label{ text: qsTr("Settings"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                                        GridLayout {
+                                            rows: 1
+                                            columns: 2
+                                            Label { text: qsTr("Language"); font.pointSize: 8 }
+                                            //-- languages
+                                            ComboBox {
+                                                id:languagesComBox
+                                                implicitHeight: 35
+                                                font.pointSize: 8
+                                                model: translate.getLanguageList()
+                                                delegate: Delegates.ComboxDelegateTypical{}
+                                                Connections {
+                                                    target: translate
+                                                    onSignalLanguageChanged: {
+                                                        languagesComBox.currentIndex = langIndex;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Apply");
+                                            onClicked: {
+                                                switch(languagesComBox.currentIndex) {
+                                                case 0: translate.selectLanguage("en"); break;
+                                                case 1: translate.selectLanguage("ru"); break;
+                                                case 2: translate.selectLanguage("cn"); break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //-- about
+                    Item {
+                        id:aboutWidget
+                        ScrollView {
+                            anchors.fill: parent
+                            //-- about
+                            ColumnLayout {
+                                spacing: 5
+                                anchors.fill: parent
+                                Pane {
+                                    Material.elevation: 2
+                                    Layout.leftMargin: 10
+                                    implicitWidth: propertyPanelSwipe.width - 15
+                                    Column {
+                                        spacing: 30
+
+                                        Label{ text: qsTr("About"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+
+                                        GridLayout {
+                                            rows: 3
+                                            columns: 1
+                                            Label{ text: softwareName; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
+                                            Label{ text: companiName; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
+                                            Label{ text: softwareVersion; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
+                                        }
                                     }
                                 }
                             }
