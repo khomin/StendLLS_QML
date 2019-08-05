@@ -313,7 +313,7 @@ void StendApi::copyInputData(sDutBaseStruct & dutStruct, const StendProperty::sI
     dutStruct.addr = pinputTemp->info.addr;
     dutStruct.power_3_3 = pinputTemp->info.power_3_3;
     dutStruct.power_input = pinputTemp->info.power_input;
-    dutStruct.power_current = pinputTemp->info.power_current / 10;
+    dutStruct.power_current = pinputTemp->info.power_current;
     dutStruct.power_state = pinputTemp->info.power_state;
     curves_data.power_3_3 = dutStruct.power_3_3;
     curves_data.power_current = dutStruct.power_current;
