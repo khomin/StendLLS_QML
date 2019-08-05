@@ -31,8 +31,7 @@ SOURCES += \
         view.cpp
 
 RESOURCES += qml.qrc \
-    font.qrc \
-    resources.qrc
+    font.qrc
 
 HEADERS += \
     clipboard.h \

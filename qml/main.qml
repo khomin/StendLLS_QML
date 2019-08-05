@@ -29,8 +29,6 @@ ApplicationWindow {
         translate.qmlReady(); // applocation.showMaximized()
     }
 
-    FontLoader { id: fontAwesome; source: "qrc:/font/resources/fonts/awesome_900.ttf" }
-
     SwipeView {
         id:rootSwipeView
         anchors.fill: parent
@@ -42,7 +40,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 Button {
                     implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("QCH1"); font.pointSize: 22
+                    text: qsTr("Quality check 1"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
                     onClicked: {
                         rootSwipeView.currentIndex = 1
@@ -50,7 +48,7 @@ ApplicationWindow {
                 }
                 Button {
                     implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("QCH2"); font.pointSize: 22
+                    text: qsTr("quality check 2"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
                     onClicked: {
                         rootSwipeView.currentIndex = 2
@@ -58,7 +56,7 @@ ApplicationWindow {
                 }
                 Button {
                     implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("Firmware"); font.pointSize: 22
+                    text: qsTr("Firmware"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
                     onClicked: {
                         rootSwipeView.currentIndex = 3

@@ -5,7 +5,7 @@ import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
 
 SwipeView {
-    id:firmwarePannelScroll
+    id:qch1PannelScroll
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
@@ -76,7 +76,7 @@ SwipeView {
                 id: logPanel
                 Material.elevation: 2
                 implicitWidth: 200
-                implicitHeight: firmwarePannelScroll.height - mcuSnPanel.height - 20
+                implicitHeight: qch1PannelScroll.height - mcuSnPanel.height - 20
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 ColumnLayout {
                     width: parent.width
@@ -351,7 +351,7 @@ SwipeView {
                         title: "Voltage"
                         antialiasing: true
                         width: chartTestColumn.width;
-                        height: (firmwarePannelScroll.height / 3 - 50)
+                        height: (qch1PannelScroll.height / 3 - 50)
                         backgroundColor: "transparent"
                         property int graphLength: 1
                         property int graphAmplitudeMax: 1
@@ -380,7 +380,7 @@ SwipeView {
                         title: "Current"
                         antialiasing: true
                         width: chartTestColumn.width;
-                        height: (firmwarePannelScroll.height / 3 - 50)
+                        height: (qch1PannelScroll.height / 3 - 50)
                         property int graphLength: 1
                         property int graphAmplitudeMax: 1
                         backgroundColor: "transparent"
@@ -409,7 +409,7 @@ SwipeView {
                         theme: ChartView.ChartThemeLight
                         title: "Frequency"
                         antialiasing: true
-                        width: chartTestColumn.width; height: (firmwarePannelScroll.height / 3 - 50)
+                        width: chartTestColumn.width; height: (qch1PannelScroll.height / 3 - 50)
                         property int graphLength: 1
                         property int graphAmplitudeMax: 1
                         backgroundColor: "transparent"
@@ -440,7 +440,7 @@ SwipeView {
         Pane {
             id:mcuSnPanel
             Material.elevation: 6
-            implicitWidth: firmwarePannelScroll.width
+            implicitWidth: qch1PannelScroll.width
             Column {
                 width: parent.width
                 spacing: 30

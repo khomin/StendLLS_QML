@@ -326,7 +326,7 @@ void StendApi::copyInputData(sDutBaseStruct & dutStruct, const StendProperty::sI
     }
 
     if((pinputTemp->info.serial_number[0]>'9')||(pinputTemp->info.serial_number[0]<'0')) {
-        strcpy(dutStruct.serial_number, QString(tr("ТЕСТОВЫЙ_НОМЕР")).toStdString().data());
+        strcpy(dutStruct.serial_number, QString(tr("TEST")).toStdString().data());
     } else {
         memcpy(&dutStruct.serial_number, &pinputTemp->info.serial_number, sizeof(pinputTemp->info.serial_number));
     }
