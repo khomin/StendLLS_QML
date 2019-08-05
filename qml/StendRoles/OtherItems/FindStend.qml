@@ -46,7 +46,7 @@ Item {
                     onClicked: {
                         viewControl.startFindStends();
                         busyIndicator.visible = true;
-                        firmwareSwipeView.setCurrentIndex(2);
+                        firmwareSwipeView.setCurrentIndex(4);
                     }
                 }
             }

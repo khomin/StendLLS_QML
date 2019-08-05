@@ -17,11 +17,12 @@ bool FindStendModel::addItem(sConnectSettings value) {
 }
 
 void FindStendModel::removeAll() {
-    for(int index = 0; index<tableItems.size(); index++) {
-        beginRemoveRows( QModelIndex(), index, index);
+    int row = rowCount();
+    if(row != 0) {
+        beginRemoveRows(QModelIndex(), 0, row-1);
         endRemoveRows();
+        tableItems.clear();
     }
-    tableItems.clear();
 }
 
 QVector<std::shared_ptr<FindStendItem>> FindStendModel::getAll() {
