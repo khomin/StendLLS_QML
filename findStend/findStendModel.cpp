@@ -19,7 +19,7 @@ bool FindStendModel::addItem(sConnectSettings value) {
 void FindStendModel::removeAll() {
     int row = rowCount();
     if(row != 0) {
-        beginRemoveRows(QModelIndex(), 0, row-1);
+        beginRemoveRows(QModelIndex(), 0, row);
         tableItems.clear();
         endRemoveRows();
     }

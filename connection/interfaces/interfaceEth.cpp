@@ -10,6 +10,8 @@
 
 InterfaceEth::InterfaceEth() {
     this->isManualClosed = false;
+    tcpSocket = nullptr;
+    tcpServer = nullptr;
 }
 
 void InterfaceEth::initInterface()  {}
