@@ -20,8 +20,8 @@ void FindStendModel::removeAll() {
     int row = rowCount();
     if(row != 0) {
         beginRemoveRows(QModelIndex(), 0, row-1);
-        endRemoveRows();
         tableItems.clear();
+        endRemoveRows();
     }
 }
 
