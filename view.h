@@ -21,8 +21,6 @@ public slots:
     Q_INVOKABLE void startFindStends();
     Q_INVOKABLE FindStendModel* getFindStendModel();
 
-    Q_INVOKABLE void setStendActiveIp(int indexModel);
-
     Q_INVOKABLE bool addConnection(QString name, const QString & parameters);
     Q_INVOKABLE void closeConnection();
 

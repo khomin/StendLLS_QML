@@ -84,7 +84,7 @@ Item {
                                 implicitWidth: 150
                                 Layout.alignment: Qt.AlignRight
                                 onClicked: {
-                                    viewControl.setStendActiveIp(indexOfThisDelegate)
+                                    Settings.activeStend = model.ip
                                 }
                             }
                         }

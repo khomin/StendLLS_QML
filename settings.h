@@ -50,43 +50,43 @@ public:
     Q_PROPERTY(QString frmwareBootPath READ getFirmwareBootPath WRITE setFirmwareBootPath NOTIFY frmwareBootPathIsChanged)
 
     QString getLanguage() { return settingsJson.value("language").toString(); }
-    void setLanguage(QString value) { settingsJson.insert("language", value); saveSettingsToFile(); }
+    void setLanguage(QString value) { settingsJson.insert("language", value); saveSettingsToFile(); languageIsChanged(); }
 
     QString getActiveStend() { return settingsJson.value("activeStend").toString(); }
-    void setActiveStend(QString value) { settingsJson.insert("activeStend", value); saveSettingsToFile(); }
+    void setActiveStend(QString value) { settingsJson.insert("activeStend", value); saveSettingsToFile(); activeStendIsChanged(); }
 
     QString getDatabaseName() { return settingsJson.value("databaseName").toString(); }
-    void setDatabaseName(QString value) { settingsJson.insert("databaseName", value); saveSettingsToFile(); }
+    void setDatabaseName(QString value) { settingsJson.insert("databaseName", value); saveSettingsToFile(); databaseNameIsChanged(); }
 
     QString getDatabaseHost() { return settingsJson.value("databaseHost").toString(); }
-    void setDatabaseHost(QString value) { settingsJson.insert("databaseHost", value); saveSettingsToFile(); }
+    void setDatabaseHost(QString value) { settingsJson.insert("databaseHost", value); saveSettingsToFile(); databaseHostIsChanged(); }
 
     QString getDatabaseUser() { return settingsJson.value("databaseUser").toString(); }
-    void setDatabaseUser(QString value) { settingsJson.insert("databaseUser", value); saveSettingsToFile(); }
+    void setDatabaseUser(QString value) { settingsJson.insert("databaseUser", value); saveSettingsToFile(); databaseUserIsChanged(); }
 
     QString getDatabasePassword() { return settingsJson.value("databasePassword").toString(); }
-    void setDatabasePassword(QString value) { settingsJson.insert("databasePassword", value); saveSettingsToFile(); }
+    void setDatabasePassword(QString value) { settingsJson.insert("databasePassword", value); saveSettingsToFile(); databasePasswordIsChanged(); }
 
     QString getDatabasePort() { return settingsJson.value("databasePort").toString(); }
-    void setDatabasePort(QString value) { settingsJson.insert("databasePort", value); saveSettingsToFile(); }
+    void setDatabasePort(QString value) { settingsJson.insert("databasePort", value); saveSettingsToFile(); databasePortIsChanged(); }
 
     QString getCap1Min() { return settingsJson.value("cap1_min").toString(); }
-    void setCap1Min(QString value) { settingsJson.insert("cap1_min", value); saveSettingsToFile(); }
+    void setCap1Min(QString value) { settingsJson.insert("cap1_min", value); saveSettingsToFile(); cap1MinIsChanged(); }
 
     QString getCap2Min() { return settingsJson.value("cap2_min").toString(); }
-    void setCap2Min(QString value) { settingsJson.insert("cap2_min", value); saveSettingsToFile(); }
+    void setCap2Min(QString value) { settingsJson.insert("cap2_min", value); saveSettingsToFile(); cap2MinIsChanged(); }
 
     QString getCap3Min() { return settingsJson.value("cap3_min").toString(); }
-    void setCap3Min(QString value) { settingsJson.insert("cap3_min", value); saveSettingsToFile(); }
+    void setCap3Min(QString value) { settingsJson.insert("cap3_min", value); saveSettingsToFile(); cap3MinIsChanged(); }
 
     QString getCap1Max() { return settingsJson.value("cap1_max").toString(); }
-    void setCap1Max(QString value) { settingsJson.insert("cap1_max", value); saveSettingsToFile(); }
+    void setCap1Max(QString value) { settingsJson.insert("cap1_max", value); saveSettingsToFile(); cap1MaxIsChanged(); }
 
     QString getCap2Max() { return settingsJson.value("cap2_max").toString(); }
-    void setCap2Max(QString value) { settingsJson.insert("cap2_max", value); saveSettingsToFile(); }
+    void setCap2Max(QString value) { settingsJson.insert("cap2_max", value); saveSettingsToFile(); cap2MaxIsChanged(); }
 
     QString getCap3Max() { return settingsJson.value("cap3_max").toString(); }
-    void setCap3Max(QString value) { settingsJson.insert("cap3_max", value); saveSettingsToFile(); }
+    void setCap3Max(QString value) { settingsJson.insert("cap3_max", value); saveSettingsToFile(); cap3MaxIsChanged(); }
 
     QString getCurMin() { return settingsJson.value("cur_min").toString(); }
     void setCurMin(QString value) { settingsJson.insert("cur_min", value); saveSettingsToFile(); }
@@ -95,13 +95,13 @@ public:
     void setCurMax(QString value) { settingsJson.insert("cur_max", value); saveSettingsToFile(); }
 
     QString getFimrwareStLinkPath() { return settingsJson.value("firmare_stlink_path").toString(); }
-    void setFimrwareStLinkPath(QString value) { settingsJson.insert("firmare_stlink_path", value); saveSettingsToFile(); }
+    void setFimrwareStLinkPath(QString value) { settingsJson.insert("firmare_stlink_path", value); saveSettingsToFile(); fimrwareStLinkPathIsChanged(); }
 
     QString getFirmwareDutPath() { return settingsJson.value("firmare_dut_path").toString(); }
-    void setFirmwareDutPath(QString value) { settingsJson.insert("firmare_dut_path", value); saveSettingsToFile(); }
+    void setFirmwareDutPath(QString value) { settingsJson.insert("firmare_dut_path", value); saveSettingsToFile(); firmwareDutPathIsChanged(); }
 
     QString getFirmwareBootPath() { return settingsJson.value("firmare_bootloader_path").toString(); }
-    void setFirmwareBootPath(QString value) { settingsJson.insert("firmare_bootloader_path", value); saveSettingsToFile(); }
+    void setFirmwareBootPath(QString value) { settingsJson.insert("firmare_bootloader_path", value); saveSettingsToFile(); frmwareBootPathIsChanged(); }
 
 protected:
     Settings();
