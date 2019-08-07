@@ -48,35 +48,115 @@ SwipeView {
 
     Connections {
         target: viewControl
-        onSignalUpdateRealTimeData: {
-            var jsonData = JSON.parse(json)
-            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
-            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
-            llsCntLabel.text = jsonData.cnt
-            llsMcuSnDeviceLabel.text = jsonData.mcu_serial_number
-            llsMcuSnLabel.text = jsonData.mcu_serial_number
-            llsSnDeviceLabel.text = jsonData.serial_number
+//        onSignalUpdateRealTimeData: {
+//            var jsonData = JSON.parse(json)
+//            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
+//            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
+//            llsCntLabel.text = jsonData.cnt
+//            llsMcuSnDeviceLabel.text = jsonData.mcu_serial_number
+//            llsMcuSnLabel.text = jsonData.mcu_serial_number
+//            llsSnDeviceLabel.text = jsonData.serial_number
 
-            drawChart(jsonData.powerCollect, chartVoltageLine, chartVoltage)
-            drawChart(jsonData.currentCollect, chartCurrentLine, chartCurrent)
-            drawChart(jsonData.cntCollect, chartCapacityLine, chartCapacity)
+//            drawChart(jsonData.powerCollect, chartVoltageLine, chartVoltage)
+//            drawChart(jsonData.currentCollect, chartCurrentLine, chartCurrent)
+//            drawChart(jsonData.cntCollect, chartCapacityLine, chartCapacity)
 
-            if(busyIndicator.visible == true) {
-                busyIndicator.visible = false;
-            }
-        }
+//            if(busyIndicator.visible == true) {
+//                busyIndicator.visible = false;
+//            }
+//        }
     }
 
-    //-- data acquition send
+//    Connections {
+//        target: viewControl
+
+//        onSignalTestFinished: {
+//            var jsonData = JSON.parse(json)
+//            if(jsonData.result === "finished") {
+//                addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
+//                programmingRectangle.color = "green"; programmingProgressBar.value = 100;
+//                test232Rectangle.color = "green"; test232ProgressBar.value = 100;
+//                test485Rectangle.color = "green"; test485ProgressBar.value = 100;
+//                testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
+//                toast.displayMessage(qsTr("Test completed successfully") + "\r\n" +
+//                                     "rs232: tx " + jsonData.test232.sendPackets +
+//                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
+//                                     "rs485: tx " + jsonData.test485.sendPackets +
+//                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
+//                                     "cnt test: " +
+//                                     "step1: " + jsonData.testFreq.capStep1 +
+//                                     ", step2: " + jsonData.testFreq.capStep2 +
+//                                     ", step3: " + jsonData.testFreq.capStep3, "good");
+//            } else {
+//                //addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+//                //programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+//                test232Rectangle.color = jsonData.test232.testResult === "finished" ? "green" : "red"; test232ProgressBar.value = 0;
+//                test485Rectangle.color = jsonData.test485.testResult === "finished" ? "green" : "red"; test485ProgressBar.value = 0;
+//                testFreqRectangle.color = jsonData.testFreq.testResult === "finished" ? "green" : "red"; testFreqProgressBar.value = 0;
+//                toast.displayMessage(qsTr("Test completed failed") + "\r\n" +
+//                                     "rs232: tx " + jsonData.test232.sendPackets +
+//                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
+//                                     "rs485: tx " + jsonData.test485.sendPackets +
+//                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
+//                                     "cnt test: " +
+//                                     "step1: " + jsonData.testFreq.capStep1 +
+//                                     ", step2: " + jsonData.testFreq.capStep2 +
+//                                     ", step3: " + jsonData.testFreq.capStep3, "bad");
+//            }
+//        }
+
+//        onSignalTestError: {
+//            var jsonData = JSON.parse(json)
+//            addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+//            programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+//            test232Rectangle.color = "red"; test232ProgressBar.value = 0;
+//            test485Rectangle.color = "red"; test485ProgressBar.value = 0;
+//            testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
+//            toast.displayMessage(jsonData.message, "bad");
+//        }
+
+//        onSignalTestUpdateStatus: {
+//            var jsonData = JSON.parse(json)
+//            if(jsonData.testStep === "programming") {
+//                addToDatabaseRectangle.color = "green"
+//                addToDatabaseProgressBar.value = parseInt(jsonData.percent)
+//                if(parseInt(jsonData.percent) < 100) {
+//                    programmingRectangle.color = "yellow"
+//                } else {
+//                    programmingRectangle.color = "green"
+//                }
+//                programmingProgressBar.value = parseInt(jsonData.percent)
+//            }
+//            if(jsonData.testStep === "waitTestNotEnd") {
+//                setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
+//                setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
+//                setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
+//            }
+//        }
+//    }
+
+    //        Shortcut {
+    //          sequence: "Space"
+    //          onActivated: {
+    //              if(viewControl.isConnected()) {
+    //                  viewControl.startTestStend()
+    //                  toast.flush()
+    //              } else {
+    //                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
+    //              }
+    //          }
+    //        }
+    //    }
+
     ColumnLayout {
         spacing: 5
         RowLayout {
-            //-- log panel
+            //-- panel
             Pane {
                 id: logPanel
                 Material.elevation: 2
                 implicitWidth: 200
-                implicitHeight: qch1PannelScroll.height - mcuSnPanel.height - 20
+                implicitHeight: qch1PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 ColumnLayout {
                     width: parent.width
@@ -115,218 +195,190 @@ SwipeView {
                 Material.elevation: 6
                 Layout.leftMargin: 10
                 implicitWidth: 330
+                implicitHeight: qch1PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop
-                Column {
-                    width: parent.width
-                    Label{ text: qsTr("Tests"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
-                    spacing: 30
-                    GridLayout {
-                        rows: 7
-                        columns: 2
-                        columnSpacing: 10
-                        rowSpacing: 10
 
-                        RowLayout{
-                            Rectangle {
-                                id:addToDatabaseRectangle
-                                width: 32; height: 32
-                                color: "red"
+                ScrollView {
+                    id: frame
+                    anchors.fill: parent
+                    clip: true
+                    Column {
+                        width: parent.width
+                        Label{ text: qsTr("Tests"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                        spacing: 15
+                        GridLayout {
+                            rows: 7
+                            columns: 2
+                            columnSpacing: 10
+                            rowSpacing: 10
+
+                            Label {
+                                text: qsTr("Power voltage:")
                             }
-                            ProgressBar {
-                                id:addToDatabaseProgressBar
-                                implicitWidth: 70; from: 0; to: 100;
+                            RowLayout {
+                                Label { id:llsPowerVoltageLabel
+                                    text: "0.0"
+                                }
+                                Label { text: "v"}
                             }
-                        }
-                        Label {
-                            text: qsTr("Add device to database")
-                        }
-                        RowLayout {
-                            Rectangle {
-                                id:programmingRectangle
-                                width: 32; height: 32
-                                color: "red"
+
+                            Label {
+                                text: qsTr("Power current:")
                             }
-                            ProgressBar {
-                                id:programmingProgressBar
-                                implicitWidth: 70; from: 0; to: 100;
+                            RowLayout {
+                                Label { id:llsPowerCurrentLabel
+                                    text: "0.0"
+                                }
+                                Label { text: "mA"}
                             }
-                        }
-                        Label {
-                            text: qsTr("Programming")
-                        }
-                        RowLayout {
-                            Rectangle {
-                                id:test232Rectangle
-                                width: 32; height: 32
-                                color: "red"
+
+                            Label {
+                                text: qsTr("CNT:")
                             }
-                            ProgressBar {
-                                id:test232ProgressBar
-                                implicitWidth: 70; from: 0; to: 100;
+                            RowLayout {
+                                Label { id:llsCntLabel
+                                    text: "0"
+                                }
+                                Label { text: "Hz"}
                             }
-                        }
-                        Label {
-                            text: qsTr("Test 232")
-                        }
-                        RowLayout{
-                            Rectangle {
-                                id:test485Rectangle
-                                width: 32; height: 32
-                                color: "red"
+
+                            Label {
+                                text: qsTr("MCU SN:")
                             }
-                            ProgressBar {
-                                id:test485ProgressBar
-                                implicitWidth: 70; from: 0; to: 100;
-                            }
-                        }
-                        Label {
-                            text: qsTr("Test 485")
-                        }
-                        RowLayout {
-                            Rectangle {
-                                id:testFreqRectangle
-                                width: 32; height: 32
-                                color: "red"
-                            }
-                            ProgressBar {
-                                id:testFreqProgressBar
-                                implicitWidth: 70; from: 0; to: 100;
-                            }
-                        }
-                        Label {
-                            text: qsTr("Test frequency")
-                        }
-                        Label {
-                            text: qsTr("Power voltage:")
-                        }
-                        RowLayout {
-                            Label { id:llsPowerVoltageLabel
-                                text: "0.0"
-                            }
-                            Label { text: "v"}
-                        }
-                        Label {
-                            text: qsTr("Power current:")
-                        }
-                        RowLayout {
-                            Label { id:llsPowerCurrentLabel
-                                text: "0.0"
-                            }
-                            Label { text: "mA"}
-                        }
-                        Label {
-                            text: qsTr("CNT:")
-                        }
-                        RowLayout {
-                            Label { id:llsCntLabel
-                                text: "0"
-                            }
-                            Label { text: "Hz"}
-                        }
-                        Label {
-                            text: qsTr("MCU SN:")
-                        }
-                        RowLayout {
                             Label { id:llsMcuSnLabel
-                                text: "---"
+                                text: "NA"
                             }
+
+                            Label {
+                                text: qsTr("SN:")
+                            }
+                            Label { id:llsSnLabel
+                                text: "NA"
+                            }
+
+                            Label {
+                                text: qsTr("Scan.num:")
+                            }
+                            Label { id:llsScannedNumLabel; text: "NA" }
+
+                            Label { text: qsTr("Temperature:") }
+                            RowLayout {
+                                Label { id:llsTempLabel; text: "NA" }
+                                Label { text: "°C" }
+                            }
+
+                            Label { text: qsTr("RS485:") }
+                            Rectangle {
+                                id:llsRs485StatusRectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+
+                            Label { text: qsTr("RS232:") }
+                            Rectangle {
+                                id:llsRs232StatusRectangle
+                                width: 32; height: 32
+                                color: "red"
+                            }
+
+                            Label { text: "Empty:" }
+                            Label { id:llsEmptyValueLabel; text: "NA" }
+
+                            Label { text: "Full:" }
+                            Label { id:llsfullValueLabel; text: "NA" }
                         }
 
-                        Connections {
-                            target: viewControl
-
-                            onSignalTestFinished: {
-                                var jsonData = JSON.parse(json)
-                                if(jsonData.result === "finished") {
-                                    addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
-                                    programmingRectangle.color = "green"; programmingProgressBar.value = 100;
-                                    test232Rectangle.color = "green"; test232ProgressBar.value = 100;
-                                    test485Rectangle.color = "green"; test485ProgressBar.value = 100;
-                                    testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
-                                    toast.displayMessage(qsTr("Test completed successfully") + "\r\n" +
-                                                         "rs232: tx " + jsonData.test232.sendPackets +
-                                                         ", rx " + jsonData.test232.receivePackets + "\r\n" +
-                                                         "rs485: tx " + jsonData.test485.sendPackets +
-                                                         ", rx " + jsonData.test485.receivePackets + "\r\n" +
-                                                         "cnt test: " +
-                                                         "step1: " + jsonData.testFreq.capStep1 +
-                                                         ", step2: " + jsonData.testFreq.capStep2 +
-                                                         ", step3: " + jsonData.testFreq.capStep3, "good");
-                                } else {
-                                    //addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-                                    //programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-                                    test232Rectangle.color = jsonData.test232.testResult === "finished" ? "green" : "red"; test232ProgressBar.value = 0;
-                                    test485Rectangle.color = jsonData.test485.testResult === "finished" ? "green" : "red"; test485ProgressBar.value = 0;
-                                    testFreqRectangle.color = jsonData.testFreq.testResult === "finished" ? "green" : "red"; testFreqProgressBar.value = 0;
-                                    toast.displayMessage(qsTr("Test completed failed") + "\r\n" +
-                                                         "rs232: tx " + jsonData.test232.sendPackets +
-                                                         ", rx " + jsonData.test232.receivePackets + "\r\n" +
-                                                         "rs485: tx " + jsonData.test485.sendPackets +
-                                                         ", rx " + jsonData.test485.receivePackets + "\r\n" +
-                                                         "cnt test: " +
-                                                         "step1: " + jsonData.testFreq.capStep1 +
-                                                         ", step2: " + jsonData.testFreq.capStep2 +
-                                                         ", step3: " + jsonData.testFreq.capStep3, "bad");
-                                }
-                            }
-
-                            onSignalTestError: {
-                                var jsonData = JSON.parse(json)
-                                addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-                                programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-                                test232Rectangle.color = "red"; test232ProgressBar.value = 0;
-                                test485Rectangle.color = "red"; test485ProgressBar.value = 0;
-                                testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
-                                toast.displayMessage(jsonData.message, "bad");
-                            }
-
-                            onSignalTestUpdateStatus: {
-                                var jsonData = JSON.parse(json)
-                                if(jsonData.testStep === "programming") {
-                                    addToDatabaseRectangle.color = "green"
-                                    addToDatabaseProgressBar.value = parseInt(jsonData.percent)
-                                    if(parseInt(jsonData.percent) < 100) {
-                                        programmingRectangle.color = "yellow"
-                                    } else {
-                                        programmingRectangle.color = "green"
+                        ColumnLayout {
+                            spacing: 10
+                            RowLayout {
+                                spacing: 10
+                                Button {
+                                    id:llsSetPowerOnOffButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Set power off");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/power-off.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50
+                                    focus: true
+                                    onClicked: {
                                     }
-                                    programmingProgressBar.value = parseInt(jsonData.percent)
                                 }
-                                if(jsonData.testStep === "waitTestNotEnd") {
-                                    setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
-                                    setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
-                                    setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
+                                Button {
+                                    id:llsResetTestsButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Reset tests");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/sync-alt.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50
+                                    focus: true
+                                    onClicked: {
+                                    }
                                 }
                             }
-                        }
-                    }
-                    Button { id:llsStartTestButton;
-                        Material.background: Material.Green;
-                        Material.foreground: "white";
-                        text: qsTr("Start test");
-                        font.pointSize: 8
-                        implicitHeight: 50;
-                        implicitWidth: 150
-                        focus: true
-                        onClicked: {
-                            if(viewControl.isConnected()) {
-                                viewControl.startTestStend()
-                                toast.flush()
-                            } else {
-                                toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
-                            }
-                        }
 
-                        Shortcut {
-                          sequence: "Space"
-                          onActivated: {
-                              if(viewControl.isConnected()) {
-                                  viewControl.startTestStend()
-                                  toast.flush()
-                              } else {
-                                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
-                              }
-                          }
+                            RowLayout {
+                                spacing: 10
+                                Button {
+                                    id:llsScanQrNumButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Scan QR number");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/barcode.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50
+                                    focus: true
+                                    onClicked: {
+                                    }
+                                }
+                                Button {
+                                    id:llsScanCancelButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Scan cancel");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/ban.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50;
+                                    focus: true
+                                    onClicked: {
+                                    }
+                                }
+                            }
+
+                            RowLayout {
+                                spacing: 10
+                                Button {
+                                    id:llsWriteButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Write");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50
+                                    focus: true
+                                    onClicked: {
+                                    }
+                                }
+                                Button {
+                                    id:llsMarkAsDefectiveButton;
+                                    Material.background: Material.Green;
+                                    Material.foreground: "white";
+                                    text: qsTr("Mark as defective");
+                                    icon.source:"qrc:/svg/resources/fonts/svgs/solid/trash.svg"
+                                    icon.width: 16; icon.height: 16
+                                    font.pointSize: 8
+                                    implicitHeight: 50
+                                    focus: true
+                                    onClicked: {
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -337,7 +389,7 @@ SwipeView {
                 Material.elevation: 6
                 Layout.leftMargin: 10
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitHeight: qch1PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop
 
                 Column {
@@ -431,34 +483,6 @@ SwipeView {
                             axisX: chartCapacityAxisX
                             axisY: chartCapacityAxisY
                             color: "orange"
-                        }
-                    }
-                }
-            }
-        }
-        //-- mcu property
-        Pane {
-            id:mcuSnPanel
-            Material.elevation: 6
-            implicitWidth: qch1PannelScroll.width
-            Column {
-                width: parent.width
-                spacing: 30
-                RowLayout {
-                    spacing: 20
-                    RowLayout {
-                        Label { text: qsTr("MCU SN: "); color: llsMcuSnDeviceLabel.text.length === 0 ? "red" : "black" }
-                        Label {
-                            id:llsMcuSnDeviceLabel
-                            text: ""
-                        }
-                    }
-                    RowLayout {
-                        Label { text: qsTr("DEVICE SN: "); color: llsSnDeviceLabel.text.length === 0 ? "red" : "black" }
-                        Label {
-                            id:llsSnDeviceLabel
-                            text: ""
-                            color: text == "TEST" ? "red" : "black"
                         }
                     }
                 }

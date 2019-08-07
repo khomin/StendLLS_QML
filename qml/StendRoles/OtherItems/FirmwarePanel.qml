@@ -11,18 +11,57 @@ SwipeView {
     clip: true
     interactive: false
 
-    function drawChart(dataArray, chartLine, chart) {
+//    function drawChart(dataArrayVoltage, dataArrayCurrent, dataArrayCnt,
+//                       chartLineVoltage, chartLineCurrent, chartLineCnt,
+//                       chart) {
+//        chartLineVoltage.clear();
+//        chartLineCurrent.clear();
+//        chartLineCnt.clear();
+
+//        chart.graphLength = dataArrayVoltage.length
+//        chart.graphAmplMaxVoltage = 0
+//        chart.graphAmplMaxCurrent = 0
+//        chart.graphAmplMaxCnt = 0
+
+//        chart.graphAmplMaxVoltage = Math.max(dataArrayVoltage)
+//        chart.graphAmplMaxCurrent = Math.max(dataArrayCurrent)
+//        chart.graphAmplMaxCnt = Math.max(dataArrayCnt)
+
+//        for(var i=0; i<dataArrayVoltage.length; i++) {
+//            chartLineVoltage.append(new Date(), parseInt(dataArrayVoltage[i]));
+//            chartLineCurrent.append(new Date(), parseInt(dataArrayCurrent[i]));
+//            chartLineCnt.append(new Date(), parseInt(dataArrayCnt[i]));
+//        }
+//    }
+
+    function drawChartLine(chart, chartLine, dataArray) {
         chartLine.clear();
-        chart.graphLength = dataArray.length
-        chart.graphAmplitudeMax = 0
-        for(var i=0; i<dataArray.length; i++) {
-            if(chart.graphAmplitudeMax < parseInt(dataArray[i])) {
-                chart.graphAmplitudeMax = parseInt(dataArray[i]);
+
+        chart.graphMinTime = new Date(dataArray[0].x);
+        chart.graphMaxTime = new Date(dataArray[dataArray.length-1].x);
+
+        var maxValue = findMaxValue(dataArray);
+
+        dataArray.forEach(function (value) {
+            chartLine.append(new Date(value.x), parseInt(value.y));
+        });
+        if (chartLine.axisY !== null) {
+            chartLine.axisY.max = maxValue;
+        }
+
+        if(chartLine.axisYRight !== null) {
+            chartLine.axisYRight.max = maxValue;
+        }
+    }
+
+    function findMaxValue(dataArray) {
+        var maxValue = 0;
+        dataArray.forEach(function (value) {
+            if(maxValue < parseInt(value.y)) {
+                maxValue = parseInt(value.y);
             }
-        }
-        for(i=0; i<dataArray.length; i++) {
-            chartLine.append(i, parseInt(dataArray[i]));
-        }
+        });
+        return maxValue*1.05+1;
     }
 
     function setTestIndicationg(testStatus, testProgressBar, testRectangle) {
@@ -53,13 +92,23 @@ SwipeView {
             llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
             llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
             llsCntLabel.text = jsonData.cnt
-            llsMcuSnDeviceLabel.text = jsonData.mcu_serial_number
-            llsMcuSnLabel.text = jsonData.mcu_serial_number
+
+            if(jsonData.mcu_serial_number !== "303030303030303030303030") {
+                llsMcuSnLabel.text = jsonData.mcu_serial_number
+            } else {
+                llsMcuSnLabel.text = "NA";
+            }
+            llsMcuSnDeviceLabel.text = llsMcuSnLabel.text
+
             llsSnDeviceLabel.text = jsonData.serial_number
 
-            drawChart(jsonData.powerCollect, chartVoltageLine, chartVoltage)
-            drawChart(jsonData.currentCollect, chartCurrentLine, chartCurrent)
-            drawChart(jsonData.cntCollect, chartCapacityLine, chartCapacity)
+//            drawChart(jsonData.powerCollect, jsonData.currentCollect, jsonData.cntCollect,
+//                      chartVoltageLine, chartCurrentLine, chartCntLine,
+//                      chart)
+
+            drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
+            drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);
+            drawChartLine(chart, chartCntLine, jsonData.cntCollect);
 
             if(busyIndicator.visible == true) {
                 busyIndicator.visible = false;
@@ -318,15 +367,15 @@ SwipeView {
                         }
 
                         Shortcut {
-                          sequence: "Space"
-                          onActivated: {
-                              if(viewControl.isConnected()) {
-                                  viewControl.startTestStend()
-                                  toast.flush()
-                              } else {
-                                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
-                              }
-                          }
+                            sequence: "Space"
+                            onActivated: {
+                                if(viewControl.isConnected()) {
+                                    viewControl.startTestStend()
+                                    toast.flush()
+                                } else {
+                                    toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
+                                }
+                            }
                         }
                     }
                 }
@@ -334,104 +383,75 @@ SwipeView {
 
             //-- test panel
             Pane {
+                id:chartPanel
                 Material.elevation: 6
                 Layout.leftMargin: 10
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                //implicitHeight: firmwarePannelScroll.height - mcuSnPanel.height - 20
                 Layout.alignment: Qt.AlignTop
 
-                Column {
-                    id:chartTestColumn
+                ChartView {
+                    id: chart
+                    theme: ChartView.ChartThemeLight
+                    antialiasing: true
+                    height: parent.height
                     width: parent.width
-                    Label{ text: qsTr("Diagrams"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
-                    spacing: 10
-                    ChartView {
-                        id: chartVoltage
-                        theme: ChartView.ChartThemeLight
-                        title: "Voltage"
-                        antialiasing: true
-                        width: chartTestColumn.width;
-                        height: (firmwarePannelScroll.height / 3 - 50)
-                        backgroundColor: "transparent"
-                        property int graphLength: 1
-                        property int graphAmplitudeMax: 1
-                        ValueAxis {
-                            id: chartVoltageAxisX
-                            min: -0.5
-                            max: chartVoltage.graphLength
-                            tickCount: 5
-                        }
-                        ValueAxis {
-                            id: chartVoltageAxisY
-                            min: -0.5
-                            max: chartVoltage.graphAmplitudeMax
-                            tickCount: 5
-                        }
-                        LineSeries {
-                            id: chartVoltageLine
-                            axisX: chartVoltageAxisX
-                            axisY: chartVoltageAxisY
-                            color: "blue"
-                        }
+                    legend.alignment: Qt.AlignTop
+                    backgroundColor: "transparent"
+                    property date graphMinTime: new Date()
+                    property date graphMaxTime: new Date()
+                    DateTimeAxis {
+                        id: chartAxisX
+                        format: "hh:mm:ss"
+                        min: chart.graphMinTime
+                        max: chart.graphMaxTime
+                        tickCount: 5
                     }
-                    ChartView {
-                        id: chartCurrent
-                        theme: ChartView.ChartThemeLight
-                        title: "Current"
-                        antialiasing: true
-                        width: chartTestColumn.width;
-                        height: (firmwarePannelScroll.height / 3 - 50)
-                        property int graphLength: 1
-                        property int graphAmplitudeMax: 1
-                        backgroundColor: "transparent"
-                        property var chartCurrentLine
-                        ValueAxis {
-                            id: chartCurrentAxisX
-                            min: -0.5
-                            max: chartCurrent.graphLength
-                            tickCount: 5
-                        }
-                        ValueAxis {
-                            id: chartCurrentChartAxisY
-                            min: -0.5
-                            max: chartCurrent.graphAmplitudeMax
-                            tickCount: 5
-                        }
-                        LineSeries {
-                            id: chartCurrentLine
-                            axisX: chartCurrentAxisX
-                            axisY: chartCurrentChartAxisY
-                            color: "red"
-                        }
+                    ValueAxis {
+                        id: chartVoltageAxisY
+                        min: -0.5
+                        max: (chart.series(chartVoltageLine) !== null) ?  chart.series(chartVoltageLine).max : 1
+                        tickCount: 5
+                        color: "blue"
                     }
-                    ChartView {
-                        id: chartCapacity
-                        theme: ChartView.ChartThemeLight
-                        title: "Frequency"
-                        antialiasing: true
-                        width: chartTestColumn.width; height: (firmwarePannelScroll.height / 3 - 50)
-                        property int graphLength: 1
-                        property int graphAmplitudeMax: 1
-                        backgroundColor: "transparent"
-                        property var chartCapacityLine
-                        ValueAxis {
-                            id: chartCapacityAxisX
-                            min: -0.5
-                            max: chartCapacity.graphLength
-                            tickCount: 5
-                        }
-                        ValueAxis {
-                            id: chartCapacityAxisY
-                            min: -0.5
-                            max: chartCapacity.graphAmplitudeMax
-                            tickCount: 5
-                        }
-                        LineSeries {
-                            id: chartCapacityLine
-                            axisX: chartCapacityAxisX
-                            axisY: chartCapacityAxisY
-                            color: "orange"
-                        }
+                    ValueAxis {
+                        id: chartCurrentAxisY
+                        min: -0.5
+                        max: (chart.series(chartCurrentLine) !== null) ?  chart.series(chartCurrentLine).max : 1
+                        tickCount: 5
+                        color: "red"
+                    }
+                    ValueAxis {
+                        id: chartCntAxisY
+                        min: -0.5
+                        max: (chart.series(chartCntLine) !== null) ?  chart.series(chartCntLine).max : 1
+                        tickCount: 5
+                        color: "orange"
+                    }
+                    LineSeries {
+                        id: chartVoltageLine
+                        axisX: chartAxisX
+                        axisY: chartVoltageAxisY
+                        color: "blue"
+                        name: "Voltage"
+                        property int max: 1
+                    }
+                    LineSeries {
+                        id: chartCurrentLine
+                        axisX: chartAxisX
+                        axisY: chartCurrentAxisY
+                        color: "red"
+                        name: "Current"
+                        property int max: 1
+                    }
+                    LineSeries {
+                        id: chartCntLine
+                        axisX: chartAxisX
+                        axisYRight: chartCntAxisY
+                        color: "orange"
+                        name: "Cnt"
+                        property int max: 1
                     }
                 }
             }
@@ -447,19 +467,13 @@ SwipeView {
                 RowLayout {
                     spacing: 20
                     RowLayout {
-                        Label { text: qsTr("MCU SN: "); color: llsMcuSnDeviceLabel.text.length === 0 ? "red" : "black" }
+                        Label { text: qsTr("MCU SN: ") }
                         Label {
-                            id:llsMcuSnDeviceLabel
-                            text: ""
-                        }
+                            id:llsMcuSnDeviceLabel; color: llsMcuSnDeviceLabel.text === "NA" ? "red" : "black" }
                     }
                     RowLayout {
-                        Label { text: qsTr("DEVICE SN: "); color: llsSnDeviceLabel.text.length === 0 ? "red" : "black" }
-                        Label {
-                            id:llsSnDeviceLabel
-                            text: ""
-                            color: text == "TEST" ? "red" : "black"
-                        }
+                        Label { text: qsTr("DEVICE SN: ") }
+                        Label { id:llsSnDeviceLabel; color: text == "TEST" ? "red" : (llsSnDeviceLabel.text === "NA" || llsSnDeviceLabel.text == "000000000000" ? "red" : "black") }
                     }
                 }
             }
