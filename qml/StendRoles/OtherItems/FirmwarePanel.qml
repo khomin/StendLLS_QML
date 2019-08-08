@@ -11,28 +11,28 @@ SwipeView {
     clip: true
     interactive: false
 
-//    function drawChart(dataArrayVoltage, dataArrayCurrent, dataArrayCnt,
-//                       chartLineVoltage, chartLineCurrent, chartLineCnt,
-//                       chart) {
-//        chartLineVoltage.clear();
-//        chartLineCurrent.clear();
-//        chartLineCnt.clear();
+    //    function drawChart(dataArrayVoltage, dataArrayCurrent, dataArrayCnt,
+    //                       chartLineVoltage, chartLineCurrent, chartLineCnt,
+    //                       chart) {
+    //        chartLineVoltage.clear();
+    //        chartLineCurrent.clear();
+    //        chartLineCnt.clear();
 
-//        chart.graphLength = dataArrayVoltage.length
-//        chart.graphAmplMaxVoltage = 0
-//        chart.graphAmplMaxCurrent = 0
-//        chart.graphAmplMaxCnt = 0
+    //        chart.graphLength = dataArrayVoltage.length
+    //        chart.graphAmplMaxVoltage = 0
+    //        chart.graphAmplMaxCurrent = 0
+    //        chart.graphAmplMaxCnt = 0
 
-//        chart.graphAmplMaxVoltage = Math.max(dataArrayVoltage)
-//        chart.graphAmplMaxCurrent = Math.max(dataArrayCurrent)
-//        chart.graphAmplMaxCnt = Math.max(dataArrayCnt)
+    //        chart.graphAmplMaxVoltage = Math.max(dataArrayVoltage)
+    //        chart.graphAmplMaxCurrent = Math.max(dataArrayCurrent)
+    //        chart.graphAmplMaxCnt = Math.max(dataArrayCnt)
 
-//        for(var i=0; i<dataArrayVoltage.length; i++) {
-//            chartLineVoltage.append(new Date(), parseInt(dataArrayVoltage[i]));
-//            chartLineCurrent.append(new Date(), parseInt(dataArrayCurrent[i]));
-//            chartLineCnt.append(new Date(), parseInt(dataArrayCnt[i]));
-//        }
-//    }
+    //        for(var i=0; i<dataArrayVoltage.length; i++) {
+    //            chartLineVoltage.append(new Date(), parseInt(dataArrayVoltage[i]));
+    //            chartLineCurrent.append(new Date(), parseInt(dataArrayCurrent[i]));
+    //            chartLineCnt.append(new Date(), parseInt(dataArrayCnt[i]));
+    //        }
+    //    }
 
     function drawChartLine(chart, chartLine, dataArray) {
         chartLine.clear();
@@ -101,10 +101,6 @@ SwipeView {
             llsMcuSnDeviceLabel.text = llsMcuSnLabel.text
 
             llsSnDeviceLabel.text = jsonData.serial_number
-
-//            drawChart(jsonData.powerCollect, jsonData.currentCollect, jsonData.cntCollect,
-//                      chartVoltageLine, chartCurrentLine, chartCntLine,
-//                      chart)
 
             drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
             drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);
@@ -318,35 +314,35 @@ SwipeView {
                                                              ", step3: " + jsonData.testFreq.capStep3, "bad");
                                     }
                                 }
+                            }
 
-                                onSignalTestError: {
+                            onSignalTestError: {
+                                var jsonData = JSON.parse(json)
+                                addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+                                programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+                                test232Rectangle.color = "red"; test232ProgressBar.value = 0;
+                                test485Rectangle.color = "red"; test485ProgressBar.value = 0;
+                                testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
+                                toast.displayMessage(jsonData.message, "bad");
+                            }
+
+                            onSignalTestUpdateStatus: {
+                                if(viewControl.stendRole == "firmare") {
                                     var jsonData = JSON.parse(json)
-                                    addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-                                    programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-                                    test232Rectangle.color = "red"; test232ProgressBar.value = 0;
-                                    test485Rectangle.color = "red"; test485ProgressBar.value = 0;
-                                    testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
-                                    toast.displayMessage(jsonData.message, "bad");
-                                }
-
-                                onSignalTestUpdateStatus: {
-                                    if(viewControl.stendRole == "firmare") {
-                                        var jsonData = JSON.parse(json)
-                                        if(jsonData.testStep === "programming") {
-                                            addToDatabaseRectangle.color = "green"
-                                            addToDatabaseProgressBar.value = parseInt(jsonData.percent)
-                                            if(parseInt(jsonData.percent) < 100) {
-                                                programmingRectangle.color = "yellow"
-                                            } else {
-                                                programmingRectangle.color = "green"
-                                            }
-                                            programmingProgressBar.value = parseInt(jsonData.percent)
+                                    if(jsonData.testStep === "programming") {
+                                        addToDatabaseRectangle.color = "green"
+                                        addToDatabaseProgressBar.value = parseInt(jsonData.percent)
+                                        if(parseInt(jsonData.percent) < 100) {
+                                            programmingRectangle.color = "yellow"
+                                        } else {
+                                            programmingRectangle.color = "green"
                                         }
-                                        if(jsonData.testStep === "waitTestNotEnd") {
-                                            setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
-                                            setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
-                                            setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
-                                        }
+                                        programmingProgressBar.value = parseInt(jsonData.percent)
+                                    }
+                                    if(jsonData.testStep === "waitTestNotEnd") {
+                                        setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
+                                        setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
+                                        setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
                                     }
                                 }
                             }
@@ -391,7 +387,6 @@ SwipeView {
                 Layout.leftMargin: 10
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                //implicitHeight: firmwarePannelScroll.height - mcuSnPanel.height - 20
                 Layout.alignment: Qt.AlignTop
 
                 ChartView {

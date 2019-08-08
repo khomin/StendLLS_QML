@@ -9,6 +9,7 @@
 #include "findStend/findStendModel.h"
 #include "findStend/findstend.h"
 #include "stend/stendApi.h"
+#include "scanerQr/interfaces/interfaceSerial.h"
 
 class View : public QObject
 {
@@ -38,6 +39,8 @@ public slots:
     Q_INVOKABLE void writeSerialNumToLls(QString llsMcuNumber);
     Q_INVOKABLE void markLlsAsDefected(QString llsMcuNumber);
 
+    Q_INVOKABLE QString getScanersList();
+
 signals:
     void signalStendLost();
     void signalStendReady();
@@ -58,6 +61,15 @@ signals:
 
     void stendRoleIsChanged();
 
+    void scanerError(QString error);
+    void scanerOpened();
+    void scanerClosed();
+
+    void signalError(QString conTypeName, QString errorMessage);
+    void signalOpened();
+    void signalClosed();
+    void signalReadyReadNewData(const QByteArray & data);
+
 private:
     void setStendRole(QString role) { stendRole = role; emit stendRoleIsChanged(); }
     QString getStendRole() { return stendRole; }
@@ -68,6 +80,7 @@ private:
     StendApi stendApi;
     Log log;
     FindStend findStend;
+    InterfaceSerial scanerSerialPort;
 };
 
 #endif // VIEW_H

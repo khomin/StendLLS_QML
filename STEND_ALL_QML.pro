@@ -21,10 +21,11 @@ SOURCES += \
         findStend/findStendModel.cpp \
         findStend/findstend.cpp \
         main.cpp \
+        scanerQr/interfaces/interfaceSerial.cpp \
         settings.cpp \
         stend/dataBase.cpp \
-        stend/programming.cpp \
         stend/stendApi.cpp \
+        stend/stendFirmware/programming.cpp \
         stend/stendTestStatus.cpp \
         storeMisc.cpp \
         translate/translation.cpp \
@@ -45,10 +46,11 @@ HEADERS += \
     findStend/findStendModel.h \
     findStend/findstend.h \
     globals.h \
+    scanerQr/interfaces/interfaceSerial.h \
     settings.h \
     stend/dataBase.h \
-    stend/programming.h \
     stend/stendApi.h \
+    stend/stendFirmware/programming.h \
     stend/stendProperty.h \
     stend/stendTestStatus.h \
     storeMisc.h \

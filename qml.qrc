@@ -17,5 +17,6 @@
         <file>qml/StendRoles/OtherItems/FirmwarePanel.qml</file>
         <file>qml/StendRoles/OtherItems/StendDataBaseSettings.qml</file>
         <file>qml/StendRoles/OtherItems/Qch1Panel.qml</file>
+        <file>qml/StendRoles/OtherItems/StendScanerSettings.qml</file>
     </qresource>
 </RCC>

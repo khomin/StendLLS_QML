@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
-import Settings 1.0
 
 SwipeView {
     id:qch1PannelScroll
@@ -12,78 +11,142 @@ SwipeView {
     clip: true
     interactive: false
 
-    property var lastDataJson: ""
+    function drawChart(dataArray, chartLine, chart) {
+        chartLine.clear();
+        chart.graphLength = dataArray.length
+        chart.graphAmplitudeMax = 0
+        for(var i=0; i<dataArray.length; i++) {
+            if(chart.graphAmplitudeMax < parseInt(dataArray[i])) {
+                chart.graphAmplitudeMax = parseInt(dataArray[i]);
+            }
+        }
+        for(i=0; i<dataArray.length; i++) {
+            chartLine.append(i, parseInt(dataArray[i]));
+        }
+    }
+
+    function setTestIndicationg(testStatus, testProgressBar, testRectangle) {
+        switch(testStatus) {
+        case "idle":
+            testProgressBar.value = 0;
+            testRectangle.color = "red"
+            break;
+        case "process":
+            testProgressBar.value = 50;
+            testRectangle.color = "yellow"
+            break;
+        case "fail":
+            testProgressBar.value = 100;
+            testRectangle.color = "red"
+            break;
+        case "finished":
+            testProgressBar.value = 100;
+            testRectangle.color = "green"
+            break;
+        }
+    }
 
     Connections {
         target: viewControl
-        onSignalUpdateRealTimeData: {
-            if(viewControl.stendRole == "qch1") {
-                lastDataJson = JSON.parse(json)
-                llsPowerVoltageLabel.text = lastDataJson.power_input.toFixed(2)
-                llsPowerCurrentLabel.text = lastDataJson.power_current.toFixed(2)
-                llsCntLabel.text = lastDataJson.cnt
+        //        onSignalUpdateRealTimeData: {
+        //            var jsonData = JSON.parse(json)
+        //            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
+        //            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
+        //            llsCntLabel.text = jsonData.cnt
+        //            llsMcuSnDeviceLabel.text = jsonData.mcu_serial_number
+        //            llsMcuSnLabel.text = jsonData.mcu_serial_number
+        //            llsSnDeviceLabel.text = jsonData.serial_number
 
-                if(lastDataJson.mcu_serial_number !== "303030303030303030303030") {
-                    llsMcuSnLabel.text = lastDataJson.mcu_serial_number
-                } else {
-                    llsMcuSnLabel.text = "NA";
-                }
+        //            drawChart(jsonData.powerCollect, chartVoltageLine, chartVoltage)
+        //            drawChart(jsonData.currentCollect, chartCurrentLine, chartCurrent)
+        //            drawChart(jsonData.cntCollect, chartCapacityLine, chartCapacity)
 
-                llsSnLabel.text = lastDataJson.serial_number
-
-                drawChartLine(chart, chartVoltageLine, lastDataJson.powerCollect);
-                drawChartLine(chart, chartCurrentLine, lastDataJson.currentCollect);
-                drawChartLine(chart, chartCntLine, lastDataJson.cntCollect);
-
-                if(busyIndicator.visible == true) {
-                    busyIndicator.visible = false;
-                }
-            }
-        }
+        //            if(busyIndicator.visible == true) {
+        //                busyIndicator.visible = false;
+        //            }
+        //        }
     }
 
-    function drawChartLine(chart, chartLine, dataArray) {
-        chartLine.clear();
+    //    Connections {
+    //        target: viewControl
 
-        chart.graphMinTime = new Date(dataArray[0].x);
-        chart.graphMaxTime = new Date(dataArray[dataArray.length-1].x);
+    //        onSignalTestFinished: {
+    //            var jsonData = JSON.parse(json)
+    //            if(jsonData.result === "finished") {
+    //                addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
+    //                programmingRectangle.color = "green"; programmingProgressBar.value = 100;
+    //                test232Rectangle.color = "green"; test232ProgressBar.value = 100;
+    //                test485Rectangle.color = "green"; test485ProgressBar.value = 100;
+    //                testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
+    //                toast.displayMessage(qsTr("Test completed successfully") + "\r\n" +
+    //                                     "rs232: tx " + jsonData.test232.sendPackets +
+    //                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
+    //                                     "rs485: tx " + jsonData.test485.sendPackets +
+    //                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
+    //                                     "cnt test: " +
+    //                                     "step1: " + jsonData.testFreq.capStep1 +
+    //                                     ", step2: " + jsonData.testFreq.capStep2 +
+    //                                     ", step3: " + jsonData.testFreq.capStep3, "good");
+    //            } else {
+    //                //addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+    //                //programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+    //                test232Rectangle.color = jsonData.test232.testResult === "finished" ? "green" : "red"; test232ProgressBar.value = 0;
+    //                test485Rectangle.color = jsonData.test485.testResult === "finished" ? "green" : "red"; test485ProgressBar.value = 0;
+    //                testFreqRectangle.color = jsonData.testFreq.testResult === "finished" ? "green" : "red"; testFreqProgressBar.value = 0;
+    //                toast.displayMessage(qsTr("Test completed failed") + "\r\n" +
+    //                                     "rs232: tx " + jsonData.test232.sendPackets +
+    //                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
+    //                                     "rs485: tx " + jsonData.test485.sendPackets +
+    //                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
+    //                                     "cnt test: " +
+    //                                     "step1: " + jsonData.testFreq.capStep1 +
+    //                                     ", step2: " + jsonData.testFreq.capStep2 +
+    //                                     ", step3: " + jsonData.testFreq.capStep3, "bad");
+    //            }
+    //        }
 
-        var maxValue = findMaxValue(dataArray);
+    //        onSignalTestError: {
+    //            var jsonData = JSON.parse(json)
+    //            addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
+    //            programmingRectangle.color = "red"; programmingProgressBar.value = 0;
+    //            test232Rectangle.color = "red"; test232ProgressBar.value = 0;
+    //            test485Rectangle.color = "red"; test485ProgressBar.value = 0;
+    //            testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
+    //            toast.displayMessage(jsonData.message, "bad");
+    //        }
 
-        dataArray.forEach(function (value) {
-            chartLine.append(new Date(value.x), parseInt(value.y));
-        });
-        if (chartLine.axisY !== null) {
-            chartLine.axisY.max = maxValue;
-        }
+    //        onSignalTestUpdateStatus: {
+    //            var jsonData = JSON.parse(json)
+    //            if(jsonData.testStep === "programming") {
+    //                addToDatabaseRectangle.color = "green"
+    //                addToDatabaseProgressBar.value = parseInt(jsonData.percent)
+    //                if(parseInt(jsonData.percent) < 100) {
+    //                    programmingRectangle.color = "yellow"
+    //                } else {
+    //                    programmingRectangle.color = "green"
+    //                }
+    //                programmingProgressBar.value = parseInt(jsonData.percent)
+    //            }
+    //            if(jsonData.testStep === "waitTestNotEnd") {
+    //                setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
+    //                setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
+    //                setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
+    //            }
+    //        }
+    //    }
 
-        if(chartLine.axisYRight !== null) {
-            chartLine.axisYRight.max = maxValue;
-        }
-    }
-
-    function findMaxValue(dataArray) {
-        var maxValue = 0;
-        dataArray.forEach(function (value) {
-            if(maxValue < parseInt(value.y)) {
-                maxValue = parseInt(value.y);
-            }
-        });
-        return maxValue*1.05+1;
-    }
-
-    function getTestIsAccept() {
-        var res = false
-        if(lastDataJson.power_input.toFixed(2) >= 6) {
-            if((lastDataJson.power_current.toFixed(2) > Settings.curMin) && (lastDataJson.power_current.toFixed(2) < Settings.curMax)) {
-                if(lastDataJson.cnt !== 0) {
-                    res = true;
-                }
-            }
-
-        }
-        return res;
-    }
+    //        Shortcut {
+    //          sequence: "Space"
+    //          onActivated: {
+    //              if(viewControl.isConnected()) {
+    //                  viewControl.startTestStend()
+    //                  toast.flush()
+    //              } else {
+    //                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
+    //              }
+    //          }
+    //        }
+    //    }
 
     ColumnLayout {
         spacing: 5
@@ -233,14 +296,13 @@ SwipeView {
                                     id:llsWriteButton;
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
-                                    text: qsTr("Write SN");
+                                    text: qsTr("Write to LLS");
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
-                                    icon.width: 12; icon.height: 12
+                                    icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
-                                    enabled: getTestIsAccept()
+                                    focus: true
                                     onClicked: {
-                                        viewControl.writeSerialNumToLls(lastDataJson.mcu_serial_number)
                                     }
                                 }
                                 Button {
@@ -249,12 +311,11 @@ SwipeView {
                                     Material.foreground: "white";
                                     text: qsTr("Mark as defective");
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/trash.svg"
-                                    icon.width: 12; icon.height: 12
+                                    icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
                                     focus: true
                                     onClicked: {
-                                        viewControl.markLlsAsDefected(lastDataJson.mcu_serial_number)
                                     }
                                 }
                             }
@@ -270,6 +331,7 @@ SwipeView {
                 Layout.fillWidth: true
                 implicitHeight: qch1PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop
+
                 ChartView {
                     id: chart
                     theme: ChartView.ChartThemeLight

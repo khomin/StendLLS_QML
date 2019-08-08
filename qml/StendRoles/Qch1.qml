@@ -15,33 +15,23 @@ Rectangle {
     Connections {
         target: viewControl
         onSearchStendComplete: {
-            if(viewControl.stendRole == "qch1") {
-                busyIndicator.visible = false;
-            }
+            busyIndicator.visible = false;
         }
         onSignalInterfaceReady: {
-            if(viewControl.stendRole == "qch1") {
-                statusPannel.setStatusConnected()
-            }
+            statusPannel.setStatusConnected()
         }
         onSignalInterfaceError: {
-            if(viewControl.stendRole == "qch1") {
-                busyIndicator.visible = false;
-                statusPannel.setStatusDisconnected()
-                toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
-            }
+            busyIndicator.visible = false;
+            statusPannel.setStatusDisconnected()
+            toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
         }
         onSignalInterfaceClosed: {
-            if(viewControl.stendRole == "qch1") {
-                busyIndicator.visible = false;
-                statusPannel.setStatusDisconnected()
-            }
+            busyIndicator.visible = false;
+            statusPannel.setStatusDisconnected()
         }
         onSignalStendLost: {
-            if(viewControl.stendRole == "qch1") {
-                toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
-            }
+            toast.displayMessage(qsTr("Connection lost"), "bad")
+            viewControl.closeConnection()
         }
     }
 
@@ -91,6 +81,13 @@ Rectangle {
                         onClicked: { qchSwipeView.setCurrentIndex(2)}
                         contentItem: Delegates.TabButtonDelegate {}
                     }
+                    TabButton {
+                        text: qsTr("Scaner"); font.pointSize: 8
+                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/qrcode.svg"
+                        icon.width: 10; icon.height: 10; height: 40
+                        onClicked: { qchSwipeView.setCurrentIndex(4)}
+                        contentItem: Delegates.TabButtonDelegate {}
+                    }
                 }
                 ToolBar {
                     id:toolBarButtonControl
@@ -112,7 +109,7 @@ Rectangle {
                                     icon.width: 14; icon.height: 14
                                     font.pointSize: 8;
                                     onClicked: {
-                                        onClicked: { qchSwipeView.setCurrentIndex(4)}
+                                        onClicked: { qchSwipeView.setCurrentIndex(5)}
                                     }
                                 }
                                 MenuItem { text: qsTr("About")
@@ -120,7 +117,7 @@ Rectangle {
                                     icon.width: 14; icon.height: 14
                                     font.pointSize: 8;
                                     onClicked: {
-                                        onClicked: { qchSwipeView.setCurrentIndex(5)}
+                                        onClicked: { qchSwipeView.setCurrentIndex(6)}
                                     }
                                 }
                             }
@@ -160,6 +157,9 @@ Rectangle {
                     //-- find stend
                     StendOtherItems.FindStend {}
 
+                    //-- scaner settings
+                    StendOtherItems.StendScanerSettings {}
+
                     //-- language
                     StendOtherItems.Language {}
 
@@ -171,7 +171,7 @@ Rectangle {
                     id:statusPannel
                     onRequestFindStends: {
                         busyIndicator.visible = true;
-                        qchSwipeView.setCurrentIndex(4)
+                        qchSwipeView.setCurrentIndex(3)
                     }
                     onConnectActivated: {
                         busyIndicator.visible = true;

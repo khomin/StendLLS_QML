@@ -23,7 +23,7 @@ public slots:
     virtual QString getAvailableList() = 0;
 
 signals:
-    void signalError(QString conTypeName, QString errorMessage);
+    void signalError(QString errorMessage);
     void signalOpened();
     void signalClosed();
     void signalReadyReadNewData(const QByteArray & data);

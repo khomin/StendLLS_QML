@@ -18,11 +18,16 @@ View::View(QObject *parent) : QObject(parent) {
     connect(&connection, &Connection::signalOpened, &stendApi, &StendApi::setStatusConnected);
     connect(&connection, &Connection::signalClosed, &stendApi, &StendApi::setStatusDisconnected);
 
-//    connect(&stendApi, &StendApi::powerDutDisabled, this, &View::searchStendComplete);
-//    connect(&stendApi, &StendApi::powerDutEnabed, this, &View::searchStendComplete);
-
     connect(&findStend, &FindStend::searchComplete, this, &View::searchStendComplete);
     connect(&stendApi, &StendApi::updateRealTimeData, this, &View::signalUpdateRealTimeData);
+
+    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerError);
+    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerOpened);
+    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerClosed);
+    connect(&scanerSerialPort, &InterfaceSerial::readyRead, this, &View::signalUpdateRealTimeData);
+
+    void errorHanler(QSerialPort::SerialPortError err);
+    void readyRead();
 }
 
 bool View::addConnection(QString name, const QString & parameters) {
@@ -69,9 +74,13 @@ bool View::testDatabaseConnect() {
 }
 
 void View::writeSerialNumToLls(QString llsMcuNumber) {
-//    stendApi.
+    //    stendApi.
 }
 
 void View::markLlsAsDefected(QString llsMcuNumber) {
+
+}
+
+QString View::getScanersList() {
 
 }
