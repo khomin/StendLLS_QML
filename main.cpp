@@ -10,11 +10,11 @@
 int main(int argc, char *argv[])
 {
 #if QT_CONFIG(library)
-    const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
-    for (const QByteArray &p : additionalLibraryPaths.split(':'))
-        QCoreApplication::addLibraryPath(QString(p));
+//    const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
+//    for (const QByteArray &p : additionalLibraryPaths.split(':'))
+//        QCoreApplication::addLibraryPath(QString(p));
 #endif
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication application(argc, argv);
 
     application.setWindowIcon(QIcon("../resources/logo.png"));

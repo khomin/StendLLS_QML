@@ -11,6 +11,29 @@ SwipeView {
     clip: true
     interactive: false
 
+//    function drawChart(dataArrayVoltage, dataArrayCurrent, dataArrayCnt,
+//                       chartLineVoltage, chartLineCurrent, chartLineCnt,
+//                       chart) {
+//        chartLineVoltage.clear();
+//        chartLineCurrent.clear();
+//        chartLineCnt.clear();
+
+//        chart.graphLength = dataArrayVoltage.length
+//        chart.graphAmplMaxVoltage = 0
+//        chart.graphAmplMaxCurrent = 0
+//        chart.graphAmplMaxCnt = 0
+
+//        chart.graphAmplMaxVoltage = Math.max(dataArrayVoltage)
+//        chart.graphAmplMaxCurrent = Math.max(dataArrayCurrent)
+//        chart.graphAmplMaxCnt = Math.max(dataArrayCnt)
+
+//        for(var i=0; i<dataArrayVoltage.length; i++) {
+//            chartLineVoltage.append(new Date(), parseInt(dataArrayVoltage[i]));
+//            chartLineCurrent.append(new Date(), parseInt(dataArrayCurrent[i]));
+//            chartLineCnt.append(new Date(), parseInt(dataArrayCnt[i]));
+//        }
+//    }
+
     function drawChartLine(chart, chartLine, dataArray) {
         chartLine.clear();
 
@@ -78,6 +101,10 @@ SwipeView {
             llsMcuSnDeviceLabel.text = llsMcuSnLabel.text
 
             llsSnDeviceLabel.text = jsonData.serial_number
+
+//            drawChart(jsonData.powerCollect, jsonData.currentCollect, jsonData.cntCollect,
+//                      chartVoltageLine, chartCurrentLine, chartCntLine,
+//                      chart)
 
             drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
             drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);

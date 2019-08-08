@@ -49,14 +49,6 @@ FindStendModel* View::getFindStendModel() {
     return findStend.getModel();
 }
 
-void View::setStendActiveIp(int indexModel) {
-    log.insertLog(tr("Set default stend"), "grey");
-    auto model = findStend.getModel()->getAll();
-    if(model.length() >= indexModel){
-        Settings::Instance().setActiveStend(model.at(indexModel).get()->getIp());
-    }
-}
-
 QString View::getListConnections() {
     return connection.getListConnections();
 }

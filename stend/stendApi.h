@@ -12,7 +12,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
-#include "programming.h"
+#include "stendFirmware/programming.h"
 #include "dataBase.h"
 
 class StendApi : public QObject
