@@ -75,3 +75,11 @@ void View::startTestStend() {
 bool View::testDatabaseConnect() {
     return stendApi.testDatabaseConnect();
 }
+
+void View::writeSerialNumToLls(QString llsMcuNumber) {
+//    stendApi.
+}
+
+void View::markLlsAsDefected(QString llsMcuNumber) {
+
+}

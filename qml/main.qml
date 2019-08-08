@@ -29,11 +29,11 @@ ApplicationWindow {
         translate.qmlReady(); // applocation.showMaximized()
     }
 
-    SwipeView {
+    StackLayout {
         id:rootSwipeView
         anchors.fill: parent
         currentIndex: 0//3
-        interactive: false
+//        interactive: false
         Item{
             RowLayout {
                 anchors.verticalCenter: parent.verticalCenter
@@ -43,6 +43,7 @@ ApplicationWindow {
                     text: qsTr("Quality check 1"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
                     onClicked: {
+                        viewControl.stendRole = "qch1";
                         rootSwipeView.currentIndex = 1
                     }
                 }
@@ -51,6 +52,7 @@ ApplicationWindow {
                     text: qsTr("quality check 2"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
                     onClicked: {
+                        viewControl.stendRole = "qch2";
                         rootSwipeView.currentIndex = 2
                     }
                 }
@@ -59,6 +61,7 @@ ApplicationWindow {
                     text: qsTr("Firmware"); font.pointSize: 12
                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
                     onClicked: {
+                        viewControl.stendRole = "firmware";
                         rootSwipeView.currentIndex = 3
                     }
                 }

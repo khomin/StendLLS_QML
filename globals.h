@@ -69,17 +69,23 @@ typedef struct {
     RTC_TimeTypeDef time;
     RTC_DateTypeDef date;
 }sDateTime;
+#pragma pack(0)
 
+#pragma pack(1)
 typedef struct {
     quint16 typeAck;
     quint32 code;
 }sPacketAckStruct;
+#pragma pack(0)
 
+#pragma pack(1)
 typedef struct{
     bool write_num;
     char serial_num[12];
 }sDutProgramming;
+#pragma pack(0)
 
+#pragma pack(1)
 typedef struct {
     eTestState state;
     eTestState freq_state;
@@ -94,7 +100,17 @@ typedef struct {
     quint16 oneWire_value;
     sDateTime dateTimeEndTest;
 }sDutTestStruct;
+#pragma pack(0)
 
+#pragma pack(1)
+typedef struct {
+    int8_t temperature;
+    uint16_t level;
+    uint16_t freq;
+}sLlsCurrentData;
+#pragma pack(0)
+
+#pragma pack(1)
 typedef struct {
     quint8 addr;
     uint32_t cnt;
@@ -108,10 +124,11 @@ typedef struct {
     sDutTestStruct test;
     sDutProgramming programming;
     bool power_state;
+    sLlsCurrentData currentDataRs232;
+    sLlsCurrentData currentDataRs485;
     sDateTime dateTime;
 }sDutBaseStruct;
-
-#pragma pack()
+#pragma pack(0)
 
 static constexpr int network_port = 45454;
 static constexpr char stend_header[] = "stend_locus_";

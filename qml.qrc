@@ -11,7 +11,6 @@
         <file>qml/StendRoles/Firmware.qml</file>
         <file>qml/StendRoles/OtherItems/StendTestSettings.qml</file>
         <file>qml/StendRoles/OtherItems/StendFirmwareProgrammingSettings.qml</file>
-        <file>qml/StendRoles/OtherItems/SettingsPannel.qml</file>
         <file>qml/StendRoles/OtherItems/Language.qml</file>
         <file>qml/StendRoles/OtherItems/FindStend.qml</file>
         <file>qml/StendRoles/OtherItems/About.qml</file>

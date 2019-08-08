@@ -73,5 +73,6 @@ bool DataBase::insertTestData(QString mcu, QString dev_test_state, sDutTestStruc
 }
 
 bool DataBase::testCconnect() {
-    return base.open();
+    QString err;
+    return openConnection(&err);
 }

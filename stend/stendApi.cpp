@@ -251,6 +251,8 @@ void StendApi::startTest() {
     }
 }
 
+#include <QDateTime>
+
 QJsonObject StendApi::convertDataToJson(sDutBaseStruct & dutStruct) {
     QJsonObject jsonObj;
     jsonObj.insert("cnt", (int)dutStruct.cnt);
@@ -277,18 +279,40 @@ QJsonObject StendApi::convertDataToJson(sDutBaseStruct & dutStruct) {
     static QJsonArray powerVoltageCollect;
     static QJsonArray powerCurrentCollect;
     static QJsonArray cntCollect;
-    powerVoltageCollect.append((int)dutStruct.power_input);
+    static QJsonArray timeCollect;
+
+    QJsonObject powerVoltage
+    {
+        {"x", QDateTime::currentDateTime().toMSecsSinceEpoch()},
+        {"y", (int)dutStruct.power_input}
+    };
+
+    powerVoltageCollect.append(powerVoltage);
     if(powerVoltageCollect.count() > maxCollectArrayData) {
         powerVoltageCollect.pop_front();
     }
-    powerCurrentCollect.append((int)dutStruct.power_current);
+
+    QJsonObject powerCurrent
+    {
+        {"x", QDateTime::currentDateTime().toMSecsSinceEpoch()},
+        {"y", (int)dutStruct.power_current}
+    };
+    powerCurrentCollect.append(powerCurrent);
     if(powerCurrentCollect.count() > maxCollectArrayData) {
         powerCurrentCollect.pop_front();
     }
-    cntCollect.append((int)dutStruct.cnt);
+
+    QJsonObject cnt
+    {
+        {"x", QDateTime::currentDateTime().toMSecsSinceEpoch()},
+        {"y", (int)dutStruct.cnt}
+    };
+    cntCollect.append(cnt);
     if(cntCollect.count() > maxCollectArrayData) {
         cntCollect.pop_front();
     }
+
+
     jsonObj.insert("powerCollect", powerVoltageCollect);
     jsonObj.insert("currentCollect", powerCurrentCollect);
     jsonObj.insert("cntCollect", cntCollect);
@@ -332,6 +356,10 @@ void StendApi::copyInputData(sDutBaseStruct & dutStruct, const StendProperty::sI
     }
     memcpy(&dutStruct.mcu_serial_number, &pinputTemp->info.mcu_serial_number, sizeof(pinputTemp->info.mcu_serial_number));
     memcpy(&dutStruct.program_version, &pinputTemp->info.program_version, sizeof(pinputTemp->info.program_version));
+
+    memcpy(&dutStruct.currentDataRs232, &pinputTemp->info.currentDataRs232, sizeof(pinputTemp->info.currentDataRs232));
+    memcpy(&dutStruct.currentDataRs485, &pinputTemp->info.currentDataRs485, sizeof(pinputTemp->info.currentDataRs485));
+
     dutStruct.dateTime = pinputTemp->info.dateTime;
     dutStruct.test = pinputTemp->info.test;
 }
@@ -352,7 +380,7 @@ bool StendApi::testIsFinished(sDutTestStruct & tests) {
     return false;
 }
 
-bool StendApi::testDatabaseConnect() {
+bool StendApi::testDatabaseConnect() {    
     return dataBase->testCconnect();
 }
 

@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("clipboard", new Clipboard(QApplication::clipboard()));
 
-    QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
+    QObject::connect(&engine, &QQmlApplicationEngine::quit, &QApplication::quit);
 
     QObject *item = engine.rootObjects().first();
     Q_ASSERT(item);

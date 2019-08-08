@@ -29,6 +29,8 @@ QJsonObject Settings::getSettings() {
         emit fimrwareStLinkPathIsChanged();
         emit firmwareDutPathIsChanged();
         emit frmwareBootPathIsChanged();
+        emit curMinIsChanged();
+        emit curMaxIsChanged();
     } else {
         qDebug() << "Cannot read file" << file.errorString();
     }

@@ -39,6 +39,9 @@ public:
     Q_PROPERTY(QString databasePassword READ getDatabasePassword WRITE setDatabasePassword NOTIFY databasePasswordIsChanged)
     Q_PROPERTY(QString databasePort READ getDatabasePort WRITE setDatabasePort NOTIFY databasePortIsChanged)
 
+    Q_PROPERTY(QString curMax READ getCurMin WRITE setCurMin NOTIFY curMinIsChanged)
+    Q_PROPERTY(QString curMin READ getCurMax WRITE setCurMax NOTIFY curMaxIsChanged)
+
     Q_PROPERTY(QString cap1Min READ getCap1Min WRITE setCap1Min NOTIFY cap1MinIsChanged)
     Q_PROPERTY(QString cap2Min READ getCap2Min WRITE setCap2Min NOTIFY cap2MinIsChanged)
     Q_PROPERTY(QString cap3Min READ getCap3Min WRITE setCap3Min NOTIFY cap3MinIsChanged)
@@ -124,6 +127,8 @@ signals:
     void fimrwareStLinkPathIsChanged();
     void firmwareDutPathIsChanged();
     void frmwareBootPathIsChanged();
+    void curMinIsChanged();
+    void curMaxIsChanged();
 
 private:
     QJsonObject settingsJson;

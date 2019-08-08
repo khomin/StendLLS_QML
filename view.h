@@ -16,6 +16,8 @@ class View : public QObject
 public:
     explicit View(QObject *parent = nullptr);
 
+    Q_PROPERTY(QString stendRole READ getStendRole WRITE setStendRole NOTIFY stendRoleIsChanged)
+
 public slots:
     Q_INVOKABLE Settings* getSettings();
     Q_INVOKABLE void startFindStends();
@@ -35,6 +37,9 @@ public slots:
 
     Q_INVOKABLE bool testDatabaseConnect();
 
+    Q_INVOKABLE void writeSerialNumToLls(QString llsMcuNumber);
+    Q_INVOKABLE void markLlsAsDefected(QString llsMcuNumber);
+
 signals:
     void signalStendLost();
     void signalStendReady();
@@ -53,7 +58,14 @@ signals:
 
     void signalUpdateRealTimeData(QString json);
 
+    void stendRoleIsChanged();
+
 private:
+    void setStendRole(QString role) { stendRole = role; emit stendRoleIsChanged(); }
+    QString getStendRole() { return stendRole; }
+
+private:
+    QString stendRole;
     Connection connection;
     StendApi stendApi;
     Log log;
