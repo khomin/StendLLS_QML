@@ -30,7 +30,6 @@ public slots:
 
 private slots:
     void errorHanler(QSerialPort::SerialPortError err);
-    void readyRead();
 private:
     static constexpr char const * typeName = "serial";
     bool isManualClosed;

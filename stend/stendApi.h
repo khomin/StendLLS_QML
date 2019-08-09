@@ -13,7 +13,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "stendFirmware/programming.h"
-#include "dataBase.h"
+#include "dataBase/dataBase.h"
 
 class StendApi : public QObject
 {
@@ -38,6 +38,9 @@ public slots:
     void insertErrorFromInterface(QString data);
 
     bool testDatabaseConnect();
+
+    bool isAvailableLlsRangeValues();
+
 signals:
     /* send data through tcp */
     void readyWriteDataToInterface(QByteArray data);
@@ -63,7 +66,6 @@ private:
     int interval_read_info_counter;
     QTimer *handlerStendTimer;
     QTimer *timeoutCommandTimer;
-    DataBase *dataBase;
 
     int transferTimeoutId;
     StendProperty::eConnetState connect_state;

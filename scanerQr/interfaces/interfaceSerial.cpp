@@ -34,7 +34,11 @@ bool InterfaceSerial::openInterface(QString name, const QString & parameters) {
         res  = portHandler->open(QIODevice::ReadWrite);
         if(res) {
             connect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
-            connect(portHandler.get(), SIGNAL(readyRead()), this, SLOT(readyRead()));
+            connect(portHandler.get(), &QSerialPort::readyRead, this, [&]() {
+                QTimer::singleShot(100, Qt::CoarseTimer, [&] {
+                    emit signalReadyReadNewData(portHandler->readAll());
+                });
+            });
             isManualClosed = false;
         } else {
             qDebug() << "openInterface: error";
@@ -136,41 +140,7 @@ void InterfaceSerial::errorHanler(QSerialPort::SerialPortError err) {
     if(err != QSerialPort::NoError) {
         disconnect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, nullptr);
         portHandler->close();
-        emit signalError(portHandler->portName(), tr("Ошибка интерфейса\nПроверьте соединение"));
-    }
-}
-
-void InterfaceSerial::readyRead() {
-    if(portHandler.get() != nullptr) {
-        QTimer::singleShot(100, Qt::CoarseTimer, [&] {
-            auto data = portHandler->readAll();
-            if(!data.isEmpty()) {
-                qDebug() << "inRaw append: "<< data;
-                inputBuffer.append(data);
-            }
-            if(inputBuffer.length() > 24) {
-                QRegExp rx("@@([\\d]{1,16})");
-                int pos = 0;
-                while ((pos = rx.indexIn(inputBuffer, pos)) != -1) {
-                    qDebug() << "Parce1: "<< inputBuffer;
-                    int packetLen = rx.cap(1).toInt();
-                    if(packetLen <= inputBuffer.size()) {
-                        QByteArray outArray(inputBuffer.data() + pos, packetLen);
-                        emit signalReadyReadNewData(outArray);
-                        inputBuffer.remove(pos, packetLen);
-                        qDebug() << "Parce2: ready :" << outArray;
-                    } else {
-                        qDebug() << "Parce2: size not full";
-                    }
-                    pos += rx.matchedLength();
-                }
-                qDebug() << "inRaw: "<< inputBuffer;
-            }
-        });
-    }
-
-    if(inputBuffer.length() > 20128) {
-        inputBuffer.clear();
+        emit signalError(tr("Interface error"));
     }
 }
 

@@ -22,8 +22,10 @@ Item {
                 Column {
                     spacing: 30
 
+                    Label{ text: qsTr("Current port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+
                     RowLayout {
-                        Label{ text: qsTr("Current port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                        Label{ text: qsTr("Port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
                         ComboBox {
                             id:serialPortComBox
                             implicitHeight: 35
@@ -36,6 +38,19 @@ Item {
                                 for(var i in json.portName)
                                     result.push(json.portName[i]);
                                 return result;
+                            }
+                        }
+                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Make active");
+                            onClicked: {
+                                if(viewControl.isScanerConnected()) {
+                                    viewControl.closeScanerConnection()
+                                }
+                                Settings.scanerPort = serialPortComBox.currentText
+
+                                var params = []
+                                if(!viewControl.addScanerConnection(Settings.scanerPort, JSON.stringify(params))) {
+
+                                }
                             }
                         }
                     }

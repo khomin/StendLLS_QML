@@ -4,8 +4,6 @@ View::View(QObject *parent) : QObject(parent) {
     connect(&connection, &Connection::signalClosed, this, &View::signalInterfaceClosed);
     connect(&connection, &Connection::signalOpened, this, &View::signalInterfaceReady);
     connect(&connection, &Connection::signalError, this, &View::signalInterfaceError);
-
-
     connect(&connection, &Connection::signalReadyReadNewData, &stendApi, &StendApi::insertDataFromInterface);
 
     connect(&stendApi, &StendApi::readyWriteDataToInterface, &connection, &Connection::writeData);
@@ -21,13 +19,14 @@ View::View(QObject *parent) : QObject(parent) {
     connect(&findStend, &FindStend::searchComplete, this, &View::searchStendComplete);
     connect(&stendApi, &StendApi::updateRealTimeData, this, &View::signalUpdateRealTimeData);
 
-    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerError);
-    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerOpened);
-    connect(&scanerSerialPort, &InterfaceSerial::signalError, this, &View::scanerClosed);
-    connect(&scanerSerialPort, &InterfaceSerial::readyRead, this, &View::signalUpdateRealTimeData);
-
-    void errorHanler(QSerialPort::SerialPortError err);
-    void readyRead();
+    connect(&scanerConnection, &Connection::signalError, this, &View::scanerError);
+    connect(&scanerConnection, &Connection::signalError, this, &View::scanerOpened);
+    connect(&scanerConnection, &Connection::signalError, this, &View::scanerClosed);
+    connect(&scanerConnection, &Connection::signalReadyReadNewData, this, [&](QByteArray data) {
+        qrScaner.insertQrData(data);
+    });
+    connect(&qrScaner, &QrScaner::qrCodeUpdateSerialNum, this, &View::scanerUpdateNumber);
+    connect(&qrScaner, &QrScaner::qrCodeUpdateSerialNum, this, &View::scanerErrorReading);
 }
 
 bool View::addConnection(QString name, const QString & parameters) {
@@ -39,10 +38,6 @@ bool View::addConnection(QString name, const QString & parameters) {
 void View::closeConnection() {
     log.insertLog(tr("Close interface"), "grey");
     connection.close();
-}
-
-Settings* View::getSettings() {
-    return &Settings::Instance();
 }
 
 void View::startFindStends() {
@@ -81,6 +76,19 @@ void View::markLlsAsDefected(QString llsMcuNumber) {
 
 }
 
-QString View::getScanersList() {
+bool View::addScanerConnection(QString name, const QString & parameters) {
+    return scanerConnection.addConnection(name, parameters);
+}
 
+void View::closeScanerConnection() {
+    log.insertLog(tr("Close scaner interface"), "grey");
+    scanerConnection.close();
+}
+
+QString View::getScanersList() {
+    return scanerConnection.getListConnections();
+}
+
+bool View::isScanerConnected() {
+    return scanerConnection.isOpened();
 }

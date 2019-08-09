@@ -106,6 +106,9 @@ public:
     QString getFirmwareBootPath() { return settingsJson.value("firmare_bootloader_path").toString(); }
     void setFirmwareBootPath(QString value) { settingsJson.insert("firmare_bootloader_path", value); saveSettingsToFile(); frmwareBootPathIsChanged(); }
 
+    QString getScanerPort() { return settingsJson.value("scanerPort").toString(); }
+    void setScanerPort(QString value) { settingsJson.insert("scanerPort", value); saveSettingsToFile(); scanerPortIsChanged(); }
+
 protected:
     Settings();
     virtual ~Settings();
@@ -129,6 +132,7 @@ signals:
     void frmwareBootPathIsChanged();
     void curMinIsChanged();
     void curMaxIsChanged();
+    void scanerPortIsChanged();
 
 private:
     QJsonObject settingsJson;

@@ -3,8 +3,6 @@
 #include "settings.h"
 
 StendApi::StendApi(QObject *parent) : QObject(parent) {
-    dataBase = new DataBase();
-
     command.push_back(StendProperty::get_basic_param);
     interval_read_info_counter = 0;
 
@@ -61,7 +59,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     });
     connect(programming, &Programming::exeReadSerialNumMcu,this, [&](QString mcuNum) {
         /* Добавляем плату в базу */
-        dataBase->dataBaseStruct.pcb.dut.serial_num_cpu = mcuNum;
+        DataBase::Instance().addNewDeviceByMcuSn(mcuNum);
         command.push_back(StendProperty::dut_power_down);
     });
     connect(programming, &Programming::exeUpdate,this, [&](int percent) {
@@ -236,7 +234,7 @@ void StendApi::packetInsert(StendProperty::sOutputTcpTempStruct pOut, QByteArray
 
 void StendApi::startTest() {
     QString error;
-    if(dataBase->openConnection(&error)) {
+    if(DataBase::Instance().openConnection(&error)) {
         if(connect_state == StendProperty::connected) {
             command.push_back(StendProperty::reset_test);
             programming->startProgramm();
@@ -381,7 +379,15 @@ bool StendApi::testIsFinished(sDutTestStruct & tests) {
 }
 
 bool StendApi::testDatabaseConnect() {    
-    return dataBase->testCconnect();
+    return DataBase::Instance().testCconnect();
+}
+
+bool StendApi::isAvailableLlsRangeValues() {
+    if(dutInfoStruct.power_current >= Settings::Instance().getCurMin().toFloat()
+            && dutInfoStruct.power_current <= Settings::Instance().getCurMax().toFloat()) {
+        return true;
+    }
+    return false;
 }
 
 QJsonObject StendApi::evaluateTestStatus(sDutTestStruct & tests) {

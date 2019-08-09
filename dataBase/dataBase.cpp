@@ -34,8 +34,7 @@ bool DataBase::openConnection(QString *error) {
     return res;
 }
 
-bool DataBase::closeConnection()
-{
+bool DataBase::closeConnection() {
     if(base.isOpen()==true)
         base.close();
     return true;
@@ -70,6 +69,37 @@ bool DataBase::insertTestData(QString mcu, QString dev_test_state, sDutTestStruc
         qDebug() << query.lastError();
     }
     return res;
+}
+
+bool DataBase::checkDeviceQrCode(QString qr_code) {
+    bool res = false;
+    QSqlQuery query(base);
+    QString prefix, dts, dev_serial, client;
+    prefix = qr_code.section("#", 0, 0);
+    client = qr_code.section("#", 1, 1);
+    dts = qr_code.section("#", 2, 2);
+    dev_serial = qr_code.section("#", 3, 3);
+    dev_serial.remove('\r');
+    dev_serial.remove('\n');
+    //
+    query.prepare("SELECT pr_check_device_qr_code(?, ?, ?, ?);");
+    query.addBindValue(QVariant(prefix).toString());
+    query.addBindValue(QVariant(client).toString());
+    query.addBindValue(QVariant(dts).toString());
+    query.addBindValue(QVariant(dev_serial).toString());
+    res = query.exec();
+    qDebug() << query.boundValue(6);
+    if(!res) {
+        qDebug() << query.lastError();
+        return false;
+    }
+    query.next();
+
+    return (query.record().value("pr_check_device_qr_code") == true);
+}
+
+void DataBase::addNewDeviceByMcuSn(QString mcuSn){
+
 }
 
 bool DataBase::testCconnect() {

@@ -17,13 +17,15 @@ SOURCES += \
         connection/connection.cpp \
         connection/interfaces/interfacesAbstract.cpp \
         connection/log.cpp \
+        dataBase/dataBase.cpp \
+        dataBase/dataBaseProperty.cpp \
         findStend/findStendItem.cpp \
         findStend/findStendModel.cpp \
         findStend/findstend.cpp \
         main.cpp \
         scanerQr/interfaces/interfaceSerial.cpp \
+        scanerQr/qrScaner.cpp \
         settings.cpp \
-        stend/dataBase.cpp \
         stend/stendApi.cpp \
         stend/stendFirmware/programming.cpp \
         stend/stendTestStatus.cpp \
@@ -42,13 +44,15 @@ HEADERS += \
     connection/connection.h \
     connection/interfaces/interfacesAbstract.h \
     connection/log.h \
+    dataBase/dataBase.h \
+    dataBase/dataBaseProperty.h \
     findStend/findStendItem.h \
     findStend/findStendModel.h \
     findStend/findstend.h \
     globals.h \
     scanerQr/interfaces/interfaceSerial.h \
+    scanerQr/qrScaner.h \
     settings.h \
-    stend/dataBase.h \
     stend/stendApi.h \
     stend/stendFirmware/programming.h \
     stend/stendProperty.h \

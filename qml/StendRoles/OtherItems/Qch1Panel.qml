@@ -11,6 +11,46 @@ SwipeView {
     clip: true
     interactive: false
 
+    Connections {
+        target: viewControl
+//        onSearchStendComplete: {
+//            busyIndicator.visible = false;
+//        }
+//        onSignalInterfaceReady: {
+//            statusPannel.setStatusConnected()
+//        }
+//        onSignalInterfaceError: {
+//            busyIndicator.visible = false;
+//            statusPannel.setStatusDisconnected()
+//            toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
+//        }
+//        onSignalInterfaceClosed: {
+//            busyIndicator.visible = false;
+//            statusPannel.setStatusDisconnected()
+//        }
+//        onSignalStendLost: {
+//            toast.displayMessage(qsTr("Connection lost"), "bad")
+//            viewControl.closeConnection()
+//        }
+        onScanerError: {
+            toast.displayMessage(error, "bad");
+        }
+        onScanerOpened: {
+
+        }
+        onScanerClosed: {
+
+        }
+        onScanerUpdateNumber: {
+//            QString qrNumber
+            toast.displayMessage(qrNumber, "good");
+        }
+        onScanerErrorReading: {
+//        QString codeMessage
+            toast.displayMessage(codeMessage, "bad");
+        }
+    }
+
     function drawChart(dataArray, chartLine, chart) {
         chartLine.clear();
         chart.graphLength = dataArray.length
@@ -44,27 +84,6 @@ SwipeView {
             testRectangle.color = "green"
             break;
         }
-    }
-
-    Connections {
-        target: viewControl
-        //        onSignalUpdateRealTimeData: {
-        //            var jsonData = JSON.parse(json)
-        //            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
-        //            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
-        //            llsCntLabel.text = jsonData.cnt
-        //            llsMcuSnDeviceLabel.text = jsonData.mcu_serial_number
-        //            llsMcuSnLabel.text = jsonData.mcu_serial_number
-        //            llsSnDeviceLabel.text = jsonData.serial_number
-
-        //            drawChart(jsonData.powerCollect, chartVoltageLine, chartVoltage)
-        //            drawChart(jsonData.currentCollect, chartCurrentLine, chartCurrent)
-        //            drawChart(jsonData.cntCollect, chartCapacityLine, chartCapacity)
-
-        //            if(busyIndicator.visible == true) {
-        //                busyIndicator.visible = false;
-        //            }
-        //        }
     }
 
     //    Connections {

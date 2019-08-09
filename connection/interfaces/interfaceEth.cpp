@@ -47,7 +47,7 @@ bool InterfaceEth::openInterface(QString name, const QString & parameters) {
         isManualClosed = false;
         emit signalOpened();
     } else {
-        emit signalError(name, "not open");
+        emit signalError("Interface not open");
         qDebug() << "openInterface: error";
     }
     return res;

@@ -10,8 +10,7 @@ bool Connection::addConnection(QString name, const QString & parameters) {
     res  = m_interface->openInterface(name, parameters);
     if(res) {
         connect(m_interface.get(), &interfacesAbstract::signalError, this,
-                [&](QString ioTypeName, QString message) {
-            Q_UNUSED(ioTypeName);
+                [&](QString message) {
             emit signalError(message);
         });
         connect(m_interface.get(), &interfacesAbstract::signalReadyReadNewData, this, [&](QByteArray data) {
