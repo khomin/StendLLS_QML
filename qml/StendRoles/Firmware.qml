@@ -19,7 +19,11 @@ Rectangle {
                 busyIndicator.visible = false;
             }
         }
-        onSignalStendLost: {
+    }
+
+    Connections {
+        target: stendProp
+        onStendNotReply: {
             if(viewControl.stendRole == "firmware") {
                 toast.displayMessage(qsTr("Connection lost"), "bad")
                 viewControl.closeConnection()
@@ -29,23 +33,19 @@ Rectangle {
 
     Connections {
         target: stendInterface
-
         onSignalOpened: {
             if(viewControl.stendRole == "firmware") {
-                statusPannel.setStatusConnected()
             }
         }
         onSignalError: {
             if(viewControl.stendRole == "firmware") {
                 busyIndicator.visible = false;
-                statusPannel.setStatusDisconnected()
                 toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
             }
         }
         onSignalClosed: {
             if(viewControl.stendRole == "firmware") {
                 busyIndicator.visible = false;
-                statusPannel.setStatusDisconnected()
             }
         }
     }

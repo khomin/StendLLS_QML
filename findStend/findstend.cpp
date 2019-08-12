@@ -5,8 +5,6 @@
 #include <QDataStream>
 
 FindStend::FindStend(QObject *parent) : QObject(parent) {
-    this->mFindStendModel = new FindStendModel(100);
-
     mSearchTimer = new QTimer();
     mSearchTimer->setInterval(1500);
     mSearchTimer->start();
@@ -31,7 +29,7 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
             } else {
                 mSearch_ip_timeout = 0;
                 mSearch_ip_state = idle;
-                mFindStendModel->getAll().empty() ? emit searchComplete("error") : emit searchComplete("normal");
+                mFindStendModel.getAll().empty() ? emit searchComplete("error") : emit searchComplete("normal");
             }
         }
     });
@@ -60,7 +58,7 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
                 dest.ip.ip_addr[0] = ((addr32 & 0xFF000000)>>24);
 
                 /* ищем ответы раньше */
-                auto modelList = mFindStendModel->getAll();
+                auto modelList = mFindStendModel.getAll();
                 for(auto i: modelList) {
                     // if it copy -> return
                     if((i->getValue().ip.ip_addr[0] == dest.ip.ip_addr[0])
@@ -70,20 +68,19 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
                         return;
                     }
                 }
-                mFindStendModel->addItem(dest);
+                mFindStendModel.addItem(dest);
             }
         }
     });
 }
 
 FindStend::~FindStend() {
-    delete mFindStendModel;
     delete mSearchTimer;
     delete mUdpSocket;
 }
 
 FindStendModel * FindStend::getModel() {
-    return mFindStendModel;
+    return &mFindStendModel;
 }
 
 void FindStend::startfind() {
@@ -113,7 +110,7 @@ void FindStend::startfind() {
         mNetwork_intface_ip = ip_list.at(0);
         mBroadcast_ip = mNetwork_intface_ip;
         /* flush list stends */
-        mFindStendModel->removeAll();
+        mFindStendModel.removeAll();
         mSearch_ip_state = on;
         mPacket_counter = 0;
     } else {

@@ -44,7 +44,7 @@ Item {
                     implicitWidth: 150
                     Layout.alignment: Qt.AlignTop
                     onClicked: {
-                        viewControl.startFindStends();
+                        stendFind.startfind()
                         busyIndicator.visible = true;
                         firmwareSwipeView.setCurrentIndex(4);
                     }

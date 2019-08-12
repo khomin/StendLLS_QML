@@ -44,14 +44,11 @@ public:
     Q_INVOKABLE Connection* getQrScanerInterface();
     Q_INVOKABLE QrScaner* getQrScanerProp();
 
-    FindStendModel* getFindStendModel();
+    FindStend* getFindStend();
 
     Q_INVOKABLE LogModel* getStendLogModel();
 
 signals:
-    void signalStendLost();
-    void signalStendReady();
-
     void searchStendComplete(QString status);
 
     void signalTestFinished(QString json);

@@ -22,6 +22,8 @@ public:
     explicit StendApi(QObject *parent = nullptr);
     ~StendApi();
 
+    Q_PROPERTY(bool stendIsConnected READ getStendIsConnected WRITE setStendIsConnected NOTIFY stendIsConnectedChanged)
+
 public slots:
     /* send command to execute */
     void sendCommand(StendProperty::eTypeCommand cmd);
@@ -41,6 +43,10 @@ public slots:
 
     bool isAvailableLlsRangeValues();
 
+    /* qml property */
+    bool getStendIsConnected() { return mStendIsConnected; }
+    void setStendIsConnected(bool value) { mStendIsConnected = value; emit stendIsConnectedChanged(); }
+
 signals:
     /* send data through tcp */
     void readyWriteDataToInterface(QByteArray data);
@@ -50,6 +56,9 @@ signals:
     void testFinihed(QString json);
     void testUpdateStep(QString json);
     void updateRealTimeData(QString json);
+
+    /* qml property */
+    void stendIsConnectedChanged();
 
 private slots:
     bool parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx);
@@ -68,7 +77,8 @@ private:
     QTimer *timeoutCommandTimer;
 
     int transferTimeoutId;
-    StendProperty::eConnetState connect_state;
+    bool mStendIsConnected;
+
     sDutBaseStruct dutInfoStruct;
     /* указатель на структуру из настроек тестирования */
     /* настройки теста частоты отправляются в каждом пакете */

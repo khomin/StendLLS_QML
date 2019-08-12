@@ -10,6 +10,14 @@ import Settings 1.0
 
 Item {
     id:testSettingsWidget
+
+    Component.onCompleted: {
+        var params = {}
+        params.baudrate = 115200;
+        console.log(JSON.stringify(params));
+        qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
+    }
+
     ScrollView {
         anchors.fill: parent
         ColumnLayout {
@@ -24,7 +32,7 @@ Item {
 
                     RowLayout {
                         Label{ text: qsTr("Current port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
-                        Label{ text: qrScanerInterface.interfaceName.length !== 0 ? qrScanerInterface.interfaceName : "NA";
+                        Label{ id:currentPort; text: qrScanerInterface.interfaceName.length !== 0 ? qrScanerInterface.interfaceName : "NA";
                             color: qrScanerInterface.interfaceName.length !== 0 ? "black" : "red";
                             font.pointSize: 8
                         }
@@ -56,7 +64,7 @@ Item {
                         }
                         Button { Material.background: Material.Green; Material.foreground: "white";
                             font.pointSize: 8; text: qsTr("Make active");
-                            enabled: serialPortComBox.currentText.length !== 0
+                            enabled: serialPortComBox.currentText != currentPort.text
                             onClicked: {
                                 if(stendInterface.isOpened()) {
                                     stendInterface.close()
@@ -66,7 +74,7 @@ Item {
                                 var params = {}
                                 params.baudrate = 115200;
                                 console.log(JSON.stringify(params));
-                                stendInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
+                                qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
                             }
                         }
                     }

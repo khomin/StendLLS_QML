@@ -1,10 +1,13 @@
 #include "view.h"
 
 View::View(QObject *parent) : QObject(parent) {
+    stendConnection.setType(Connection::ConnectionEth);
+
+    qrScanerConnection.setType(Connection::ConnectionSerial);
+
     connect(&stendConnection, &Connection::signalReadyReadNewData, &stendApi, &StendApi::insertDataFromInterface);
 
     connect(&stendApi, &StendApi::readyWriteDataToInterface, &stendConnection, &Connection::writeData);
-    connect(&stendApi, &StendApi::stendNotReply, this, &View::signalStendLost);
 
     connect(&stendApi, &StendApi::testFinihed, this, &View::signalTestFinished);
     connect(&stendApi, &StendApi::testError, this, &View::signalTestError);
@@ -21,8 +24,8 @@ View::View(QObject *parent) : QObject(parent) {
     });
 }
 
-FindStendModel* View::getFindStendModel() {
-    return findStend.getModel();
+FindStend* View::getFindStend() {
+    return &findStend;
 }
 
 Connection* View::getStendInterface() {

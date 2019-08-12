@@ -5,12 +5,18 @@
 #include <memory.h>
 #include "interfaces/interfacesAbstract.h"
 #include "scanerQr/interfaces/interfaceSerial.h"
+#include "interfaces/interfaceEth.h"
 #include <QJsonObject>
 
 class Connection : public QObject {
     Q_OBJECT
 public:
+
     explicit Connection();
+
+    typedef enum {ConnectionSerial, ConnectionEth} eConnectionType;
+
+    void setType(Connection::eConnectionType connectionType);
 
     Q_PROPERTY(QString interfaceName READ getInterfaceName NOTIFY interfaceNameIsChanged)
 

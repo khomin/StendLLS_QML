@@ -13,7 +13,7 @@ class FindStendModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit FindStendModel(int maxCountElements, QObject *parent = nullptr);
+    explicit FindStendModel(QObject *parent = nullptr);
 
     enum Roles {
         ModelRoleIp = Qt::UserRole + 1,

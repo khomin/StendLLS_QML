@@ -24,7 +24,7 @@ public slots:
     FindStendModel * getModel();
 
 private:
-    FindStendModel* mFindStendModel;
+    FindStendModel mFindStendModel;
     QTimer *mSearchTimer;
     sConnectSettings mSelected_dest;
     sIp_list mBroadcast_ip;

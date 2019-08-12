@@ -6,8 +6,6 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     command.push_back(StendProperty::get_basic_param);
     interval_read_info_counter = 0;
 
-    connect_state = StendProperty::disconnected;
-
     /* константы теста емкости */
     capValues.min[0] = Settings::Instance().getCap1Min().toInt();
     capValues.min[1] = Settings::Instance().getCap2Min().toInt();
@@ -28,7 +26,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     this->timeoutCommandTimer = new QTimer();
 
     connect(handlerStendTimer, &QTimer::timeout,this, [&]() {
-        if(connect_state == StendProperty::connected) {
+        if(getStendIsConnected()) {
             //--- if command list is empty -> get basic_param
             if(command.isEmpty()) {
                 command.push_back(StendProperty::get_basic_param);
@@ -81,21 +79,21 @@ void StendApi::insertDataFromInterface(QByteArray data) {
             timeoutCommandTimer->stop();
             handlerStendTimer->start();
             command.removeFirst(); /* flush command */
-            connect_state = StendProperty::connected;
+            setStendIsConnected(true);
         } else {
             emit stendNotReply(tr("Not reply"));
-            connect_state = StendProperty::disconnected;
+            setStendIsConnected(false);
         }
     }
 }
 
 void StendApi::setStatusConnected() {
-    connect_state = StendProperty::connected;
+    setStendIsConnected(true);
 }
 
 void StendApi::setStatusDisconnected() {
     command.clear();
-    connect_state = StendProperty::disconnected;
+    setStendIsConnected(false);
 }
 
 void StendApi::insertErrorFromInterface(QString data) {
@@ -235,7 +233,7 @@ void StendApi::packetInsert(StendProperty::sOutputTcpTempStruct pOut, QByteArray
 void StendApi::startTest() {
     QString error;
     if(DataBase::Instance().openConnection(&error)) {
-        if(connect_state == StendProperty::connected) {
+        if(mStendIsConnected) {
             command.push_back(StendProperty::reset_test);
             programming->startProgramm();
             mTestIsFinished = false;

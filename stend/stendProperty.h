@@ -21,12 +21,6 @@ public:
         reset_test			= 0x08
     }eTypeCommand;
 
-    /* states */
-    typedef enum {
-        disconnected,
-        connected
-    }eConnetState;
-
     /* data */
     typedef struct {
         quint16 serial_num;

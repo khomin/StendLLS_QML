@@ -1,9 +1,9 @@
 #include "findStendModel.h"
 #include <QDebug>
 
-FindStendModel::FindStendModel(int maxCountElements, QObject *parent) {
+FindStendModel::FindStendModel(QObject *parent) {
     Q_UNUSED(parent);
-    this->m_maxCountElements = maxCountElements;
+    this->m_maxCountElements = 100;
 }
 
 bool FindStendModel::addItem(sConnectSettings value) {

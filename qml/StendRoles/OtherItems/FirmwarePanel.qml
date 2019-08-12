@@ -357,8 +357,8 @@ SwipeView {
                         implicitWidth: 150
                         focus: true
                         onClicked: {
-                            if(viewControl.isConnected()) {
-                                viewControl.startTestStend()
+                            if(stendProp.getStendIsConnected()) {
+                                stendProp.startTest()
                                 toast.flush()
                             } else {
                                 toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
@@ -368,8 +368,8 @@ SwipeView {
                         Shortcut {
                             sequence: "Space"
                             onActivated: {
-                                if(viewControl.isConnected()) {
-                                    viewControl.startTestStend()
+                                if(stendProp.getStendIsConnected()) {
+                                    stendProp.startTest()
                                     toast.flush()
                                 } else {
                                     toast.displayMessage(qsTr("You need to establish a connection"), "neutral");

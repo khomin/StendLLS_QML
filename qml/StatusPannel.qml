@@ -18,30 +18,36 @@ Pane {
 
     signal connectActivated();
     signal disconnectActivated();
-    //    signal requestReadSettings();
-    //    signal requestReadSettingsFirtTime();
-    //    signal requestWriteSettings();
     signal requestFindStends();
 
-    property bool statusConnected: false
+    Connections {
+        target: stendProp
+        onStendNotReply: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(qsTr("Connection lost"), "bad")
+                viewControl.closeConnection()
+            }
+        }
+    }
 
-    function setStatusSerialOpened() {
-        connectButton.statusSerialPort = true;
-    }
-    function setStatusSerialClosed() {
-        connectButton.statusSerialPort = false;
-    }
-    function setStatusConnected() {
-        statusConnected = true;
-    }
-    function setStatusDisconnected() {
-        statusConnected = false;
-    }
-    function readSettingsFirstTime() {
-        requestReadSettingsFirtTime()
-    }
-    function readSettings() {
-        requestReadSettings()
+    Connections {
+        target: stendInterface
+        onSignalOpened: {
+            if(viewControl.stendRole == "qch1") {
+                //
+            }
+        }
+        onSignalError: {
+            if(viewControl.stendRole == "qch1") {
+                busyIndicator.visible = false;
+                toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
+            }
+        }
+        onSignalClosed: {
+            if(viewControl.stendRole == "qch1") {
+                busyIndicator.visible = false;
+            }
+        }
     }
 
     RowLayout {
@@ -53,16 +59,16 @@ Pane {
             Label {text: qsTr("Stend") }
             Label {text: Settings.activeStend; }
             Button { id:connectButton;
-                Material.background: statusConnected ? Material.Green : "#406D9E";
+                Material.background: stendInterface.isOpened() ? Material.Green : "#406D9E";
                 Material.foreground: "white";
-                text: statusConnected ? qsTr("Disconnect") : qsTr("Connect");
+                text: stendProp.stendIsConnected ? qsTr("Disconnect") : qsTr("Connect");
                 font.pointSize: 8
                 implicitHeight: 45;
                 focus: false
                 onClicked: {
-                    if(statusConnected) {
+                    if(stendInterface.isOpened()) {
                         disconnectActivated();
-                        viewControl.closeConnection();
+                        stendInterface.close();
                     } else {
                         var params = {};
                         params.port = 45454;
@@ -76,7 +82,7 @@ Pane {
                 text: qsTr("Find stend");
                 enabled: !connectButton.statusSerialPort
                 onClicked: {
-                    viewControl.startFindStends();
+                    stendFind.startfind();
                     requestFindStends()
                 }
             }
@@ -85,14 +91,14 @@ Pane {
             Layout.alignment: Qt.AlignLeft
             Label { id:statusLabel; font.pointSize: 8;
                 Layout.alignment: Qt.AlignCenter;
-                text: statusConnected ? (qsTr("Connected")) : (qsTr("Disconnected"))
-                color: statusConnected ? (Material.color(Material.Green, Material.Shade800)) : (Material.color(Material.Red, Material.Shade800))
+                text: stendProp.stendIsConnected ? (qsTr("Connected")) : (qsTr("Disconnected"))
+                color: stendProp.stendIsConnected ? (Material.color(Material.Green, Material.Shade800)) : (Material.color(Material.Red, Material.Shade800))
             }
             Rectangle {
                 radius: 5
                 width: 150
                 height: 5
-                color: statusConnected ? (Material.color(Material.Green, Material.Shade10)) : (Material.color(Material.Red, Material.Shade800))
+                color: stendProp.stendIsConnected ? (Material.color(Material.Green, Material.Shade10)) : (Material.color(Material.Red, Material.Shade800))
             }
         }
     }

@@ -9,12 +9,6 @@
 
 int main(int argc, char *argv[])
 {
-#if QT_CONFIG(library)
-//    const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
-//    for (const QByteArray &p : additionalLibraryPaths.split(':'))
-//        QCoreApplication::addLibraryPath(QString(p));
-#endif
-//    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication application(argc, argv);
 
     application.setWindowIcon(QIcon("../resources/logo.png"));
@@ -39,7 +33,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("qrScaner", QVariant::fromValue(viewControl.getQrScanerProp()));
     engine.rootContext()->setContextProperty("qrScanerInterface", QVariant::fromValue(viewControl.getQrScanerInterface()));
 
-    engine.rootContext()->setContextProperty("stendFindModel", QVariant::fromValue(viewControl.getFindStendModel()));
+    engine.rootContext()->setContextProperty("stendFind", QVariant::fromValue(viewControl.getFindStend()));
+    engine.rootContext()->setContextProperty("stendFindModel", QVariant::fromValue(viewControl.getFindStend()->getModel()));
 
     engine.rootContext()->setContextProperty("logStendModel", QVariant::fromValue(viewControl.getStendLogModel()));
 

@@ -52,6 +52,8 @@ public:
     Q_PROPERTY(QString firmwareDutPath READ getFirmwareDutPath WRITE setFirmwareDutPath NOTIFY firmwareDutPathIsChanged)
     Q_PROPERTY(QString frmwareBootPath READ getFirmwareBootPath WRITE setFirmwareBootPath NOTIFY frmwareBootPathIsChanged)
 
+    Q_PROPERTY(QString scanerPort READ getScanerPort WRITE setScanerPort NOTIFY scanerPortIsChanged)
+
     QString getLanguage() { return settingsJson.value("language").toString(); }
     void setLanguage(QString value) { settingsJson.insert("language", value); saveSettingsToFile(); languageIsChanged(); }
 
