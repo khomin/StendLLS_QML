@@ -32,8 +32,16 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("viewControl", &viewControl);
     engine.rootContext()->setContextProperty("translate", &translater);
     qmlRegisterSingletonType<Settings>("Settings", 1, 0, "Settings", Settings::qmlInstance);
-    engine.rootContext()->setContextProperty("logStendModel", QVariant::fromValue(viewControl.getStendLogModel()));
+
+    engine.rootContext()->setContextProperty("stendProp", QVariant::fromValue(viewControl.getStendProp()));
+    engine.rootContext()->setContextProperty("stendInterface", QVariant::fromValue(viewControl.getStendInterface()));
+
+    engine.rootContext()->setContextProperty("qrScaner", QVariant::fromValue(viewControl.getQrScanerProp()));
+    engine.rootContext()->setContextProperty("qrScanerInterface", QVariant::fromValue(viewControl.getQrScanerInterface()));
+
     engine.rootContext()->setContextProperty("stendFindModel", QVariant::fromValue(viewControl.getFindStendModel()));
+
+    engine.rootContext()->setContextProperty("logStendModel", QVariant::fromValue(viewControl.getStendLogModel()));
 
     engine.addImportPath(QStringLiteral(":/imports"));
 

@@ -2,7 +2,7 @@
 #include <QDebug>
 
 Connection::Connection() {
-    m_interface = std::make_shared<InterfaceEth>();
+    m_interface = std::make_shared<InterfaceSerial>();
 }
 
 bool Connection::addConnection(QString name, const QString & parameters) {
@@ -17,8 +17,10 @@ bool Connection::addConnection(QString name, const QString & parameters) {
             emit signalReadyReadNewData(data);
         });
         emit signalOpened();
+        emit interfaceNameIsChanged();
     } else {
         emit signalError("not open");
+        emit interfaceNameIsChanged();
     }
     return res;
 }
@@ -35,7 +37,10 @@ void Connection::close() {
 }
 
 QString Connection::getListConnections() {
-    return m_interface->getAvailableList();
+    if(m_interface.get() != nullptr) {
+         return m_interface->getAvailableList();
+    }
+    return "";
 }
 
 bool Connection::isOpened() {

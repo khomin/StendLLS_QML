@@ -12,44 +12,41 @@ SwipeView {
     interactive: false
 
     Connections {
-        target: viewControl
-//        onSearchStendComplete: {
-//            busyIndicator.visible = false;
-//        }
-//        onSignalInterfaceReady: {
-//            statusPannel.setStatusConnected()
-//        }
-//        onSignalInterfaceError: {
-//            busyIndicator.visible = false;
-//            statusPannel.setStatusDisconnected()
-//            toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
-//        }
-//        onSignalInterfaceClosed: {
-//            busyIndicator.visible = false;
-//            statusPannel.setStatusDisconnected()
-//        }
-//        onSignalStendLost: {
-//            toast.displayMessage(qsTr("Connection lost"), "bad")
-//            viewControl.closeConnection()
-//        }
-        onScanerError: {
-            toast.displayMessage(error, "bad");
+        target: qrScaner
+        onQrCodeError: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(message, "bad");
+            }
         }
-        onScanerOpened: {
-
-        }
-        onScanerClosed: {
-
-        }
-        onScanerUpdateNumber: {
-//            QString qrNumber
-            toast.displayMessage(qrNumber, "good");
-        }
-        onScanerErrorReading: {
-//        QString codeMessage
-            toast.displayMessage(codeMessage, "bad");
+        onQrCodeUpdateSerialNum: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(number, "good");
+            }
         }
     }
+
+    Connections {
+        target: qrScanerInterface
+
+        onSignalError: { //(const QString message);
+            if(viewControl.stendRole == "qch1") {
+            }
+        }
+        onSignalReadyReadNewData: { // QByteArray data
+            if(viewControl.stendRole == "qch1") {
+            }
+        }
+        onSignalOpened: {
+            if(viewControl.stendRole == "qch1") {
+            }
+
+        }
+        onSignalClosed: {
+            if(viewControl.stendRole == "qch1") {
+            }
+        }
+    }
+
 
     function drawChart(dataArray, chartLine, chart) {
         chartLine.clear();
@@ -85,87 +82,6 @@ SwipeView {
             break;
         }
     }
-
-    //    Connections {
-    //        target: viewControl
-
-    //        onSignalTestFinished: {
-    //            var jsonData = JSON.parse(json)
-    //            if(jsonData.result === "finished") {
-    //                addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
-    //                programmingRectangle.color = "green"; programmingProgressBar.value = 100;
-    //                test232Rectangle.color = "green"; test232ProgressBar.value = 100;
-    //                test485Rectangle.color = "green"; test485ProgressBar.value = 100;
-    //                testFreqRectangle.color = "green"; testFreqProgressBar.value = 100;
-    //                toast.displayMessage(qsTr("Test completed successfully") + "\r\n" +
-    //                                     "rs232: tx " + jsonData.test232.sendPackets +
-    //                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
-    //                                     "rs485: tx " + jsonData.test485.sendPackets +
-    //                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
-    //                                     "cnt test: " +
-    //                                     "step1: " + jsonData.testFreq.capStep1 +
-    //                                     ", step2: " + jsonData.testFreq.capStep2 +
-    //                                     ", step3: " + jsonData.testFreq.capStep3, "good");
-    //            } else {
-    //                //addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-    //                //programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-    //                test232Rectangle.color = jsonData.test232.testResult === "finished" ? "green" : "red"; test232ProgressBar.value = 0;
-    //                test485Rectangle.color = jsonData.test485.testResult === "finished" ? "green" : "red"; test485ProgressBar.value = 0;
-    //                testFreqRectangle.color = jsonData.testFreq.testResult === "finished" ? "green" : "red"; testFreqProgressBar.value = 0;
-    //                toast.displayMessage(qsTr("Test completed failed") + "\r\n" +
-    //                                     "rs232: tx " + jsonData.test232.sendPackets +
-    //                                     ", rx " + jsonData.test232.receivePackets + "\r\n" +
-    //                                     "rs485: tx " + jsonData.test485.sendPackets +
-    //                                     ", rx " + jsonData.test485.receivePackets + "\r\n" +
-    //                                     "cnt test: " +
-    //                                     "step1: " + jsonData.testFreq.capStep1 +
-    //                                     ", step2: " + jsonData.testFreq.capStep2 +
-    //                                     ", step3: " + jsonData.testFreq.capStep3, "bad");
-    //            }
-    //        }
-
-    //        onSignalTestError: {
-    //            var jsonData = JSON.parse(json)
-    //            addToDatabaseRectangle.color = "red"; addToDatabaseProgressBar.value = 0;
-    //            programmingRectangle.color = "red"; programmingProgressBar.value = 0;
-    //            test232Rectangle.color = "red"; test232ProgressBar.value = 0;
-    //            test485Rectangle.color = "red"; test485ProgressBar.value = 0;
-    //            testFreqRectangle.color = "red"; testFreqProgressBar.value = 0;
-    //            toast.displayMessage(jsonData.message, "bad");
-    //        }
-
-    //        onSignalTestUpdateStatus: {
-    //            var jsonData = JSON.parse(json)
-    //            if(jsonData.testStep === "programming") {
-    //                addToDatabaseRectangle.color = "green"
-    //                addToDatabaseProgressBar.value = parseInt(jsonData.percent)
-    //                if(parseInt(jsonData.percent) < 100) {
-    //                    programmingRectangle.color = "yellow"
-    //                } else {
-    //                    programmingRectangle.color = "green"
-    //                }
-    //                programmingProgressBar.value = parseInt(jsonData.percent)
-    //            }
-    //            if(jsonData.testStep === "waitTestNotEnd") {
-    //                setTestIndicationg(jsonData.test232.testResult, test232ProgressBar, test232Rectangle)
-    //                setTestIndicationg(jsonData.test485.testResult, test485ProgressBar, test485Rectangle)
-    //                setTestIndicationg(jsonData.testFreq.testResult, testFreqProgressBar, testFreqRectangle)
-    //            }
-    //        }
-    //    }
-
-    //        Shortcut {
-    //          sequence: "Space"
-    //          onActivated: {
-    //              if(viewControl.isConnected()) {
-    //                  viewControl.startTestStend()
-    //                  toast.flush()
-    //              } else {
-    //                  toast.displayMessage(qsTr("You need to establish a connection"), "neutral");
-    //              }
-    //          }
-    //        }
-    //    }
 
     ColumnLayout {
         spacing: 5

@@ -4,13 +4,15 @@
 #include <QObject>
 #include <memory.h>
 #include "interfaces/interfacesAbstract.h"
-#include "interfaces/interfaceEth.h"
+#include "scanerQr/interfaces/interfaceSerial.h"
 #include <QJsonObject>
 
 class Connection : public QObject {
     Q_OBJECT
 public:
     explicit Connection();
+
+    Q_PROPERTY(QString interfaceName READ getInterfaceName NOTIFY interfaceNameIsChanged)
 
 public slots:
     bool addConnection(QString name, const QString & parameters);
@@ -25,7 +27,16 @@ signals:
     void signalOpened();
     void signalClosed();
 
+    void interfaceNameIsChanged();
+
 private:
+    QString getInterfaceName() {
+        if(m_interface.get() != nullptr) {
+            return m_interface->getInterfaceName();
+        }
+        return "";
+    }
+
     std::shared_ptr<interfacesAbstract> m_interface;
 };
 

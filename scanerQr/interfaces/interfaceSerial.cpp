@@ -22,17 +22,17 @@ InterfaceSerial::~InterfaceSerial() {
 
 bool InterfaceSerial::openInterface(QString name, const QString & parameters) {
     bool res = false;
-    this->portHandler->setPortName(name);
-    this->parametersJson = QJsonDocument::fromJson(parameters.toUtf8()).object();
+    portHandler->setPortName(name);
+    parametersJson = QJsonDocument::fromJson(parameters.toUtf8()).object();
     auto baudrate = parametersJson.find("baudrate");
     if(baudrate != parametersJson.end()) {
-        portHandler->setBaudRate(baudrate.value().toInt());
-        portHandler->setDataBits(QSerialPort::Data8);
-        portHandler->setParity(QSerialPort::NoParity);
-        portHandler->setStopBits(QSerialPort::OneStop);
-        portHandler->setFlowControl(QSerialPort::NoFlowControl);
         res  = portHandler->open(QIODevice::ReadWrite);
         if(res) {
+            portHandler->setBaudRate(baudrate.value().toInt());
+            portHandler->setDataBits(QSerialPort::Data8);
+            portHandler->setParity(QSerialPort::NoParity);
+            portHandler->setStopBits(QSerialPort::OneStop);
+            portHandler->setFlowControl(QSerialPort::NoFlowControl);
             connect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
             connect(portHandler.get(), &QSerialPort::readyRead, this, [&]() {
                 QTimer::singleShot(100, Qt::CoarseTimer, [&] {

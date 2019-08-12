@@ -1,6 +1,5 @@
 
-#QT += quick quickcontrols2 serialport positioning location opengl qml network quick sql concurrent
-QT += qml network quickcontrols2 quick serialport charts sql #opengl #concurrent
+QT += qml network quickcontrols2 quick serialport charts sql #opengl
 
 CONFIG += c++14
 

@@ -15,25 +15,41 @@ Rectangle {
     Connections {
         target: viewControl
         onSearchStendComplete: {
-            busyIndicator.visible = false;
-        }
-        onSignalInterfaceReady: {
-            statusPannel.setStatusConnected()
-        }
-        onSignalInterfaceError: {
-            busyIndicator.visible = false;
-            statusPannel.setStatusDisconnected()
-            toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
-        }
-        onSignalInterfaceClosed: {
-            busyIndicator.visible = false;
-            statusPannel.setStatusDisconnected()
+            if(viewControl.stendRole == "qch1") {
+                busyIndicator.visible = false;
+            }
         }
         onSignalStendLost: {
-            toast.displayMessage(qsTr("Connection lost"), "bad")
-            viewControl.closeConnection()
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(qsTr("Connection lost"), "bad")
+                viewControl.closeConnection()
+            }
         }
     }
+
+    Connections {
+        target: stendInterface
+
+        onSignalOpened: {
+            if(viewControl.stendRole == "qch1") {
+                statusPannel.setStatusConnected()
+            }
+        }
+        onSignalError: {
+            if(viewControl.stendRole == "qch1") {
+                busyIndicator.visible = false;
+                statusPannel.setStatusDisconnected()
+                toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
+            }
+        }
+        onSignalClosed: {
+            if(viewControl.stendRole == "qch1") {
+                busyIndicator.visible = false;
+                statusPannel.setStatusDisconnected()
+            }
+        }
+    }
+
 
     ColumnLayout {
         anchors.fill: parent

@@ -22,7 +22,13 @@ Item {
                 Column {
                     spacing: 30
 
-                    Label{ text: qsTr("Current port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                    RowLayout {
+                        Label{ text: qsTr("Current port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                        Label{ text: qrScanerInterface.interfaceName.length !== 0 ? qrScanerInterface.interfaceName : "NA";
+                            color: qrScanerInterface.interfaceName.length !== 0 ? "black" : "red";
+                            font.pointSize: 8
+                        }
+                    }
 
                     RowLayout {
                         Label{ text: qsTr("Port"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
@@ -30,59 +36,37 @@ Item {
                             id:serialPortComBox
                             implicitHeight: 35
                             font.pointSize: 8
-//                            enabled: false
                             delegate: Delegates.ComboxDelegateTypical{}
                             model: {
                                 var result = [];
-                                var json = JSON.parse(viewControl.getScanersList());
+                                var json = JSON.parse(qrScanerInterface.getListConnections());
                                 for(var i in json.portName)
                                     result.push(json.portName[i]);
                                 return result;
                             }
                         }
-                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Make active");
+                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Refrash");
                             onClicked: {
-                                if(viewControl.isScanerConnected()) {
-                                    viewControl.closeScanerConnection()
+                                var result = [];
+                                var json = JSON.parse(qrScanerInterface.getListConnections());
+                                for(var i in json.portName)
+                                    result.push(json.portName[i]);
+                                serialPortComBox.model = result;
+                            }
+                        }
+                        Button { Material.background: Material.Green; Material.foreground: "white";
+                            font.pointSize: 8; text: qsTr("Make active");
+                            enabled: serialPortComBox.currentText.length !== 0
+                            onClicked: {
+                                if(stendInterface.isOpened()) {
+                                    stendInterface.close()
                                 }
                                 Settings.scanerPort = serialPortComBox.currentText
 
-                                var params = []
-                                if(!viewControl.addScanerConnection(Settings.scanerPort, JSON.stringify(params))) {
-
-                                }
-                            }
-                        }
-                    }
-
-                    GridLayout {
-                        rows: 3
-                        columns: 1
-
-                        Label{ text: "Cap 1 min value"; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
-                        TextField {
-
-                        }
-                    }
-
-
-                    Label{ text: qsTr("Available ports"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
-
-                    GridLayout {
-                        rows: 3
-                        columns: 1
-
-                        Label{ text: "Cap 1 min value"; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
-                        TextField {
-                            placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
-                            validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
-                            color: acceptableInput ? "black" : "red"
-                            text: Settings.cap1Min
-                            onEditingFinished: {
-                                Settings.cap1Min = text;
-                            }
-                            onAccepted: {
-                                Settings.cap1Min = text;
+                                var params = {}
+                                params.baudrate = 115200;
+                                console.log(JSON.stringify(params));
+                                stendInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
                             }
                         }
                     }

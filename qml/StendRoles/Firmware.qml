@@ -19,28 +19,33 @@ Rectangle {
                 busyIndicator.visible = false;
             }
         }
-        onSignalInterfaceReady: {
+        onSignalStendLost: {
+            if(viewControl.stendRole == "firmware") {
+                toast.displayMessage(qsTr("Connection lost"), "bad")
+                viewControl.closeConnection()
+            }
+        }
+    }
+
+    Connections {
+        target: stendInterface
+
+        onSignalOpened: {
             if(viewControl.stendRole == "firmware") {
                 statusPannel.setStatusConnected()
             }
         }
-        onSignalInterfaceError: {
+        onSignalError: {
             if(viewControl.stendRole == "firmware") {
                 busyIndicator.visible = false;
                 statusPannel.setStatusDisconnected()
                 toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
             }
         }
-        onSignalInterfaceClosed: {
+        onSignalClosed: {
             if(viewControl.stendRole == "firmware") {
                 busyIndicator.visible = false;
                 statusPannel.setStatusDisconnected()
-            }
-        }
-        onSignalStendLost: {
-            if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
             }
         }
     }

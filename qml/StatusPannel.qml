@@ -67,7 +67,7 @@ Pane {
                         var params = {};
                         params.port = 45454;
                         connectActivated();
-                        viewControl.addConnection(Settings.activeStend, JSON.stringify(params));
+                        stendInterface.addConnection(Settings.activeStend, JSON.stringify(params));
                     }
                 }
             }
