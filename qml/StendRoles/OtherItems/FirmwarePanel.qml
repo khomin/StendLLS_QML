@@ -11,28 +11,33 @@ SwipeView {
     clip: true
     interactive: false
 
-    //    function drawChart(dataArrayVoltage, dataArrayCurrent, dataArrayCnt,
-    //                       chartLineVoltage, chartLineCurrent, chartLineCnt,
-    //                       chart) {
-    //        chartLineVoltage.clear();
-    //        chartLineCurrent.clear();
-    //        chartLineCnt.clear();
+    Connections {
+        target: viewControl
+        onSignalUpdateRealTimeData: {
+            var jsonData = JSON.parse(json)
+            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
+            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
+            llsFreqLabel.text = jsonData.freq
 
-    //        chart.graphLength = dataArrayVoltage.length
-    //        chart.graphAmplMaxVoltage = 0
-    //        chart.graphAmplMaxCurrent = 0
-    //        chart.graphAmplMaxCnt = 0
+            if(jsonData.mcu_serial_number !== "303030303030303030303030") {
+                llsMcuSnLabel.text = jsonData.mcu_serial_number
+            } else {
+                llsMcuSnLabel.text = "NA";
+            }
+            llsMcuSnDeviceLabel.text = llsMcuSnLabel.text
 
-    //        chart.graphAmplMaxVoltage = Math.max(dataArrayVoltage)
-    //        chart.graphAmplMaxCurrent = Math.max(dataArrayCurrent)
-    //        chart.graphAmplMaxCnt = Math.max(dataArrayCnt)
+            llsSnDeviceLabel.text = jsonData.serial_number
 
-    //        for(var i=0; i<dataArrayVoltage.length; i++) {
-    //            chartLineVoltage.append(new Date(), parseInt(dataArrayVoltage[i]));
-    //            chartLineCurrent.append(new Date(), parseInt(dataArrayCurrent[i]));
-    //            chartLineCnt.append(new Date(), parseInt(dataArrayCnt[i]));
-    //        }
-    //    }
+            drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
+            drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);
+            drawChartLine(chart, chartCntLine, jsonData.cntCollect);
+
+            if(busyIndicator.visible == true) {
+                busyIndicator.visible = false;
+            }
+        }
+    }
+
 
     function drawChartLine(chart, chartLine, dataArray) {
         chartLine.clear();
@@ -82,33 +87,6 @@ SwipeView {
             testProgressBar.value = 100;
             testRectangle.color = "green"
             break;
-        }
-    }
-
-    Connections {
-        target: viewControl
-        onSignalUpdateRealTimeData: {
-            var jsonData = JSON.parse(json)
-            llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
-            llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
-            llsCntLabel.text = jsonData.cnt
-
-            if(jsonData.mcu_serial_number !== "303030303030303030303030") {
-                llsMcuSnLabel.text = jsonData.mcu_serial_number
-            } else {
-                llsMcuSnLabel.text = "NA";
-            }
-            llsMcuSnDeviceLabel.text = llsMcuSnLabel.text
-
-            llsSnDeviceLabel.text = jsonData.serial_number
-
-            drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
-            drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);
-            drawChartLine(chart, chartCntLine, jsonData.cntCollect);
-
-            if(busyIndicator.visible == true) {
-                busyIndicator.visible = false;
-            }
         }
     }
 
@@ -260,10 +238,10 @@ SwipeView {
                             Label { text: "mA"}
                         }
                         Label {
-                            text: qsTr("CNT:")
+                            text: qsTr("Frequency:")
                         }
                         RowLayout {
-                            Label { id:llsCntLabel
+                            Label { id:llsFreqLabel
                                 text: "0"
                             }
                             Label { text: "Hz"}
@@ -471,7 +449,7 @@ SwipeView {
                     }
                     RowLayout {
                         Label { text: qsTr("DEVICE SN: ") }
-                        Label { id:llsSnDeviceLabel; color: text == "TEST" ? "red" : (llsSnDeviceLabel.text === "NA" || llsSnDeviceLabel.text == "000000000000" ? "red" : "black") }
+                        Label { id:llsSnDeviceLabel; color: text == "------------" ? "red" : (llsSnDeviceLabel.text === "NA" || llsSnDeviceLabel.text == "000000000000" ? "red" : "black") }
                     }
                 }
             }

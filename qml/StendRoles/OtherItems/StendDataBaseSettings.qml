@@ -51,10 +51,10 @@ Item {
                             color: acceptableInput ? "black" : "red"
                             text: Settings.databaseHost
                             onEditingFinished: {
-                                Settings.databaseName = text;
+                                Settings.databaseHost = text;
                             }
                             onAccepted: {
-                                Settings.databaseName = text;
+                                Settings.databaseHost = text;
                             }
                         }
 

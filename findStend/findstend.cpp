@@ -10,21 +10,21 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
     mSearchTimer->start();
 
     mUdpSocket = new QUdpSocket(this);
-    mUdpSocket->bind(QHostAddress::Any, network_port);
+    mUdpSocket->bind(QHostAddress::Any, Globals::network_port);
     mPacket_counter = 0;
 
     QObject::connect(mSearchTimer, &QTimer::timeout, this, [&]() {
-        sConnectSettings dest;
+        Globals::sConnectSettings dest;
 
         if(mSearch_ip_state != idle) {
             if(mSearch_ip_timeout < mSearch_ip_const_time) {
                 mSearch_ip_timeout++;
                 /* Отправляем запрос */
-                QByteArray request(broadcast_call);
+                QByteArray request(Globals::broadcast_call);
                 // добавляем в запрос версию по
-                request.push_back(stend_version);
+                request.push_back(Globals::stend_version);
 
-                mUdpSocket->writeDatagram(request, request.length(), QHostAddress::Broadcast, network_port);
+                mUdpSocket->writeDatagram(request, request.length(), QHostAddress::Broadcast, Globals::network_port);
                 mPacket_counter++;
             } else {
                 mSearch_ip_timeout = 0;
@@ -48,8 +48,8 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
             qDebug() << "udp port: " << hostPort;
 
             QString dataStr(buf);
-            if(dataStr.toUtf8().contains(QByteArray(broadcast_call_reply))) {
-                sConnectSettings dest;
+            if(dataStr.toUtf8().contains(QByteArray(Globals::broadcast_call_reply))) {
+                Globals::sConnectSettings dest;
                 dest.dateReply = QDateTime::currentDateTime();
                 quint32 addr32 = hostAddr.toIPv4Address();
                 dest.ip.ip_addr[3] = (addr32 & 0xFF);
@@ -88,17 +88,17 @@ void FindStend::startfind() {
     QHostAddress address;
     QString address_str;
     QList <QHostAddress>list = QNetworkInterface::allAddresses();
-    QVector <sIp_list>ip_list;
+    QVector <Globals::sIp_list>ip_list;
 
     for(int i=0; i<list.size(); i++) {
         address = list.at(i);
         address_str = address.toString();
         if(address_str.count('.')==3) {
-            sIp_list ip;
-            ip.ip_addr[0] = address_str.section(".",0,0).toShort();
-            ip.ip_addr[1] = address_str.section(".",1,1).toShort();
-            ip.ip_addr[2] = address_str.section(".",2,2).toShort();
-            ip.ip_addr[3] = address_str.section(".",3,3).toShort();
+            Globals::sIp_list ip;
+            ip.ip_addr[0] = (uint8_t)address_str.section(".",0,0).toInt();
+            ip.ip_addr[1] = (uint8_t)address_str.section(".",1,1).toInt();
+            ip.ip_addr[2] = (uint8_t)address_str.section(".",2,2).toInt();
+            ip.ip_addr[3] = (uint8_t)address_str.section(".",3,3).toInt();
             if(ip.ip_addr[0] != 127 && ip.ip_addr[1] != 0
                     && ip.ip_addr[2] != 0 && ip.ip_addr[3] != 1) {
                 ip_list.push_back(ip);

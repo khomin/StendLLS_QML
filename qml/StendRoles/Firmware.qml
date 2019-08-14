@@ -19,6 +19,16 @@ Rectangle {
                 busyIndicator.visible = false;
             }
         }
+        onSignalDataBaseError: {
+            if(viewControl.stendRole == "firmware") {
+            toast.displayMessage(err, "bad")
+            }
+        }
+        onGoodMessage: {
+            if(viewControl.stendRole == "firmware") {
+            toast.displayMessage(text, "good")
+            }
+        }
     }
 
     Connections {

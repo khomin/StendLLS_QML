@@ -6,6 +6,7 @@
 #include "translate/translation.h"
 #include "view.h"
 #include"clipboard.h"
+#include "selectLlsTestType/selectLlsTesttype.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,17 +25,23 @@ int main(int argc, char *argv[])
     View viewControl;
 
     engine.rootContext()->setContextProperty("viewControl", &viewControl);
+
     engine.rootContext()->setContextProperty("translate", &translater);
+
     qmlRegisterSingletonType<Settings>("Settings", 1, 0, "Settings", Settings::qmlInstance);
 
     engine.rootContext()->setContextProperty("stendProp", QVariant::fromValue(viewControl.getStendProp()));
     engine.rootContext()->setContextProperty("stendInterface", QVariant::fromValue(viewControl.getStendInterface()));
+    engine.rootContext()->setContextProperty("stendQchDecision", QVariant::fromValue(viewControl.getStendQchDecision()));
 
     engine.rootContext()->setContextProperty("qrScaner", QVariant::fromValue(viewControl.getQrScanerProp()));
     engine.rootContext()->setContextProperty("qrScanerInterface", QVariant::fromValue(viewControl.getQrScanerInterface()));
 
     engine.rootContext()->setContextProperty("stendFind", QVariant::fromValue(viewControl.getFindStend()));
     engine.rootContext()->setContextProperty("stendFindModel", QVariant::fromValue(viewControl.getFindStend()->getModel()));
+
+    engine.rootContext()->setContextProperty("llsTypeModel", QVariant::fromValue(viewControl.getSelectLlsType()->getModel()));
+    engine.rootContext()->setContextProperty("selectLlsTestType", viewControl.getSelectLlsType());
 
     engine.rootContext()->setContextProperty("logStendModel", QVariant::fromValue(viewControl.getStendLogModel()));
 

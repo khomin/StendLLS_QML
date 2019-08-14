@@ -33,7 +33,6 @@ ApplicationWindow {
         id:rootSwipeView
         anchors.fill: parent
         currentIndex: 0//3
-//        interactive: false
         Item{
             RowLayout {
                 anchors.verticalCenter: parent.verticalCenter

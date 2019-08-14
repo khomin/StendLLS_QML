@@ -20,7 +20,7 @@ public:
         ModelRoleMac,
     };
 
-    bool addItem(sConnectSettings value);
+    bool addItem(Globals::sConnectSettings value);
 
     void removeAll();
 

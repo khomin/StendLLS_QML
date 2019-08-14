@@ -31,6 +31,8 @@ QJsonObject Settings::getSettings() {
         emit frmwareBootPathIsChanged();
         emit curMinIsChanged();
         emit curMaxIsChanged();
+        emit tempMaxChanged();
+        emit tempMinChanged();
     } else {
         qDebug() << "Cannot read file" << file.errorString();
     }

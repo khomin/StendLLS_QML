@@ -1,6 +1,8 @@
 #include "view.h"
 
 View::View(QObject *parent) : QObject(parent) {
+    validateQchValues = new ValidateQchValues(&selectLlsTestType);
+
     stendConnection.setType(Connection::ConnectionEth);
 
     qrScanerConnection.setType(Connection::ConnectionSerial);
@@ -19,6 +21,12 @@ View::View(QObject *parent) : QObject(parent) {
     connect(&findStend, &FindStend::searchComplete, this, &View::searchStendComplete);
     connect(&stendApi, &StendApi::updateRealTimeData, this, &View::signalUpdateRealTimeData);
 
+    connect(&stendApi, &StendApi::updateLastData, validateQchValues, &ValidateQchValues::insertLlsData);
+
+    connect(&stendApi, &StendApi::dataBaseError, this, &View::signalDataBaseError);
+
+    connect(&stendApi, &StendApi::goodMessage, this, &View::goodMessage);
+
     connect(&qrScanerConnection, &Connection::signalReadyReadNewData, this, [&](QByteArray data) {
         qrScaner.insertQrData(data);
     });
@@ -36,6 +44,10 @@ StendApi* View::getStendProp() {
     return &stendApi;
 }
 
+ValidateQchValues* View::getStendQchDecision() {
+    return validateQchValues;
+}
+
 Connection* View::getQrScanerInterface() {
     return &qrScanerConnection;
 }
@@ -46,6 +58,10 @@ LogModel* View::getStendLogModel() {
 
 QrScaner* View::getQrScanerProp() {
     return &qrScaner;
+}
+
+SelectLlsTestType* View::getSelectLlsType() {
+    return &selectLlsTestType;
 }
 
 void View::startTestStend() {

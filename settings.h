@@ -42,6 +42,9 @@ public:
     Q_PROPERTY(QString curMax READ getCurMin WRITE setCurMin NOTIFY curMinIsChanged)
     Q_PROPERTY(QString curMin READ getCurMax WRITE setCurMax NOTIFY curMaxIsChanged)
 
+    Q_PROPERTY(QString tempMax READ getTempMax NOTIFY tempMaxChanged)
+    Q_PROPERTY(QString tempMin READ getTempMin NOTIFY tempMinChanged)
+
     Q_PROPERTY(QString cap1Min READ getCap1Min WRITE setCap1Min NOTIFY cap1MinIsChanged)
     Q_PROPERTY(QString cap2Min READ getCap2Min WRITE setCap2Min NOTIFY cap2MinIsChanged)
     Q_PROPERTY(QString cap3Min READ getCap3Min WRITE setCap3Min NOTIFY cap3MinIsChanged)
@@ -52,6 +55,7 @@ public:
     Q_PROPERTY(QString firmwareDutPath READ getFirmwareDutPath WRITE setFirmwareDutPath NOTIFY firmwareDutPathIsChanged)
     Q_PROPERTY(QString frmwareBootPath READ getFirmwareBootPath WRITE setFirmwareBootPath NOTIFY frmwareBootPathIsChanged)
 
+    /* scaner */
     Q_PROPERTY(QString scanerPort READ getScanerPort WRITE setScanerPort NOTIFY scanerPortIsChanged)
 
     QString getLanguage() { return settingsJson.value("language").toString(); }
@@ -111,6 +115,9 @@ public:
     QString getScanerPort() { return settingsJson.value("scanerPort").toString(); }
     void setScanerPort(QString value) { settingsJson.insert("scanerPort", value); saveSettingsToFile(); scanerPortIsChanged(); }
 
+    float getTempMax() { return settingsJson.value("tempMax").toString().toFloat(); }
+    float getTempMin() { return settingsJson.value("tempMin").toString().toFloat(); }
+
 protected:
     Settings();
     virtual ~Settings();
@@ -135,6 +142,8 @@ signals:
     void curMinIsChanged();
     void curMaxIsChanged();
     void scanerPortIsChanged();
+    void tempMaxChanged();
+    void tempMinChanged();
 
 private:
     QJsonObject settingsJson;

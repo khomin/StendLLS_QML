@@ -25,7 +25,7 @@ Pane {
         onStendNotReply: {
             if(viewControl.stendRole == "qch1") {
                 toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
+                stendInterface.close()
             }
         }
     }
