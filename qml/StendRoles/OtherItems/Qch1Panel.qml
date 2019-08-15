@@ -110,6 +110,12 @@ SwipeView {
         }
     }
 
+    Component.onCompleted: {
+        var params = {}
+        params.baudrate = 115200;
+        qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
+    }
+
     ColumnLayout {
         spacing: 5
         RowLayout {

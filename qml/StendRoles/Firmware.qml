@@ -21,12 +21,12 @@ Rectangle {
         }
         onSignalDataBaseError: {
             if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(err, "bad")
+            toast.displayMessage(err, "bad")
             }
         }
         onGoodMessage: {
             if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(text, "good")
+            toast.displayMessage(text, "good")
             }
         }
         onBadMessage: {
