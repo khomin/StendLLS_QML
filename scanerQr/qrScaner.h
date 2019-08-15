@@ -17,6 +17,12 @@ public:
         return mQrCode;
     }
 
+    Q_INVOKABLE void flushQr() {
+        setQrCodeSn("");
+        mQrCode = "";
+        setIsValid(false);
+    }
+
 signals:
     void qrCodeUpdateSerialNum(QString number);
     void qrCodeError(QString message);

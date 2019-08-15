@@ -23,7 +23,7 @@ Pane {
     Connections {
         target: stendProp
         onStendNotReply: {
-            if(viewControl.stendRole == "qch1") {
+            if((viewControl.stendRole == "qch1") || (viewControl.stendRole == "qch2")) {
                 toast.displayMessage(qsTr("Connection lost"), "bad")
                 stendInterface.close()
             }
@@ -33,18 +33,17 @@ Pane {
     Connections {
         target: stendInterface
         onSignalOpened: {
-            if(viewControl.stendRole == "qch1") {
-                //
+            if((viewControl.stendRole == "qch1") || (viewControl.stendRole == "qch2")) {
             }
         }
         onSignalError: {
-            if(viewControl.stendRole == "qch1") {
+            if((viewControl.stendRole == "qch1") || (viewControl.stendRole == "qch2")) {
                 busyIndicator.visible = false;
                 toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
             }
         }
         onSignalClosed: {
-            if(viewControl.stendRole == "qch1") {
+            if((viewControl.stendRole == "qch1") || (viewControl.stendRole == "qch2")) {
                 busyIndicator.visible = false;
             }
         }

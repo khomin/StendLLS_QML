@@ -6,7 +6,7 @@ import QtCharts 2.3
 import Settings 1.0
 
 SwipeView {
-    id:qch1PannelScroll
+    id:qch2PannelScroll
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
@@ -15,7 +15,7 @@ SwipeView {
     Connections {
         target: viewControl
         onSignalUpdateRealTimeData: {
-            if(viewControl.stendRole == "qch1") {
+            if(viewControl.stendRole == "qch2") {
                 var jsonData = JSON.parse(json)
                 llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
                 llsPowerCurrentLabel.text = jsonData.power_current.toFixed(1)
@@ -40,17 +40,17 @@ SwipeView {
             }
         }
         onSignalDataBaseError: {
-            if(viewControl.stendRole == "qch1") {
+            if(viewControl.stendRole == "qch2") {
                 toast.displayMessage(err, "bad")
             }
         }
         onGoodMessage: {
-            if(viewControl.stendRole == "qch1") {
+            if(viewControl.stendRole == "qch2") {
                 toast.displayMessage(text, "good")
             }
         }
         onBadMessage: {
-            if(viewControl.stendRole == "qch1") {
+            if(viewControl.stendRole == "qch2") {
                 toast.displayMessage(text, "bad")
             }
         }
@@ -89,7 +89,7 @@ SwipeView {
     Connections {
         target: qrScaner
         onQrCodeError: {
-            if(viewControl.stendRole == "qch1") {
+            if(viewControl.stendRole == "qch2") {
                 toast.displayMessage(message, "bad");
             }
         }
@@ -110,6 +110,12 @@ SwipeView {
         }
     }
 
+    Component.onCompleted: {
+        var params = {}
+        params.baudrate = 115200;
+        qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
+    }
+
     ColumnLayout {
         spacing: 5
         RowLayout {
@@ -118,7 +124,7 @@ SwipeView {
                 id: logPanel
                 Material.elevation: 2
                 implicitWidth: 200
-                implicitHeight: qch1PannelScroll.height - 20
+                implicitHeight: qch2PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 ColumnLayout {
                     width: parent.width
@@ -157,7 +163,7 @@ SwipeView {
                 Material.elevation: 6
                 Layout.leftMargin: 10
                 implicitWidth: 330
-                implicitHeight: qch1PannelScroll.height - 20
+                implicitHeight: qch2PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop
 
                 ScrollView {
@@ -224,6 +230,14 @@ SwipeView {
                                 color: stendQchDecision.snValid ? "black" : "red"
                             }
 
+                            Label {
+                                text: qsTr("Scan.num:")
+                            }
+                            Label { id:llsScannedNumLabel;
+                                text: qrScaner.qrCodeSn
+                                color: qrScaner.isValid ? "black" : "red"
+                            }
+
                             Label { text: qsTr("Temperature:") }
                             RowLayout {
                                 Label { id:llsTempLabel; text: "NA"
@@ -261,22 +275,21 @@ SwipeView {
                             RowLayout {
                                 spacing: 10
                                 Button {
-                                    id:llsWriteTestButton;
+                                    id:llsWriteSnToLlsButton;
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
-                                    text: qsTr("Save test");
+                                    text: qsTr("Write SN to LLS");
                                     enabled: qrScaner.isValid
                                              && stendProp.isConnected
                                              && stendQchDecision.levelEmptyTriggered
                                              && stendQchDecision.levelFullTriggered
                                              && llsSnLabel.text == "------------"
-                                             && llsMcuSnLabel.text != "NA"
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
                                     onClicked: {
-                                        stendProp.saveTestLlsToDb(llsMcuSnLabel.text)
+                                        stendProp.writeSerialNumToLls(qrScaner.qrCodeSn.toString())
                                     }
                                 }
                                 Button {
@@ -295,6 +308,7 @@ SwipeView {
                                         var result = []
                                         if(mcuSn !== "NA" && qrCode !== "NA") {
                                             stendProp.markLlsAsDefective(mcuSn, qrCode, JSON.stringify(result))
+                                            qrScaner.flushQr();
                                         }
                                     }
                                 }
@@ -309,7 +323,7 @@ SwipeView {
                 Material.elevation: 6
                 Layout.leftMargin: 10
                 Layout.fillWidth: true
-                implicitHeight: qch1PannelScroll.height - 20
+                implicitHeight: qch2PannelScroll.height - 20
                 Layout.alignment: Qt.AlignTop
 
                 ChartView {

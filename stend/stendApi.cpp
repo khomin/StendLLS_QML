@@ -418,10 +418,18 @@ bool StendApi::isAvailableLlsRangeValues() {
     return false;
 }
 
-void StendApi::writeSerialNumberToLls(QString sn) {
+void StendApi::writeSerialNumToLls(QString sn) {
     QJsonObject object;
     object.insert("sn", sn);
     command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::write_serial_dut, object));
+}
+
+void StendApi::saveTestLlsToDb(QString mcuNum) {
+    try {
+        DataBase::Instance().insertTestData(mcuNum, "tested", llsInfoStruct.test, true);
+    } catch(QString ex) {
+        emit dataBaseError(ex);
+    }
 }
 
 void StendApi::markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonDataStr) {

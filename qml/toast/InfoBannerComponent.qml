@@ -30,7 +30,7 @@ Item {
             anchors.fill: parent
             Text {
                 id: messageText
-                font.pixelSize: 24
+                font.pixelSize: 18
                 renderType: Text.QtRendering
                 width: parent.width
                 anchors.verticalCenter: parent.verticalCenter

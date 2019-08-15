@@ -45,7 +45,8 @@ public slots:
     bool getStendIsConnected() { return mStendIsConnected; }
     void setStendIsConnected(bool value) { mStendIsConnected = value; emit stendIsConnectedChanged(); }
 
-    void writeSerialNumberToLls(QString sn);
+    void saveTestLlsToDb(QString mcuNum);
+    void writeSerialNumToLls(QString sn);
     void markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonData);
 
 signals:

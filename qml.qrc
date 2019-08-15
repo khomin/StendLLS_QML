@@ -20,5 +20,6 @@
         <file>qml/StendRoles/OtherItems/StendScanerSettings.qml</file>
         <file>qml/StendRoles/OtherItems/SelectLlsType.qml</file>
         <file>qml/StendRoles/OtherItems/SelectMode.qml</file>
+        <file>qml/StendRoles/OtherItems/Qch2Panel.qml</file>
     </qresource>
 </RCC>
