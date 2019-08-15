@@ -11,13 +11,6 @@ import Settings 1.0
 Item {
     id:testSettingsWidget
 
-    Component.onCompleted: {
-        var params = {}
-        params.baudrate = 115200;
-        console.log(JSON.stringify(params));
-        qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
-    }
-
     ScrollView {
         anchors.fill: parent
         ColumnLayout {
@@ -53,7 +46,7 @@ Item {
                                 return result;
                             }
                         }
-                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Refrash");
+                        Button { Material.background: Material.Grey; Material.foreground: "white"; font.pointSize: 8; text: qsTr("Refresh");
                             onClicked: {
                                 var result = [];
                                 var json = JSON.parse(qrScanerInterface.getListConnections());
@@ -64,7 +57,7 @@ Item {
                         }
                         Button { Material.background: Material.Green; Material.foreground: "white";
                             font.pointSize: 8; text: qsTr("Make active");
-                            enabled: serialPortComBox.currentText != currentPort.text
+                            enabled: (serialPortComBox.currentText != currentPort.text) && (serialPortComBox.currentText.length !== 0)
                             onClicked: {
                                 if(stendInterface.isOpened()) {
                                     stendInterface.close()

@@ -25,7 +25,7 @@ Pane {
         onStendNotReply: {
             if(viewControl.stendRole == "qch1") {
                 toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
+                stendInterface.close()
             }
         }
     }
@@ -61,7 +61,7 @@ Pane {
             Button { id:connectButton;
                 Material.background: stendInterface.isOpened() ? Material.Green : "#406D9E";
                 Material.foreground: "white";
-                text: stendProp.stendIsConnected ? qsTr("Disconnect") : qsTr("Connect");
+                text: stendProp.isConnected ? qsTr("Disconnect") : qsTr("Connect");
                 font.pointSize: 8
                 implicitHeight: 45;
                 focus: false
@@ -91,14 +91,14 @@ Pane {
             Layout.alignment: Qt.AlignLeft
             Label { id:statusLabel; font.pointSize: 8;
                 Layout.alignment: Qt.AlignCenter;
-                text: stendProp.stendIsConnected ? (qsTr("Connected")) : (qsTr("Disconnected"))
-                color: stendProp.stendIsConnected ? (Material.color(Material.Green, Material.Shade800)) : (Material.color(Material.Red, Material.Shade800))
+                text: stendProp.isConnected ? (qsTr("Connected")) : (qsTr("Disconnected"))
+                color: stendProp.isConnected ? (Material.color(Material.Green, Material.Shade800)) : (Material.color(Material.Red, Material.Shade800))
             }
             Rectangle {
                 radius: 5
                 width: 150
                 height: 5
-                color: stendProp.stendIsConnected ? (Material.color(Material.Green, Material.Shade10)) : (Material.color(Material.Red, Material.Shade800))
+                color: stendProp.isConnected ? (Material.color(Material.Green, Material.Shade10)) : (Material.color(Material.Red, Material.Shade800))
             }
         }
     }

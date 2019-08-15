@@ -11,7 +11,7 @@ class FindStendItem : public QObject
     Q_OBJECT
 public:
 
-    explicit FindStendItem(sConnectSettings value) {
+    explicit FindStendItem(Globals::sConnectSettings value) {
         this->value = value;
         ip = QString("%1.%2.%3.%4")
                 .arg(value.ip.ip_addr[0])
@@ -34,7 +34,7 @@ public:
     QString getMac() {
         return mac;
     }
-    sConnectSettings getValue() {
+    Globals::sConnectSettings getValue() {
         return value;
     }
 
@@ -45,7 +45,7 @@ signals:
 private:
     QString ip;
     QString mac;
-    sConnectSettings value;
+    Globals::sConnectSettings value;
 };
 
 #endif // FINDSTENDITEM_H

@@ -34,6 +34,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap1Min
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap1Min = text;
                             }
@@ -48,6 +49,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap2Min
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap2Min = text;
                             }
@@ -62,6 +64,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap3Min
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap3Min = text;
                             }
@@ -76,6 +79,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap1Max
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap1Max = text;
                             }
@@ -90,6 +94,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap2Max
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap2Max = text;
                             }
@@ -104,6 +109,7 @@ Item {
                             validator: RegExpValidator { regExp: /^[\d]{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.cap3Max
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.cap3Max = text;
                             }

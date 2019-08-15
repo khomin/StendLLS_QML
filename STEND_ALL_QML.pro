@@ -1,7 +1,7 @@
 
 QT += qml network quickcontrols2 quick serialport charts sql #opengl
 
-CONFIG += c++14
+CONFIG += c++17
 
 TRANSLATIONS += \
         translate/Language_en.ts \
@@ -21,13 +21,18 @@ SOURCES += \
         findStend/findStendItem.cpp \
         findStend/findStendModel.cpp \
         findStend/findstend.cpp \
+        globals.cpp \
         main.cpp \
         scanerQr/interfaces/interfaceSerial.cpp \
         scanerQr/qrScaner.cpp \
+        selectLlsTestType/item.cpp \
+        selectLlsTestType/selectLlsTestModel.cpp \
+        selectLlsTestType/selectLlsTesttype.cpp \
         settings.cpp \
         stend/stendApi.cpp \
         stend/stendFirmware/programming.cpp \
         stend/stendTestStatus.cpp \
+        stend/validateQchValues.cpp \
         storeMisc.cpp \
         translate/translation.cpp \
         view.cpp
@@ -51,11 +56,15 @@ HEADERS += \
     globals.h \
     scanerQr/interfaces/interfaceSerial.h \
     scanerQr/qrScaner.h \
+    selectLlsTestType/item.h \
+    selectLlsTestType/selectLlsTestModel.h \
+    selectLlsTestType/selectLlsTesttype.h \
     settings.h \
     stend/stendApi.h \
     stend/stendFirmware/programming.h \
     stend/stendProperty.h \
     stend/stendTestStatus.h \
+    stend/validateQchValues.h \
     storeMisc.h \
     translate/translation.h \
     view.h

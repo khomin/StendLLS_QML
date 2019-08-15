@@ -39,7 +39,7 @@ public:
 #pragma pack(1)
     typedef struct {
         quint8 version;
-        sDutBaseStruct info;
+        Globals::sDutBaseStruct info;
     }sInputTcpTempStruct;
 #pragma pack()
 

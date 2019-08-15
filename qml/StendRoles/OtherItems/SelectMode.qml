@@ -3,70 +3,37 @@ import QtQuick.Layouts 1.1
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
+import QtQuick.Layouts 1.12
 import "qrc:/qml" as QmlCustomize
 import "qrc:/qml/delegates/" as Delegates
 import "qrc:/qml/toast/" as Toast
+import "qrc:/qml/StendRoles/" as StendRoles
 import "qrc:/qml/StendRoles/OtherItems" as StendOtherItems
 
-import Settings 1.0
-
-Rectangle {
-    id:firmwareRectangle
-    Connections {
-        target: viewControl
-        onSearchStendComplete: {
-            if(viewControl.stendRole == "firmware") {
-                busyIndicator.visible = false;
-            }
-        }
-        onSignalDataBaseError: {
-            if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(err, "bad")
-            }
-        }
-        onGoodMessage: {
-            if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(text, "good")
-            }
-        }
-        onBadMessage: {
-            if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(text, "bad")
-            }
-        }
-    }
-
-    Connections {
-        target: stendProp
-        onStendNotReply: {
-            if(viewControl.stendRole == "firmware") {
-                toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
-            }
-        }
-    }
-
-    Connections {
-        target: stendInterface
-        onSignalOpened: {
-            if(viewControl.stendRole == "firmware") {
-            }
-        }
-        onSignalError: {
-            if(viewControl.stendRole == "firmware") {
-                busyIndicator.visible = false;
-                toast.displayMessage(qsTr("Opening a host returned an error"), "bad")
-            }
-        }
-        onSignalClosed: {
-            if(viewControl.stendRole == "firmware") {
-                busyIndicator.visible = false;
-            }
-        }
-    }
-
+Item {
     ColumnLayout {
+        id:rootColumnLayout
         anchors.fill: parent
+
+        Connections {
+            target: viewControl
+            onSignalDataBaseError: {
+                if(viewControl.stendRole == "undefined") {
+                    toast.displayMessage(err, "bad")
+                }
+            }
+            onGoodMessage: {
+                if(viewControl.stendRole == "undefined") {
+                    toast.displayMessage(text, "good")
+                }
+            }
+            onBadMessage: {
+                if(viewControl.stendRole == "undefined") {
+                    toast.displayMessage(text, "bad")
+                }
+            }
+        }
+
         Pane {
             Layout.fillWidth: true
             Material.elevation: 6
@@ -77,13 +44,13 @@ Rectangle {
                 color: "#406D9E"
             }
             RowLayout {
-                implicitWidth: firmwareRectangle.width - 30
+                implicitWidth: rootColumnLayout.width - 30
                 implicitHeight: 50
                 anchors.verticalCenter: parent.verticalCenter
                 TabBar {
                     Material.accent: "white"
                     id: tabBar
-                    implicitWidth: (firmwareRectangle.width - toolBarButtonControl.width > 600) ? 600 : firmwareRectangle.width - toolBarButtonControl.width
+                    implicitWidth: (rootColumnLayout.width - toolBarButtonControl.width > 400) ? 400 : rootColumnLayout.width - toolBarButtonControl.width
                     implicitHeight: 50
                     background: Rectangle {
                         width: tabBar.width
@@ -94,28 +61,14 @@ Rectangle {
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/satellite-dish.svg"
                         icon.width: 10; icon.height: 10; height: 40
                         implicitWidth: 200
-                        onClicked: { firmwareSwipeView.setCurrentIndex(0)}
+                        onClicked: { qchSwipeView.setCurrentIndex(0) }
                         contentItem: Delegates.TabButtonDelegate {}
                     }
                     TabButton {
                         text: qsTr("DataBase"); font.pointSize: 8
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
                         icon.width: 10; icon.height: 10; height: 40
-                        onClicked: { firmwareSwipeView.setCurrentIndex(1)}
-                        contentItem: Delegates.TabButtonDelegate {}
-                    }
-                    TabButton {
-                        text: qsTr("Testing"); font.pointSize: 8
-                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
-                        icon.width: 10; icon.height: 10; height: 40
-                        onClicked: { firmwareSwipeView.setCurrentIndex(2)}
-                        contentItem: Delegates.TabButtonDelegate {}
-                    }
-                    TabButton {
-                        text: qsTr("Firmware programming"); font.pointSize: 8
-                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
-                        icon.width: 10; icon.height: 10; height: 40
-                        onClicked: { firmwareSwipeView.setCurrentIndex(3)}
+                        onClicked: { qchSwipeView.setCurrentIndex(1) }
                         contentItem: Delegates.TabButtonDelegate {}
                     }
                 }
@@ -139,7 +92,7 @@ Rectangle {
                                     icon.width: 14; icon.height: 14
                                     font.pointSize: 8;
                                     onClicked: {
-                                        onClicked: { firmwareSwipeView.setCurrentIndex(5)}
+                                        onClicked: { qchSwipeView.setCurrentIndex(2) }
                                     }
                                 }
                                 MenuItem { text: qsTr("About")
@@ -147,7 +100,7 @@ Rectangle {
                                     icon.width: 14; icon.height: 14
                                     font.pointSize: 8;
                                     onClicked: {
-                                        onClicked: { firmwareSwipeView.setCurrentIndex(6)}
+                                        onClicked: { qchSwipeView.setCurrentIndex(3) }
                                     }
                                 }
                             }
@@ -169,43 +122,55 @@ Rectangle {
             ColumnLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                SwipeView { id: firmwareSwipeView
+
+                SwipeView { id: qchSwipeView
                     spacing: 50
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     interactive: false
 
-                    //-- firmware panel
-                    StendOtherItems.FirmwarePanel {}
+                    Item {
+                        RowLayout {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Button {
+                                implicitWidth: 200; implicitHeight: 200
+                                text: qsTr("Quality check 1"); font.pointSize: 12
+                                icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
+                                onClicked: {
+                                    viewControl.stendRole = "qch1";
+                                    rootSwipeView.currentIndex = 1
+                                }
+                            }
+                            Button {
+                                implicitWidth: 200; implicitHeight: 200
+                                text: qsTr("quality check 2"); font.pointSize: 12
+                                icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
+                                onClicked: {
+                                    viewControl.stendRole = "qch2";
+                                    rootSwipeView.currentIndex = 2
+                                }
+                            }
+                            Button {
+                                implicitWidth: 200; implicitHeight: 200
+                                text: qsTr("Firmware"); font.pointSize: 12
+                                icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
+                                onClicked: {
+                                    viewControl.stendRole = "firmware";
+                                    rootSwipeView.currentIndex = 3
+                                }
+                            }
+                        }
+                    }
 
                     //-- dataBase
                     StendOtherItems.StendDataBaseSettings {}
-
-                    //-- test settings
-                    StendOtherItems.StendTestSettings {}
-
-                    //-- firmware programming settings
-                    StendOtherItems.StendFirmwareProgrammingSettings {}
-
-                    //-- find stend
-                    StendOtherItems.FindStend {}
 
                     //-- language
                     StendOtherItems.Language {}
 
                     //-- about
                     StendOtherItems.About {}
-                }
-
-                QmlCustomize.StatusPannel {
-                    id:statusPannel
-                    onRequestFindStends: {
-                        busyIndicator.visible = true;
-                        firmwareSwipeView.setCurrentIndex(4)
-                    }
-                    onConnectActivated: {
-                        busyIndicator.visible = true;
-                    }
                 }
             }
         }

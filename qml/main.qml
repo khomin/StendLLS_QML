@@ -6,6 +6,7 @@ import "qrc:/qml" as QmlCustomize
 import "qrc:/qml/delegates/" as Delegates
 import "qrc:/qml/toast/" as Toast
 import "qrc:/qml/StendRoles/" as StendRoles
+import "qrc:/qml/StendRoles/OtherItems" as StendOtherItems
 
 ApplicationWindow {
     id:applocation
@@ -33,50 +34,11 @@ ApplicationWindow {
         id:rootSwipeView
         anchors.fill: parent
         currentIndex: 0//3
-//        interactive: false
-        Item{
-            RowLayout {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                Button {
-                    implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("Quality check 1"); font.pointSize: 12
-                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
-                    onClicked: {
-                        viewControl.stendRole = "qch1";
-                        rootSwipeView.currentIndex = 1
-                    }
-                }
-                Button {
-                    implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("quality check 2"); font.pointSize: 12
-                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
-                    onClicked: {
-                        viewControl.stendRole = "qch2";
-                        rootSwipeView.currentIndex = 2
-                    }
-                }
-                Button {
-                    implicitWidth: 200; implicitHeight: 200
-                    text: qsTr("Firmware"); font.pointSize: 12
-                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
-                    onClicked: {
-                        viewControl.stendRole = "firmware";
-                        rootSwipeView.currentIndex = 3
-                    }
-                }
-            }
-        }
 
-        StendRoles.Qch1 {
-
-        }
-        StendRoles.Qch2 {
-
-        }
-        StendRoles.Firmware {
-
-        }
+        StendOtherItems.SelectMode {}
+        StendRoles.Qch1 {}
+        StendRoles.Qch2 {}
+        StendRoles.Firmware {}
     }
 
     BusyIndicator {

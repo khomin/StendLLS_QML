@@ -33,6 +33,7 @@ Item {
                             validator: RegExpValidator { regExp: /^.{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.fimrwareStLinkPath
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.fimrwareStLinkPath = text;
                             }
@@ -47,6 +48,7 @@ Item {
                             validator: RegExpValidator { regExp: /^.{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.firmwareDutPath
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.firmwareDutPath = text;
                             }
@@ -61,6 +63,7 @@ Item {
                             validator: RegExpValidator { regExp: /^.{1,128}$/ }
                             color: acceptableInput ? "black" : "red"
                             text: Settings.frmwareBootPath
+                            selectByMouse: true
                             onEditingFinished: {
                                 Settings.frmwareBootPath = text;
                             }

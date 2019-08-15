@@ -11,20 +11,33 @@ public:
     explicit QrScaner(QObject *parent = nullptr);
 
     Q_PROPERTY(bool isValid READ getIsValid NOTIFY qrCodeIsValidChanged)
+    Q_PROPERTY(QString qrCodeSn READ getQrCodeSn NOTIFY qrCodeSnChanged)
+
+    Q_INVOKABLE QString getQrCode() {
+        return mQrCode;
+    }
 
 signals:
     void qrCodeUpdateSerialNum(QString number);
     void qrCodeError(QString message);
     void qrCodeIsValidChanged();
+    void qrCodeSnChanged();
 
 public slots:
     void insertQrData(QString codeData);
 
 private:
-    bool getIsValid() { return isValid; }
-    void setIsValid(bool value) { isValid = value; emit qrCodeIsValidChanged(); }
+    bool getIsValid() { return mIsValid; }
+    void setIsValid(bool value) { mIsValid = value; emit qrCodeIsValidChanged(); }
 
-    bool isValid;
+    QString getQrCodeSn() {
+        return mQrCodeSn;
+    }
+    void setQrCodeSn(QString value) { mQrCodeSn = value; emit qrCodeSnChanged(); }
+
+    bool mIsValid;
+    QString mQrCodeSn;
+    QString mQrCode;
 };
 
 #endif // QRSCANER_H

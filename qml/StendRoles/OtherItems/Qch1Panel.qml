@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
+import Settings 1.0
 
 SwipeView {
     id:qch1PannelScroll
@@ -12,41 +13,88 @@ SwipeView {
     interactive: false
 
     Connections {
+        target: viewControl
+        onSignalUpdateRealTimeData: {
+            if(viewControl.stendRole == "qch1") {
+                var jsonData = JSON.parse(json)
+                llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
+                llsPowerCurrentLabel.text = jsonData.power_current.toFixed(1)
+                llsFreqLabel.text = jsonData.freq
+                llsTempLabel.text = jsonData.temp.toFixed(2)
+
+                if(jsonData.mcu_serial_number !== "303030303030303030303030") {
+                    llsMcuSnLabel.text = jsonData.mcu_serial_number
+                } else {
+                    llsMcuSnLabel.text = "NA";
+                }
+
+                llsSnLabel.text = jsonData.serial_number
+
+                drawChartLine(chart, chartVoltageLine, jsonData.powerCollect);
+                drawChartLine(chart, chartCurrentLine, jsonData.currentCollect);
+                drawChartLine(chart, chartCntLine, jsonData.cntCollect);
+
+                if(busyIndicator.visible == true) {
+                    busyIndicator.visible = false;
+                }
+            }
+        }
+        onSignalDataBaseError: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(err, "bad")
+            }
+        }
+        onGoodMessage: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(text, "good")
+            }
+        }
+        onBadMessage: {
+            if(viewControl.stendRole == "qch1") {
+                toast.displayMessage(text, "bad")
+            }
+        }
+    }
+
+    function drawChartLine(chart, chartLine, dataArray) {
+        chartLine.clear();
+
+        chart.graphMinTime = new Date(dataArray[0].x);
+        chart.graphMaxTime = new Date(dataArray[dataArray.length-1].x);
+
+        var maxValue = findMaxValue(dataArray);
+
+        dataArray.forEach(function (value) {
+            chartLine.append(new Date(value.x), parseInt(value.y));
+        });
+        if (chartLine.axisY !== null) {
+            chartLine.axisY.max = maxValue;
+        }
+
+        if(chartLine.axisYRight !== null) {
+            chartLine.axisYRight.max = maxValue;
+        }
+    }
+
+    function findMaxValue(dataArray) {
+        var maxValue = 0;
+        dataArray.forEach(function (value) {
+            if(maxValue < parseInt(value.y)) {
+                maxValue = parseInt(value.y);
+            }
+        });
+        return maxValue*1.05+1;
+    }
+
+    Connections {
         target: qrScaner
         onQrCodeError: {
             if(viewControl.stendRole == "qch1") {
                 toast.displayMessage(message, "bad");
             }
         }
-        onQrCodeUpdateSerialNum: {
-            if(viewControl.stendRole == "qch1") {
-                toast.displayMessage(number, "good");
-            }
-        }
+        onQrCodeUpdateSerialNum: {}
     }
-
-    Connections {
-        target: qrScanerInterface
-
-        onSignalError: { //(const QString message);
-            if(viewControl.stendRole == "qch1") {
-            }
-        }
-        onSignalReadyReadNewData: { // QByteArray data
-            if(viewControl.stendRole == "qch1") {
-            }
-        }
-        onSignalOpened: {
-            if(viewControl.stendRole == "qch1") {
-            }
-
-        }
-        onSignalClosed: {
-            if(viewControl.stendRole == "qch1") {
-            }
-        }
-    }
-
 
     function drawChart(dataArray, chartLine, chart) {
         chartLine.clear();
@@ -62,25 +110,10 @@ SwipeView {
         }
     }
 
-    function setTestIndicationg(testStatus, testProgressBar, testRectangle) {
-        switch(testStatus) {
-        case "idle":
-            testProgressBar.value = 0;
-            testRectangle.color = "red"
-            break;
-        case "process":
-            testProgressBar.value = 50;
-            testRectangle.color = "yellow"
-            break;
-        case "fail":
-            testProgressBar.value = 100;
-            testRectangle.color = "red"
-            break;
-        case "finished":
-            testProgressBar.value = 100;
-            testRectangle.color = "green"
-            break;
-        }
+    Component.onCompleted: {
+        var params = {}
+        params.baudrate = 115200;
+        qrScanerInterface.addConnection(Settings.scanerPort, JSON.stringify(params));
     }
 
     ColumnLayout {
@@ -139,7 +172,8 @@ SwipeView {
                     clip: true
                     Column {
                         width: parent.width
-                        Label{ text: qsTr("Tests"); font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
+                        Label{ text: qsTr("Tests") + " " + selectLlsTestType.activeProfile;
+                            font.pointSize: 8; color: Material.color(Material.Green, Material.Shade800)}
                         spacing: 15
                         GridLayout {
                             rows: 7
@@ -153,6 +187,7 @@ SwipeView {
                             RowLayout {
                                 Label { id:llsPowerVoltageLabel
                                     text: "0.0"
+                                    color: "black"
                                 }
                                 Label { text: "v"}
                             }
@@ -163,16 +198,18 @@ SwipeView {
                             RowLayout {
                                 Label { id:llsPowerCurrentLabel
                                     text: "0.0"
+                                    color: stendQchDecision.powerCurrValid ? "black" : "red"
                                 }
                                 Label { text: "mA"}
                             }
 
                             Label {
-                                text: qsTr("CNT:")
+                                text: qsTr("Frequency:")
                             }
                             RowLayout {
-                                Label { id:llsCntLabel
+                                Label { id:llsFreqLabel
                                     text: "0"
+                                    color: stendQchDecision.levelValid ? "black" : "red"
                                 }
                                 Label { text: "Hz"}
                             }
@@ -182,6 +219,7 @@ SwipeView {
                             }
                             Label { id:llsMcuSnLabel
                                 text: "NA"
+                                color: stendQchDecision.mcuSnValid ? "black" : "red"
                             }
 
                             Label {
@@ -189,16 +227,21 @@ SwipeView {
                             }
                             Label { id:llsSnLabel
                                 text: "NA"
+                                color: stendQchDecision.snValid ? "black" : "red"
                             }
 
                             Label {
                                 text: qsTr("Scan.num:")
                             }
-                            Label { id:llsScannedNumLabel; text: "NA" }
+                            Label { id:llsScannedNumLabel;
+                                text: qrScaner.qrCodeSn
+                                color: qrScaner.isValid ? "black" : "red"
+                            }
 
                             Label { text: qsTr("Temperature:") }
                             RowLayout {
-                                Label { id:llsTempLabel; text: "NA" }
+                                Label { id:llsTempLabel; text: "NA"
+                                    color: stendQchDecision.tempValid ? "black" : "red" }
                                 Label { text: "°C" }
                             }
 
@@ -206,21 +249,25 @@ SwipeView {
                             Rectangle {
                                 id:llsRs485StatusRectangle
                                 width: 32; height: 32
-                                color: "red"
+                                color: stendQchDecision.rs485IsNormal ? "green" : "red"
                             }
 
                             Label { text: qsTr("RS232:") }
                             Rectangle {
                                 id:llsRs232StatusRectangle
                                 width: 32; height: 32
-                                color: "red"
+                                color: stendQchDecision.rs232IsNormal ? "green" : "red"
                             }
 
                             Label { text: "Empty:" }
-                            Label { id:llsEmptyValueLabel; text: "NA" }
+                            Label { id:llsEmptyValueLabel;
+                                text:stendQchDecision.levelEmptyValue
+                                color: stendQchDecision.levelEmptyTriggered ? "black" : "red" }
 
                             Label { text: "Full:" }
-                            Label { id:llsfullValueLabel; text: "NA" }
+                            Label { id:llsfullValueLabel;
+                                text:stendQchDecision.levelFullValue
+                                color: stendQchDecision.levelFullTriggered ? "black" : "red" }
                         }
 
                         ColumnLayout {
@@ -232,12 +279,17 @@ SwipeView {
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
                                     text: qsTr("Write to LLS");
+                                    enabled: qrScaner.isValid
+                                             && stendProp.isConnected
+                                             && stendQchDecision.levelEmptyTriggered
+                                             && stendQchDecision.levelFullTriggered
+                                             && llsSnLabel.text == "------------"
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
-                                    focus: true
                                     onClicked: {
+                                        stendProp.writeSerialNumberToLls(qrScaner.qrCodeSn.toString())
                                     }
                                 }
                                 Button {
@@ -245,12 +297,18 @@ SwipeView {
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
                                     text: qsTr("Mark as defective");
+                                    enabled: stendQchDecision.mcuSnValid && qrScaner.isValid && stendProp.isConnected
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/trash.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
-                                    focus: true
                                     onClicked: {
+                                        var mcuSn = llsMcuSnLabel.text
+                                        var qrCode = qrScaner.getQrCode();
+                                        var result = []
+                                        if(mcuSn !== "NA" && qrCode !== "NA") {
+                                            stendProp.markLlsAsDefective(mcuSn, qrCode, JSON.stringify(result))
+                                        }
                                     }
                                 }
                             }

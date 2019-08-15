@@ -33,7 +33,8 @@ Item {
                         Label{ text: "Database name"; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
                         TextField {
                             placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
-                            validator: RegExpValidator { regExp: /^[\w]{1,128}$/ }
+                            validator: RegExpValidator { regExp: /^[\w.-]{1,128}$/ }
+                            selectByMouse: true
                             color: acceptableInput ? "black" : "red"
                             text: Settings.databaseName
                             onEditingFinished: {
@@ -47,14 +48,15 @@ Item {
                         Label{ text: "Host"; font.pointSize: 8; color: Material.color(Material.Grey, Material.Shade800)}
                         TextField {
                             placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
-                             validator: RegExpValidator { regExp: /^(?=.*[^\.]$)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.?){4}$/ }
+                            validator: RegExpValidator { regExp: /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/ }
+                            selectByMouse: true
                             color: acceptableInput ? "black" : "red"
                             text: Settings.databaseHost
                             onEditingFinished: {
-                                Settings.databaseName = text;
+                                Settings.databaseHost = text;
                             }
                             onAccepted: {
-                                Settings.databaseName = text;
+                                Settings.databaseHost = text;
                             }
                         }
 
@@ -62,6 +64,7 @@ Item {
                         TextField {
                             placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
                             validator: RegExpValidator { regExp: /^[\w]{1,128}$/ }
+                            selectByMouse: true
                             color: acceptableInput ? "black" : "red"
                             text: Settings.databaseUser
                             onEditingFinished: {
@@ -76,6 +79,7 @@ Item {
                         TextField {
                             placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
                             validator: RegExpValidator { regExp: /^.{1,128}$/ }
+                            selectByMouse: true
                             color: acceptableInput ? "black" : "red"
                             text: Settings.databasePassword
                             onEditingFinished: {
@@ -91,6 +95,7 @@ Item {
                             placeholderText: qsTr("Enter value"); implicitWidth: 200; font.pointSize: 8;
                             validator: RegExpValidator { regExp: /^[\d]{1,10}$/ }
                             color: acceptableInput ? "black" : "red"
+                            selectByMouse: true
                             text: Settings.databasePort
                             onEditingFinished: {
                                 Settings.databasePort = text;
@@ -109,11 +114,7 @@ Item {
                             implicitWidth: 150
                             focus: true
                             onClicked: {
-                                if(viewControl.testDatabaseConnect()) {
-                                    toast.displayMessage(qsTr("Database сonnection established"), "good")
-                                } else {
-                                    toast.displayMessage(qsTr("Database сonnection not established"), "bad")
-                                }
+                                viewControl.testDatabaseConnect();
                             }
                         }
                     }

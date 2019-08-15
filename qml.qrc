@@ -18,5 +18,7 @@
         <file>qml/StendRoles/OtherItems/StendDataBaseSettings.qml</file>
         <file>qml/StendRoles/OtherItems/Qch1Panel.qml</file>
         <file>qml/StendRoles/OtherItems/StendScanerSettings.qml</file>
+        <file>qml/StendRoles/OtherItems/SelectLlsType.qml</file>
+        <file>qml/StendRoles/OtherItems/SelectMode.qml</file>
     </qresource>
 </RCC>

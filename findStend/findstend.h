@@ -26,9 +26,9 @@ public slots:
 private:
     FindStendModel mFindStendModel;
     QTimer *mSearchTimer;
-    sConnectSettings mSelected_dest;
-    sIp_list mBroadcast_ip;
-    sIp_list mNetwork_intface_ip;
+    Globals::sConnectSettings mSelected_dest;
+    Globals::sIp_list mBroadcast_ip;
+    Globals::sIp_list mNetwork_intface_ip;
     QUdpSocket* mUdpSocket;
     eSearch_ip_State mSearch_ip_state;
     int mSearch_ip_timeout;

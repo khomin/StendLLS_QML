@@ -6,7 +6,7 @@ FindStendModel::FindStendModel(QObject *parent) {
     this->m_maxCountElements = 100;
 }
 
-bool FindStendModel::addItem(sConnectSettings value) {
+bool FindStendModel::addItem(Globals::sConnectSettings value) {
     if(tableItems.size() +1 < m_maxCountElements) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
         tableItems << std::make_shared<FindStendItem>(value);
