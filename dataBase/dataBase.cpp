@@ -16,7 +16,7 @@ bool DataBase::openConnection(QString *error) {
     QString str;
     if(!QSqlDatabase::isDriverAvailable("QPSQL")) {
         if(error != nullptr) {
-                 *error = tr("Driver QPSQL not available");
+            *error = tr("Driver QPSQL not available");
         }
         return false;
     }
@@ -48,36 +48,50 @@ bool DataBase::closeConnection() {
 
 bool DataBase::insertTestData(QString mcu, QString dev_test_state, Globals::sDutTestStruct res_data_test, bool res_test) {
     bool res = false;
+    Q_UNUSED(dev_test_state);
+
     if(!base.isOpen()) {
         openConnection(nullptr);
     }
 
-    QSqlQuery sql_query(base);
-    QJsonObject json_object;
-    //
-    json_object["freq_state"] = 1;
-    for(int i=0; i<3; i++)
-        json_object["freq_value" + QString::number(i)] = QString::number(res_data_test.cap_test_result[i]);
-    json_object["rs232_state"] = res_data_test.rs232_state;
-    json_object["rs232_pack_tx"] = res_data_test.rs232_send_packet;
-    json_object["rs232_pack_rx"] = res_data_test.rs232_receive_packet;
-    json_object["rs485_state"] = res_data_test.rs485_state;
-    json_object["rs485_pack_rx"] = res_data_test.rs485_receive_packet;
-    json_object["rs485_pack_tx"] = res_data_test.rs485_send_packet;
-    json_object["test_datetime"] = QDateTime::currentDateTime().toString(Qt::ISODate);
-    QJsonDocument json_doc(json_object);
-    QString json = json_doc.toJson(QJsonDocument::Compact);
-
     QSqlQuery query;
-    query.prepare("SELECT pr_insert_pcb_test_result(?, ?, ?, ?)");
-    query.addBindValue(QVariant(mcu).toString());
-    query.addBindValue(json);
-    query.addBindValue(res_test);
-    query.addBindValue(USER_ID);
-    res = query.exec();
-    if(!res) {
-        qDebug() << query.lastError();
-        throw ((tr("Database error")) + ": " + query.lastError().databaseText());
+
+    try {
+        QSqlQuery sql_query(base);
+        QJsonObject json_object;
+
+        json_object["freq_state"] = 1;
+        for(int i=0; i<3; i++)
+            json_object["freq_value" + QString::number(i)] = QString::number(res_data_test.cap_test_result[i]);
+        json_object["rs232_state"] = res_data_test.rs232_state;
+        json_object["rs232_pack_tx"] = res_data_test.rs232_send_packet;
+        json_object["rs232_pack_rx"] = res_data_test.rs232_receive_packet;
+        json_object["rs485_state"] = res_data_test.rs485_state;
+        json_object["rs485_pack_rx"] = res_data_test.rs485_receive_packet;
+        json_object["rs485_pack_tx"] = res_data_test.rs485_send_packet;
+        json_object["test_datetime"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+        QJsonDocument json_doc(json_object);
+        QString json = json_doc.toJson(QJsonDocument::Compact);
+
+        qDebug() << "mcu: " << QVariant(mcu).toString();
+        qDebug() << "json: " << json;
+        qDebug() << "res_test: " << res_test;
+        qDebug() << "USER_ID: " << USER_ID;
+
+        query.prepare("SELECT pr_insert_pcb_test_result(?, ?, ?, ?)");
+        query.addBindValue(QVariant(mcu).toString());
+        query.addBindValue(json);
+        query.addBindValue(res_test);
+        query.addBindValue(USER_ID);
+        res = query.exec();
+        if(!res) {
+            qDebug() << query.lastError();
+            throw ((tr("Database error")) + ": " + query.lastError().databaseText());
+        }
+    } catch(...) {
+        qDebug() << "Exeption: " << query.lastError();
+        qDebug() << query.executedQuery();
     }
     return res;
 }
@@ -192,13 +206,13 @@ bool DataBase::placeResult(bool res_bool, QString qrCode, QString mcu, QString d
 }
 
 bool DataBase::getLlsMaxMinValues(int dts_id, float *cnt_value_min, float *cnt_value_max,
-                            float *voltage_value_min, float *voltage_value_max,
-                            float *freq_value_min, float *freq_value_max,
-                            float *nominal_current,
-                            float *tolerance_level,
-                            uint32_t *empty_value_minumum_correct,
-                            uint32_t *full_value_minumum_correct,
-                            float *tolerance_current)
+                                  float *voltage_value_min, float *voltage_value_max,
+                                  float *freq_value_min, float *freq_value_max,
+                                  float *nominal_current,
+                                  float *tolerance_level,
+                                  uint32_t *empty_value_minumum_correct,
+                                  uint32_t *full_value_minumum_correct,
+                                  float *tolerance_current)
 {
     bool res = false;
 

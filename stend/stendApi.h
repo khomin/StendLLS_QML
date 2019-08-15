@@ -24,6 +24,7 @@ public:
     ~StendApi();
 
     Q_PROPERTY(bool isConnected READ getStendIsConnected WRITE setStendIsConnected NOTIFY stendIsConnectedChanged)
+    Q_PROPERTY(bool isProcessed READ getStendIsProcessed WRITE setStendIsisProcessed NOTIFY stendIsProcessedChanged)
 
 public slots:
     void startTest();
@@ -45,6 +46,9 @@ public slots:
     bool getStendIsConnected() { return mStendIsConnected; }
     void setStendIsConnected(bool value) { mStendIsConnected = value; emit stendIsConnectedChanged(); }
 
+    bool getStendIsProcessed() { return mStendIsProcessed; }
+    void setStendIsisProcessed(bool value) { mStendIsProcessed = value; emit stendIsProcessedChanged(); }
+
     void saveTestLlsToDb(QString mcuNum);
     void writeSerialNumToLls(QString sn);
     void markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonData);
@@ -62,6 +66,7 @@ signals:
 
     /* qml property */
     void stendIsConnectedChanged();
+    void stendIsProcessedChanged();
 
     void dataBaseError(QString err);
 
@@ -91,7 +96,9 @@ private:
     QTimer *timeoutCommandTimer;
 
     int transferTimeoutId;
-    bool mStendIsConnected;
+    bool mStendIsConnected = false;
+    bool mStendIsProcessed = false;
+    bool mTestIsFinished = false;
 
     Globals::sDutBaseStruct llsInfoStruct;
     /* указатель на структуру из настроек тестирования */
@@ -99,7 +106,9 @@ private:
     StendProperty::sCapTestValues capValues;
     float curLlsMinValue;
     float curLlsMaxValue;
-    bool mTestIsFinished = false;
+
+    QString mMcuNumber;
+
     QVector <QPair<StendProperty::eTypeCommand, QJsonObject>> command;
     QVector <Globals::S_curves_data>curves_data_vector;
 

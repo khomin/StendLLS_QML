@@ -343,7 +343,7 @@ SwipeView {
                         implicitHeight: 50;
                         implicitWidth: 150
                         focus: true
-                        enabled: stendProp.isConnected
+                        enabled: stendProp.isConnected && !stendProp.isProcessed
                         onClicked: {
                             if(stendProp.getStendIsConnected()) {
                                 stendProp.startTest()

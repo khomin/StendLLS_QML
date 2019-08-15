@@ -6,8 +6,6 @@
 StendApi::StendApi(QObject *parent) : QObject(parent) {
     interval_read_info_counter = 0;
 
-    mStendIsConnected = false;
-
     /* константы теста емкости */
     capValues.min[0] = Settings::Instance().getCap1Min().toInt();
     capValues.min[1] = Settings::Instance().getCap2Min().toInt();
@@ -52,6 +50,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
         jsonObj.insert("testStep", "programming");
         jsonObj.insert("percent", 0);
         jsonObj.insert("message", err);
+        setStendIsisProcessed(false);
         emit testError(QJsonDocument(jsonObj).toJson());
     });
     connect(programming, &Programming::programmFinished,this, [&]() {
@@ -60,6 +59,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     connect(programming, &Programming::exeReadSerialNumMcu,this, [&](QString mcuNum) {
         /* Добавляем плату в базу */
         try {
+            mMcuNumber = mcuNum;
             DataBase::Instance().insertTestData(mcuNum, "inited", llsInfoStruct.test, true);
         } catch(QString ex) {
             emit dataBaseError(ex);
@@ -201,10 +201,11 @@ bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx)
                 if(!mTestIsFinished){
                     mTestIsFinished = true;
                     DataBase::Instance().insertTestData(
-                                QString::fromUtf8(llsInfoStruct.mcu_serial_number, sizeof(llsInfoStruct.mcu_serial_number)),
+                                mMcuNumber,
                                 "programming",
                                 llsInfoStruct.test,
                                 llsInfoStruct.test.state == Globals::test_ok);
+                    setStendIsisProcessed(false);
                     emit testFinihed(QJsonDocument(jsonObj).toJson());
                 }
             } else {
@@ -261,18 +262,22 @@ void StendApi::startTest() {
             if(mStendIsConnected) {
                 command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::reset_test, QJsonObject()));
                 programming->startProgramm();
+                mMcuNumber = "";
                 mTestIsFinished = false;
+                setStendIsisProcessed(true);
             }
         } else { /* not working */
             jsonObj.insert("testResult", false);
             jsonObj.insert("database", "database");
             jsonObj.insert("message", error);
+            setStendIsisProcessed(false);
             emit testError(QJsonDocument(jsonObj).toJson());
         }
     } catch(QString ex) {
         jsonObj.insert("testResult", false);
         jsonObj.insert("database", "database");
         jsonObj.insert("message", ex);
+        setStendIsisProcessed(false);
         emit testError(QJsonDocument(jsonObj).toJson());
     }
 }
