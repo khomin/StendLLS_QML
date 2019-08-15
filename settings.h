@@ -157,9 +157,6 @@ public:
     float getTempMax() { return mTempMax; }
     float getTempMin() { return mTempMin; }
 
-    float getTempMax() { return settingsJson.value("tempMax").toString().toFloat(); }
-    float getTempMin() { return settingsJson.value("tempMin").toString().toFloat(); }
-
 protected:
     Settings();
     virtual ~Settings();

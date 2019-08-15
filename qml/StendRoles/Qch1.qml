@@ -21,10 +21,6 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        selectLlsTestType.researchLlsTypes()
-    }
-
     StackLayout {
         id:stackLayout
         anchors.fill: parent
