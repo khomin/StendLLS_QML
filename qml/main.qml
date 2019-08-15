@@ -27,13 +27,14 @@ ApplicationWindow {
     property int propertyCentralSwipeLastIndex: 0
 
     Component.onCompleted: {
-        translate.qmlReady(); // applocation.showMaximized()
+        translate.qmlReady();
+        applocation.showMaximized()
     }
 
     StackLayout {
         id:rootSwipeView
         anchors.fill: parent
-        currentIndex: 0//3
+        currentIndex: 0
 
         StendOtherItems.SelectMode {}
         StendRoles.Qch1 {}

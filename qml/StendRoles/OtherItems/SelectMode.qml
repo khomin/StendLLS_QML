@@ -35,7 +35,7 @@ Item {
         }
 
         Pane {
-            Layout.fillWidth: true
+            implicitWidth: parent.width
             Material.elevation: 6
             Layout.alignment: Qt.AlignLeft
             implicitHeight: 50

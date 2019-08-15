@@ -284,7 +284,7 @@ SwipeView {
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
                                     text: qsTr("Mark as defective");
-                                    enabled: stendQchDecision.mcuSnValid && qrScaner.isValid && stendProp.isConnected
+                                    enabled: stendQchDecision.mcuSnValid && stendProp.isConnected
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/trash.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8

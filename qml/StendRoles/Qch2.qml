@@ -32,7 +32,7 @@ Rectangle {
             ColumnLayout {
                 anchors.fill: parent
                 Pane {
-                    Layout.fillWidth: true
+                    implicitWidth: parent.width
                     Material.elevation: 6
                     Layout.alignment: Qt.AlignLeft
                     implicitHeight: 50
@@ -41,14 +41,12 @@ Rectangle {
                         color: "#406D9E"
                     }
                     RowLayout {
-                        implicitWidth: qc1Rectangle.width - 30
-                        implicitHeight: 50
+                        implicitWidth: parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         TabBar {
                             Material.accent: "white"
                             id: tabBar
-                            implicitWidth: (qc1Rectangle.width - toolBarButtonControl.width > 600) ? 600 : qc1Rectangle.width - toolBarButtonControl.width
-                            implicitHeight: 50
+                            implicitWidth: (qc1Rectangle.width - toolBarButtonControl.width > 500) ? 500 : qc1Rectangle.width - toolBarButtonControl.width
                             background: Rectangle {
                                 width: tabBar.width
                                 color: "#406D9F"
