@@ -49,7 +49,7 @@ public slots:
     bool getStendIsProcessed() { return mStendIsProcessed; }
     void setStendIsisProcessed(bool value) { mStendIsProcessed = value; emit stendIsProcessedChanged(); }
 
-    void saveTestLlsToDb(QString mcuNum);
+    void saveAssemblyTestLlsToDb(QString mcuNum);
     void writeSerialNumToLls(QString sn);
     void markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonData);
 

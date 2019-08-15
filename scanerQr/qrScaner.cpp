@@ -32,3 +32,8 @@ void QrScaner::insertQrData(QString codeData) {
         emit qrCodeError(tr("Scaner error, the number is not valid"));
     }
 }
+
+void QrScaner::resetData() {
+    setIsValid(false);
+    setQrCodeSn("");
+}

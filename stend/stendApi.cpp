@@ -60,7 +60,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
         /* Добавляем плату в базу */
         try {
             mMcuNumber = mcuNum;
-            DataBase::Instance().insertTestData(mcuNum, "inited", llsInfoStruct.test, true);
+            DataBase::Instance().insertPcbTestData(mcuNum, "inited", llsInfoStruct.test, true);
         } catch(QString ex) {
             emit dataBaseError(ex);
         }
@@ -200,7 +200,7 @@ bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx)
             if(testIsFinished(llsInfoStruct.test)) {
                 if(!mTestIsFinished){
                     mTestIsFinished = true;
-                    DataBase::Instance().insertTestData(
+                    DataBase::Instance().insertPcbTestData(
                                 mMcuNumber,
                                 "programming",
                                 llsInfoStruct.test,
@@ -240,6 +240,12 @@ bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx)
         case StendProperty::write_serial_dut:
             res = true;
             emit goodMessage(tr("The serial number was successfully assigned to the device"));
+            try {
+                DataBase::Instance().placeResult(false, qrCode, mcuSn, "test_defect", QString(json_doc.toJson(QJsonDocument::Compact)));
+                emit goodMessage(tr("Device added to broken table"));
+            } catch(QString ex) {
+                emit dataBaseError(ex);
+            }
             break;
         }
     }
@@ -429,9 +435,13 @@ void StendApi::writeSerialNumToLls(QString sn) {
     command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::write_serial_dut, object));
 }
 
-void StendApi::saveTestLlsToDb(QString mcuNum) {
+void StendApi::saveAssemblyTestLlsToDb(QString mcuNum) {
     try {
-        DataBase::Instance().insertTestData(mcuNum, "tested", llsInfoStruct.test, true);
+        if(DataBase::Instance().insertAsseblyTestResult(mcuNum, "tested", llsInfoStruct.test, true)) {
+            emit goodMessage(tr("Test result was saved"));
+        } else {
+            emit badMessage(tr("Test result was not saved"));
+        }
     } catch(QString ex) {
         emit dataBaseError(ex);
     }

@@ -31,6 +31,7 @@ signals:
 
 public slots:
     void insertQrData(QString codeData);
+    void resetData();
 
 private:
     bool getIsValid() { return mIsValid; }
