@@ -44,14 +44,14 @@ Item {
                 color: "#406D9E"
             }
             RowLayout {
-                implicitWidth: rootColumnLayout.width - 30
-                implicitHeight: 50
+                width: rootColumnLayout.width - 30
+                height: 50
                 anchors.verticalCenter: parent.verticalCenter
                 TabBar {
                     Material.accent: "white"
                     id: tabBar
-                    implicitWidth: (rootColumnLayout.width - toolBarButtonControl.width > 400) ? 400 : rootColumnLayout.width - toolBarButtonControl.width
-                    implicitHeight: 50
+                    width: (rootColumnLayout.width - toolBarButtonControl.width > 400) ? 400 : rootColumnLayout.width - toolBarButtonControl.width
+                    height: 50
                     background: Rectangle {
                         width: tabBar.width
                         color: "#406D9F"
@@ -74,6 +74,7 @@ Item {
                 }
                 ToolBar {
                     id:toolBarButtonControl
+//                    anchors.right: parent.right
                     Layout.alignment: Qt.AlignRight
                     RowLayout {
                         anchors.fill: parent

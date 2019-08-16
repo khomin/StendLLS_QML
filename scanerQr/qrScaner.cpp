@@ -7,15 +7,13 @@ QrScaner::QrScaner(QObject *parent) : QObject(parent)
 }
 
 void QrScaner::insertQrData(QString codeData) {
-    QString code_res = codeData.section("#", 3, 3);
-
     mQrCode = codeData;
-
+    QString code_res = mQrCode.section("#", 3, 3);
     if(code_res.length() != 0) {
-        QString header = codeData.section("#", 1, 1) + " " + codeData.section("#", 2, 2);
+        QString header = mQrCode.section("#", 1, 1) + " " + mQrCode.section("#", 2, 2);
         try {
-            if(DataBase::Instance().checkDeviceQrCode(codeData)) {
-                emit qrCodeUpdateSerialNum(codeData);
+            if(DataBase::Instance().checkDeviceQrCode(mQrCode)) {
+                emit qrCodeUpdateSerialNum(mQrCode);
                 setQrCodeSn(code_res);
                 setIsValid(true);
             } else {
@@ -31,4 +29,13 @@ void QrScaner::insertQrData(QString codeData) {
         setIsValid(false);
         emit qrCodeError(tr("Scaner error, the number is not valid"));
     }
+}
+
+QString QrScaner::convertCodeToSerialNumber(QString qrCode) {
+    return qrCode.section("#", 3, 3);
+}
+
+void QrScaner::resetData() {
+    setIsValid(false);
+    setQrCodeSn("");
 }

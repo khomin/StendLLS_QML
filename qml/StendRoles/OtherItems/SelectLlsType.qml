@@ -5,8 +5,9 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtQuick.Layouts 1.12
 
-
 Item {
+    signal goToStartScreen()
+
     ColumnLayout {
         anchors.fill: parent
         Pane {
@@ -71,7 +72,7 @@ Item {
                         ColumnLayout {
                             anchors.verticalCenter: parent.verticalCenter
                             width: rootPanel.width / 2
-                            spacing: 0
+                            spacing: 15
                             TextEdit {
                                 width: rootPanel.width / 2
                                 readOnly: true
@@ -79,6 +80,18 @@ Item {
                                 wrapMode: TextEdit.Wrap
                                 text: qsTr("At the verification stage, when the device does not yet have a serial number,\nthe program does not know what type of device the device belongs to.\nTherefore, please select a type from the available\nThen the program will be able to load the \"minimum-maximum\"\nparameters for tests that are suitable specifically for this type of device")
                             }
+                            Button {
+                                Material.background: Material.Blue;
+                                Material.foreground: "white";
+                                text: qsTr("Go to start screen");
+                                font.pointSize: 8
+                                implicitHeight: 45;
+                                focus: false
+                                onClicked: {
+                                    goToStartScreen()
+                                }
+                            }
+
                             Button {
                                 Material.background: Material.Green;
                                 Material.foreground: "white";

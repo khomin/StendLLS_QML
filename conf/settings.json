@@ -16,7 +16,7 @@
     "firmare_bootloader_path": "C:/firmware_dut/BootLoader_tmk24_v10_3.hex",
     "firmare_dut_path": "C:/firmware_dut/dut_tmk24_v10_3.hex",
     "firmare_stlink_path": "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe",
-    "language": "cn",
+    "language": "ru",
     "scanerPort": "ttyACM0",
     "tempMax": "60",
     "tempMin": "10"

@@ -22,6 +22,8 @@ void ValidateQchValues::clearAllToFalse() {
     setRs485IsNormal(false);
     setLevelFullTriggered(false);
     setLevelEmptyTriggered(false);
+
+    emit invalidateValues();
 }
 
 void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {

@@ -18,6 +18,7 @@ SwipeView {
             llsPowerVoltageLabel.text = jsonData.power_input.toFixed(2)
             llsPowerCurrentLabel.text = jsonData.power_current.toFixed(2)
             llsFreqLabel.text = jsonData.freq
+            llsCntLabel.text = jsonData.cnt
 
             if(jsonData.mcu_serial_number !== "303030303030303030303030") {
                 llsMcuSnLabel.text = jsonData.mcu_serial_number
@@ -246,6 +247,14 @@ SwipeView {
                             }
                             Label { text: "Hz"}
                         }
+
+                        Label {
+                            text: qsTr("CNT:")
+                        }
+                        Label { id:llsCntLabel
+                            text: "0"
+                        }
+
                         Label {
                             text: qsTr("MCU SN:")
                         }
@@ -258,7 +267,7 @@ SwipeView {
                         Connections {
                             target: viewControl
                             onSignalTestFinished: {
-                                if(viewControl.stendRole == "firmare") {
+                                if(viewControl.stendRole == "firmware") {
                                     var jsonData = JSON.parse(json)
                                     if(jsonData.result === "finished") {
                                         addToDatabaseRectangle.color = "green"; addToDatabaseProgressBar.value = 100;
@@ -305,7 +314,7 @@ SwipeView {
                             }
 
                             onSignalTestUpdateStatus: {
-                                if(viewControl.stendRole == "firmare") {
+                                if(viewControl.stendRole == "firmware") {
                                     var jsonData = JSON.parse(json)
                                     if(jsonData.testStep === "programming") {
                                         addToDatabaseRectangle.color = "green"
@@ -334,7 +343,7 @@ SwipeView {
                         implicitHeight: 50;
                         implicitWidth: 150
                         focus: true
-                        enabled: stendProp.isConnected
+                        enabled: stendProp.isConnected && !stendProp.isProcessed
                         onClicked: {
                             if(stendProp.getStendIsConnected()) {
                                 stendProp.startTest()

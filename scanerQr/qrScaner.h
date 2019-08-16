@@ -23,6 +23,8 @@ public:
         setIsValid(false);
     }
 
+    static QString convertCodeToSerialNumber(QString qrCode);
+
 signals:
     void qrCodeUpdateSerialNum(QString number);
     void qrCodeError(QString message);
@@ -31,6 +33,7 @@ signals:
 
 public slots:
     void insertQrData(QString codeData);
+    void resetData();
 
 private:
     bool getIsValid() { return mIsValid; }

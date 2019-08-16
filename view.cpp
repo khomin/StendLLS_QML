@@ -34,6 +34,8 @@ View::View(QObject *parent) : QObject(parent) {
     connect(&qrScanerConnection, &Connection::signalReadyReadNewData, this, [&](QByteArray data) {
         qrScaner.insertQrData(data);
     });
+
+    connect(validateQchValues, &ValidateQchValues::invalidateValues, &qrScaner, &QrScaner::resetData);
 }
 
 FindStend* View::getFindStend() {

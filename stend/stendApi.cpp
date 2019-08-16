@@ -2,19 +2,10 @@
 #include <QtDebug>
 #include "settings.h"
 #include <QDateTime>
+#include "scanerQr/qrScaner.h"
 
 StendApi::StendApi(QObject *parent) : QObject(parent) {
     interval_read_info_counter = 0;
-
-    mStendIsConnected = false;
-
-    /* константы теста емкости */
-    capValues.min[0] = Settings::Instance().getCap1Min().toInt();
-    capValues.min[1] = Settings::Instance().getCap2Min().toInt();
-    capValues.min[2] = Settings::Instance().getCap3Min().toInt();
-    capValues.max[0] = Settings::Instance().getCap1Max().toInt();
-    capValues.max[1] = Settings::Instance().getCap2Max().toInt();
-    capValues.max[2] = Settings::Instance().getCap3Max().toInt();
 
     /* programming mcu */
     programming = new Programming();
@@ -22,6 +13,8 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     programming->moveToThread(programmingThread);
     connect(programmingThread, SIGNAL(started()), programming, SLOT(initThread()));
     programmingThread->start();
+
+    updateCapProperty();
 
     this->handlerStendTimer = new QTimer();
     handlerStendTimer->start(500);
@@ -52,6 +45,7 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
         jsonObj.insert("testStep", "programming");
         jsonObj.insert("percent", 0);
         jsonObj.insert("message", err);
+        setStendIsisProcessed(false);
         emit testError(QJsonDocument(jsonObj).toJson());
     });
     connect(programming, &Programming::programmFinished,this, [&]() {
@@ -60,7 +54,8 @@ StendApi::StendApi(QObject *parent) : QObject(parent) {
     connect(programming, &Programming::exeReadSerialNumMcu,this, [&](QString mcuNum) {
         /* Добавляем плату в базу */
         try {
-            DataBase::Instance().insertTestData(mcuNum, "inited", llsInfoStruct.test, true);
+            mMcuNumber = mcuNum;
+            DataBase::Instance().insertPcbTestData(mcuNum, "inited", llsInfoStruct.test, true);
         } catch(QString ex) {
             emit dataBaseError(ex);
         }
@@ -81,7 +76,7 @@ StendApi::~StendApi() {
 
 void StendApi::insertDataFromInterface(QByteArray data) {
     if(!command.isEmpty()) {
-        if(parsinReply(command.last().first, data)) {
+        if(parsinReply(command.last().first, command.last().second, data)) {
             timeoutCommandTimer->stop();
             handlerStendTimer->start();
             command.removeFirst(); /* flush command */
@@ -149,12 +144,16 @@ void StendApi::sendCommand(StendProperty::eTypeCommand cmd, QJsonObject jsonArgs
 
     case StendProperty::reboot: /* перезагрузка стенда */
         break;
+
     case StendProperty::write_serial_dut:
-        QString writeSn = jsonArgs.value("sn").toString();
-        if(writeSn.length() <= (int)sizeof(outputTcpTempStruct.writed_serial_num)) {
-            strcpy(outputTcpTempStruct.writed_serial_num, writeSn.toUtf8().data());
-            packetInsert(outputTcpTempStruct, dataTx, QByteArray(Globals::stend_header));
-            emit readyWriteDataToInterface(dataTx);
+        QJsonValue qrCode = jsonArgs.value("qrCode").toString();
+        if(!qrCode.isUndefined()) {
+            QString sn = QrScaner::convertCodeToSerialNumber(qrCode.toString());
+            if((!sn.isEmpty()) && (sn.length() <= sizeof(outputTcpTempStruct.writed_serial_num))) {
+                strcpy(outputTcpTempStruct.writed_serial_num, sn.toUtf8().data());
+                packetInsert(outputTcpTempStruct, dataTx, QByteArray(Globals::stend_header));
+                emit readyWriteDataToInterface(dataTx);
+            }
         }
         break;
     }
@@ -180,7 +179,8 @@ bool StendApi::headerIsValid(QByteArray & dataRx) {
     return false;
 }
 
-bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx) {
+bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QJsonObject property,
+                           QByteArray & dataRx) {
     bool res = false;
     if(headerIsValid(dataRx)) {
         StendProperty::sInputTcpTempStruct* pinputTemp = (StendProperty::sInputTcpTempStruct*)((uint8_t*) dataRx.data() + strlen(Globals::stend_header));
@@ -200,11 +200,12 @@ bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx)
             if(testIsFinished(llsInfoStruct.test)) {
                 if(!mTestIsFinished){
                     mTestIsFinished = true;
-                    DataBase::Instance().insertTestData(
-                                QString::fromUtf8(llsInfoStruct.mcu_serial_number, sizeof(llsInfoStruct.mcu_serial_number)),
+                    DataBase::Instance().insertPcbTestData(
+                                mMcuNumber,
                                 "programming",
                                 llsInfoStruct.test,
                                 llsInfoStruct.test.state == Globals::test_ok);
+                    setStendIsisProcessed(false);
                     emit testFinihed(QJsonDocument(jsonObj).toJson());
                 }
             } else {
@@ -238,7 +239,26 @@ bool StendApi::parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx)
 
         case StendProperty::write_serial_dut:
             res = true;
-            emit goodMessage(tr("The serial number was successfully assigned to the device"));
+            try {
+            QJsonValue qrCode = property.value("qrCode").toString();
+            QJsonValue mcuNum = property.value("mcuNum").toString();
+            QJsonValue resultJson = property.value("resultJson").toString();
+            if(!qrCode.isUndefined()
+                    && (!mcuNum.isUndefined())
+                    && (!resultJson.isUndefined())) {
+                DataBase::Instance().placeResult(true,
+                                                 qrCode.toString(),
+                                                 mcuNum.toString(),
+                                                 "test_defect",
+                                                 resultJson.toString()
+                                                 );
+                emit goodMessage(tr("The serial number was successfully assigned to the device"));
+            } else {
+                emit badMessage(tr("Write serial number, error arguments"));
+            }
+        } catch(QString ex) {
+                emit dataBaseError(ex);
+            }
             break;
         }
     }
@@ -259,20 +279,25 @@ void StendApi::startTest() {
     try {
         if(DataBase::Instance().openConnection(&error)) {
             if(mStendIsConnected) {
+                updateCapProperty();
                 command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::reset_test, QJsonObject()));
                 programming->startProgramm();
+                mMcuNumber = "";
                 mTestIsFinished = false;
+                setStendIsisProcessed(true);
             }
         } else { /* not working */
             jsonObj.insert("testResult", false);
             jsonObj.insert("database", "database");
             jsonObj.insert("message", error);
+            setStendIsisProcessed(false);
             emit testError(QJsonDocument(jsonObj).toJson());
         }
     } catch(QString ex) {
         jsonObj.insert("testResult", false);
         jsonObj.insert("database", "database");
         jsonObj.insert("message", ex);
+        setStendIsisProcessed(false);
         emit testError(QJsonDocument(jsonObj).toJson());
     }
 }
@@ -418,15 +443,23 @@ bool StendApi::isAvailableLlsRangeValues() {
     return false;
 }
 
-void StendApi::writeSerialNumToLls(QString sn) {
+void StendApi::writeSerialNumToLls(QString qrCode,
+                                   QString mcuNum,
+                                   QString resultJson) {
     QJsonObject object;
-    object.insert("sn", sn);
+    object.insert("qrCode", qrCode);
+    object.insert("mcuNum", mcuNum);
+    object.insert("resultJson", resultJson);
     command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::write_serial_dut, object));
 }
 
-void StendApi::saveTestLlsToDb(QString mcuNum) {
+void StendApi::saveAssemblyTestLlsToDb(QString mcuNum) {
     try {
-        DataBase::Instance().insertTestData(mcuNum, "tested", llsInfoStruct.test, true);
+        if(DataBase::Instance().insertAsseblyTestResult(mcuNum, "tested", llsInfoStruct.test, true)) {
+            emit goodMessage(tr("Test result was saved"));
+        } else {
+            emit badMessage(tr("Test result was not saved"));
+        }
     } catch(QString ex) {
         emit dataBaseError(ex);
     }
@@ -442,6 +475,15 @@ void StendApi::markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonDat
     } catch(QString ex) {
         emit dataBaseError(ex);
     }
+}
+
+void StendApi::updateCapProperty() { /* константы теста емкости */
+    capValues.min[0] = Settings::Instance().getCap1Min().toInt();
+    capValues.min[1] = Settings::Instance().getCap2Min().toInt();
+    capValues.min[2] = Settings::Instance().getCap3Min().toInt();
+    capValues.max[0] = Settings::Instance().getCap1Max().toInt();
+    capValues.max[1] = Settings::Instance().getCap2Max().toInt();
+    capValues.max[2] = Settings::Instance().getCap3Max().toInt();
 }
 
 QJsonObject StendApi::evaluateTestStatus(Globals::sDutTestStruct & tests) {

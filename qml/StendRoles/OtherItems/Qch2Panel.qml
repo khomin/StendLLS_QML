@@ -284,12 +284,26 @@ SwipeView {
                                              && stendQchDecision.levelEmptyTriggered
                                              && stendQchDecision.levelFullTriggered
                                              && llsSnLabel.text == "------------"
+                                             && llsMcuSnLabel.text != "NA"
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8
                                     implicitHeight: 50
                                     onClicked: {
-                                        stendProp.writeSerialNumToLls(qrScaner.qrCodeSn.toString())
+                                        var resultJson = []
+                                        resultJson.levelEmpty = stendQchDecision.getLevelEmptyTriggered()
+                                        resultJson.levelFull = stendQchDecision.getLevelFullTriggered()()
+                                        resultJson.current = stendQchDecision.getPowerCurrentValid()()
+                                        resultJson.rs485 = stendQchDecision.getRs232IsNormal()
+                                        resultJson.rs232 = stendQchDecision.getRs485IsNormal()
+                                        resultJson.temp = stendQchDecision.getTempValid()()
+                                        resultJson.voltage = stendQchDecision.getVoltageValid()
+
+                                        stendProp.writeSerialNumToLls(
+                                                    qrScaner.getQrCode(),
+                                                    llsMcuSnLabel.text,
+                                                    resultJson
+                                                    )
                                     }
                                 }
                                 Button {
@@ -297,7 +311,7 @@ SwipeView {
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
                                     text: qsTr("Mark as defective");
-                                    enabled: stendQchDecision.mcuSnValid && qrScaner.isValid && stendProp.isConnected
+                                    enabled: stendQchDecision.mcuSnValid && stendProp.isConnected
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/trash.svg"
                                     icon.width: 16; icon.height: 16
                                     font.pointSize: 8

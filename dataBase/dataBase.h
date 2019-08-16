@@ -36,7 +36,8 @@ public:
     bool openConnection(QString *error);
     bool closeConnection();
     bool testCconnect();
-    bool insertTestData(QString mcu, QString dev_test_state, Globals::sDutTestStruct res_data_test, bool res_test);
+    bool insertPcbTestData(QString mcu, QString dev_test_state, Globals::sDutTestStruct res_data_test, bool res_test);
+    bool insertAsseblyTestResult(QString mcu, QString dev_test_state, Globals::sDutTestStruct res_data_test, bool res_test);
     bool checkDeviceQrCode(QString qr_code);
     bool placeResult(bool res_bool, QString qr_code, QString mcu, QString dev_status, QString resultJson);
     bool getLlsMaxMinValues(int dts_id, float *cnt_value_min, float *cnt_value_max,

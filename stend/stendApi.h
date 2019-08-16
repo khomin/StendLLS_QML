@@ -24,6 +24,7 @@ public:
     ~StendApi();
 
     Q_PROPERTY(bool isConnected READ getStendIsConnected WRITE setStendIsConnected NOTIFY stendIsConnectedChanged)
+    Q_PROPERTY(bool isProcessed READ getStendIsProcessed WRITE setStendIsisProcessed NOTIFY stendIsProcessedChanged)
 
 public slots:
     void startTest();
@@ -45,8 +46,13 @@ public slots:
     bool getStendIsConnected() { return mStendIsConnected; }
     void setStendIsConnected(bool value) { mStendIsConnected = value; emit stendIsConnectedChanged(); }
 
-    void saveTestLlsToDb(QString mcuNum);
-    void writeSerialNumToLls(QString sn);
+    bool getStendIsProcessed() { return mStendIsProcessed; }
+    void setStendIsisProcessed(bool value) { mStendIsProcessed = value; emit stendIsProcessedChanged(); }
+
+    void saveAssemblyTestLlsToDb(QString mcuNum);
+    void writeSerialNumToLls(QString qrCode,
+                             QString mcuNum,
+                             QString resultJson);
     void markLlsAsDefective(QString mcuSn, QString qrCode, QString jsonData);
 
 signals:
@@ -62,6 +68,7 @@ signals:
 
     /* qml property */
     void stendIsConnectedChanged();
+    void stendIsProcessedChanged();
 
     void dataBaseError(QString err);
 
@@ -75,7 +82,7 @@ signals:
 private slots:
     /* send command to execute */
     void sendCommand(StendProperty::eTypeCommand cmd, QJsonObject jsonArgs);
-    bool parsinReply(StendProperty::eTypeCommand cmd, QByteArray & dataRx);
+    bool parsinReply(StendProperty::eTypeCommand cmd, QJsonObject property, QByteArray & dataRx);
     bool headerIsValid(QByteArray & dataRx);
     void packetInsert(StendProperty::sOutputTcpTempStruct pOut, QByteArray & pArray, QByteArray packHeader);
     QJsonObject evaluateTestStatus(Globals::sDutTestStruct & tests);
@@ -85,13 +92,17 @@ private slots:
     bool testIsFinished(Globals::sDutTestStruct & tests);
 
 private:
+    void updateCapProperty(); /* константы теста емкости */
+
     Globals::sIp_list ip;
     int interval_read_info_counter;
     QTimer *handlerStendTimer;
     QTimer *timeoutCommandTimer;
 
     int transferTimeoutId;
-    bool mStendIsConnected;
+    bool mStendIsConnected = false;
+    bool mStendIsProcessed = false;
+    bool mTestIsFinished = false;
 
     Globals::sDutBaseStruct llsInfoStruct;
     /* указатель на структуру из настроек тестирования */
@@ -99,7 +110,9 @@ private:
     StendProperty::sCapTestValues capValues;
     float curLlsMinValue;
     float curLlsMaxValue;
-    bool mTestIsFinished = false;
+
+    QString mMcuNumber;
+
     QVector <QPair<StendProperty::eTypeCommand, QJsonObject>> command;
     QVector <Globals::S_curves_data>curves_data_vector;
 

@@ -265,10 +265,11 @@ SwipeView {
                                     Material.background: Material.Green;
                                     Material.foreground: "white";
                                     text: qsTr("Save test");
-                                    enabled: qrScaner.isValid
-                                             && stendProp.isConnected
+                                    enabled: stendProp.isConnected
                                              && stendQchDecision.levelEmptyTriggered
                                              && stendQchDecision.levelFullTriggered
+                                             && stendQchDecision.rs232IsNormal
+                                             && stendQchDecision.rs485IsNormal
                                              && llsSnLabel.text == "------------"
                                              && llsMcuSnLabel.text != "NA"
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
@@ -276,7 +277,7 @@ SwipeView {
                                     font.pointSize: 8
                                     implicitHeight: 50
                                     onClicked: {
-                                        stendProp.saveTestLlsToDb(llsMcuSnLabel.text)
+                                        stendProp.saveAssemblyTestLlsToDb(llsMcuSnLabel.text)
                                     }
                                 }
                                 Button {

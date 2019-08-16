@@ -73,6 +73,8 @@ public slots:
     void insertLlsData(Globals::sDutBaseStruct llsData);
 
 signals:
+    void invalidateValues();
+
     bool powerCurrentValidChanged();
     bool levelValidChanged();
     bool voltageValidChanged();

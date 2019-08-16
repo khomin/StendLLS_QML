@@ -26,7 +26,12 @@ Rectangle {
         anchors.fill: parent
         currentIndex: 0
 
-        StendOtherItems.SelectLlsType {}
+        StendOtherItems.SelectLlsType {
+            onGoToStartScreen: {
+                stendInterface.close();
+                rootSwipeView.currentIndex = 0;
+            }
+        }
 
         Item {
             ColumnLayout {
@@ -56,28 +61,28 @@ Rectangle {
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/satellite-dish.svg"
                                 icon.width: 10; icon.height: 10; height: 40
                                 implicitWidth: 200
-                                onClicked: { qchSwipeView.setCurrentIndex(0)}
+                                onClicked: { qchSwipeView.currentIndex = 0 }
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
                             TabButton {
                                 text: qsTr("DataBase"); font.pointSize: 8
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
                                 icon.width: 10; icon.height: 10; height: 40
-                                onClicked: { qchSwipeView.setCurrentIndex(1)}
+                                onClicked: { qchSwipeView.currentIndex = 1 }
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
                             TabButton {
                                 text: qsTr("Testing"); font.pointSize: 8
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
                                 icon.width: 10; icon.height: 10; height: 40
-                                onClicked: { qchSwipeView.setCurrentIndex(2)}
+                                onClicked: { qchSwipeView.currentIndex = 2 }
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
                             TabButton {
                                 text: qsTr("Scaner"); font.pointSize: 8
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/qrcode.svg"
                                 icon.width: 10; icon.height: 10; height: 40
-                                onClicked: { qchSwipeView.setCurrentIndex(4)}
+                                onClicked: { qchSwipeView.currentIndex = 4 }
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
                         }
@@ -96,12 +101,23 @@ Rectangle {
                                     }
                                     Menu {
                                         id: toolButtonMenu
+                                        MenuItem { text: qsTr("Got to start screen")
+                                            icon.source: "qrc:/svg/resources/fonts/svgs/solid/sync.svg"
+                                            icon.width: 14; icon.height: 14
+                                            font.pointSize: 8;
+                                            onClicked: {
+                                                onClicked: {
+                                                    stendInterface.close();
+                                                    rootSwipeView.currentIndex = 0;
+                                                }
+                                            }
+                                        }
                                         MenuItem { text: qsTr("Settings")
                                             icon.source: "qrc:/svg/resources/fonts/svgs/solid/address-card.svg"
                                             icon.width: 14; icon.height: 14
                                             font.pointSize: 8;
                                             onClicked: {
-                                                onClicked: { qchSwipeView.setCurrentIndex(5)}
+                                                onClicked: { qchSwipeView.currentIndex = 5 }
                                             }
                                         }
                                         MenuItem { text: qsTr("About")
@@ -109,7 +125,7 @@ Rectangle {
                                             icon.width: 14; icon.height: 14
                                             font.pointSize: 8;
                                             onClicked: {
-                                                onClicked: { qchSwipeView.setCurrentIndex(6)}
+                                                onClicked: { qchSwipeView.currentIndex = 6 }
                                             }
                                         }
                                     }
@@ -131,11 +147,9 @@ Rectangle {
                     ColumnLayout {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        SwipeView { id: qchSwipeView
-                            spacing: 50
+                        StackLayout { id: qchSwipeView
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            interactive: false
 
                             //-- firmware panel
                             StendOtherItems.Qch2Panel {}
@@ -163,7 +177,7 @@ Rectangle {
                             id:statusPannel
                             onRequestFindStends: {
                                 busyIndicator.visible = true;
-                                qchSwipeView.setCurrentIndex(3)
+                                qchSwipeView.currentIndex = 3
                             }
                             onConnectActivated: {
                                 busyIndicator.visible = true;
