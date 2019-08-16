@@ -78,8 +78,8 @@ Rectangle {
                 color: "#406D9E"
             }
             RowLayout {
-                width: firmwareRectangle.width - 30
-                height: 50
+                implicitWidth: firmwareRectangle.width - 30
+                implicitHeight: 50
                 anchors.verticalCenter: parent.verticalCenter
                 TabBar {
                     Material.accent: "white"
@@ -94,7 +94,7 @@ Rectangle {
                         text: qsTr("Stend"); font.pointSize: 8
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/satellite-dish.svg"
                         icon.width: 10; icon.height: 10; height: 40
-                        width: 200
+                        implicitWidth: 200
                         onClicked: { firmwareSwipeView.currentIndex = 0 }
                         contentItem: Delegates.TabButtonDelegate {}
                     }
