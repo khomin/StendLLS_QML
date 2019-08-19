@@ -91,7 +91,8 @@ signals:
 private:
     void clearAllToFalse();
 
-    bool matchNumber(QString number);
+    bool matchSnNumber(QString number);
+    bool matchMcuNumber(QString number);
 
     bool valuesLevelIsNormal(int value, int constCompVal, float tollerance);
 

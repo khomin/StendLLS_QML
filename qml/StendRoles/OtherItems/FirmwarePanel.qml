@@ -459,7 +459,7 @@ SwipeView {
                     }
                     RowLayout {
                         Label { text: qsTr("DEVICE SN: ") }
-                        Label { id:llsSnDeviceLabel; color: text == "------------" ? "red" : (llsSnDeviceLabel.text === "NA" || llsSnDeviceLabel.text == "000000000000" ? "red" : "black") }
+                        Label { id:llsSnDeviceLabel; color: text == "----------" ? "red" : (llsSnDeviceLabel.text === "NA" || llsSnDeviceLabel.text == "000000000000" ? "red" : "black") }
                     }
                 }
             }

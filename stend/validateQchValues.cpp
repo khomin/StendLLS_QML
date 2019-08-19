@@ -54,9 +54,9 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
         snLen = strlen(llsData.serial_number);
     }
 
-    setSnValid(matchNumber(QString::fromLocal8Bit(llsData.serial_number, (int)snLen)));
+    setSnValid(matchSnNumber(QString::fromLocal8Bit(llsData.serial_number, (int)snLen)));
 
-    setMcuSnValid(matchNumber(Globals::hexToString(llsData.mcu_serial_number, sizeof(llsData.mcu_serial_number))));
+    setMcuSnValid(matchMcuNumber(Globals::hexToString(llsData.mcu_serial_number, sizeof(llsData.mcu_serial_number))));
 
     setTempValid(
                 llsData.currentDataRs232.temperature >= mSelectLlsType->getTempMin()
@@ -69,18 +69,14 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
         mEmptyCompare = freq;
     }
     setLevelEmpty(mEmptyCompare);
-//    setLevelEmptyTriggered(valuesLevelIsNormal(mEmptyCompare,
-//                                               mSelectLlsType->getLevelEmpty(),
-//                                               mSelectLlsType->getTolerance()));
+
     setLevelEmptyTriggered(true);
 
     if(freq < mFullCompare && freq != 0xFFFE) {
         mFullCompare = freq;
     }
     setLevelFull(mFullCompare);
-//    setLevelFullTriggered(valuesLevelIsNormal(mFullCompare,
-//                                               mSelectLlsType->getLevelFull(),
-//                                               mSelectLlsType->getTolerance()));
+
     setLevelFullTriggered(true);
 
     setRs232IsNormal(llsData.currentDataRs232.isValid);
@@ -108,11 +104,22 @@ bool ValidateQchValues::valuesLevelIsNormal(int value, int constCompVal, float t
     return false;
 }
 
-bool ValidateQchValues::matchNumber(QString number) {
-    QRegularExpression re("^[0-9-a-f-A-F]{1,32}$");
+bool ValidateQchValues::matchSnNumber(QString number) {
+    QRegularExpression re("^[\\d]{1,32}$");
     if(number == "303030303030303030303030") {
         return false;
     }
+    number.replace("\r", 0).append(0);
+    QRegularExpressionMatch match = re.match(number);
+    return match.hasMatch();
+}
+
+bool ValidateQchValues::matchMcuNumber(QString number) {
+    QRegularExpression re("^[0-9-a-f-A-F]{1,32}$");
+    if(number == "----------") {
+        return false;
+    }
+    number.replace("\r", 0).append(0);
     QRegularExpressionMatch match = re.match(number);
     return match.hasMatch();
 }

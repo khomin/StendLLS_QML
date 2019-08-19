@@ -367,14 +367,18 @@ QJsonObject StendApi::convertDataToJson(Globals::sDutBaseStruct & dutStruct) {
     jsonObj.insert("currentCollect", powerCurrentCollect);
     jsonObj.insert("cntCollect", cntCollect);
 
-    QString factorySn;
+
+    QString tstr, factorySn;
     for(uint8_t i=0; i<sizeof(dutStruct.serial_number); i++) {
         factorySn += QString::number(dutStruct.serial_number[i], 16);
     }
-    jsonObj.insert("serial_number", QString::fromUtf8(dutStruct.serial_number, sizeof(dutStruct.serial_number)));
+    tstr = QString::fromUtf8(dutStruct.serial_number, strlen(dutStruct.serial_number));
+    jsonObj.insert("serial_number", tstr);
     jsonObj.insert("program_version", dutStruct.program_version);
 
-    jsonObj.insert("mcu_serial_number", Globals::hexToString(dutStruct.mcu_serial_number, sizeof(dutStruct.mcu_serial_number)));
+    tstr = Globals::hexToString(dutStruct.mcu_serial_number, sizeof(dutStruct.mcu_serial_number));
+    tstr.replace("\r", 0).append(0);
+    jsonObj.insert("mcu_serial_number", tstr);
     jsonObj.insert("bootloader_version", dutStruct.bootloader_version);
     return jsonObj;
 }
@@ -396,18 +400,19 @@ void StendApi::copyInputData(Globals::sDutBaseStruct & dutStruct, const StendPro
         curves_data_vector.clear();
     }
 
-    if((pinputTemp->info.serial_number[0]>'9') || (pinputTemp->info.serial_number[0]<'0')) {
-        strcpy(dutStruct.serial_number, QString("------------").toStdString().data());
+    if(((pinputTemp->info.serial_number[0]>'9') || (pinputTemp->info.serial_number[0]<'0'))
+            || strstr(pinputTemp->info.serial_number, "000000000000") != nullptr) {
+        strcpy(dutStruct.serial_number, QString("----------\0").toStdString().data());
     } else {
         size_t snLen = 0;
-        if(strlen(dutStruct.serial_number) >= sizeof(dutStruct.serial_number)) {
-            snLen = sizeof(dutStruct.serial_number);
-        } else {
-            snLen = strlen(dutStruct.serial_number);
-        }
-        memcpy(&dutStruct.serial_number, &pinputTemp->info.serial_number, snLen);
+        QString tSn = QString::fromUtf8(pinputTemp->info.serial_number, strlen(pinputTemp->info.serial_number));
+        tSn = tSn.split("\r").first();
+        tSn.replace("\r", "\0").replace("\n", "\0");
+        memset((char*)dutStruct.serial_number, 0, sizeof(dutStruct.serial_number));
+        memcpy((char*)dutStruct.serial_number, tSn.toUtf8().data(), tSn.length());
     }
 
+    memset(&dutStruct.mcu_serial_number, 0, sizeof(pinputTemp->info.mcu_serial_number));
     memcpy(&dutStruct.mcu_serial_number, &pinputTemp->info.mcu_serial_number, sizeof(pinputTemp->info.mcu_serial_number));
     memcpy(&dutStruct.program_version, &pinputTemp->info.program_version, sizeof(pinputTemp->info.program_version));
 

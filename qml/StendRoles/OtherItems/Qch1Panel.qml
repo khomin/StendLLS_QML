@@ -306,7 +306,7 @@ SwipeView {
                                              && stendQchDecision.levelFullTriggered
                                              && stendQchDecision.rs232IsNormal
                                              && stendQchDecision.rs485IsNormal
-                                             && llsSnLabel.text == "------------"
+                                             && llsSnLabel.text == "----------"
                                              && llsMcuSnLabel.text != "NA"
                                     icon.source:"qrc:/svg/resources/fonts/svgs/solid/pen.svg"
                                     icon.width: 16; icon.height: 16
