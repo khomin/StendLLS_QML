@@ -399,8 +399,15 @@ void StendApi::copyInputData(Globals::sDutBaseStruct & dutStruct, const StendPro
     if((pinputTemp->info.serial_number[0]>'9') || (pinputTemp->info.serial_number[0]<'0')) {
         strcpy(dutStruct.serial_number, QString("------------").toStdString().data());
     } else {
-        memcpy(&dutStruct.serial_number, &pinputTemp->info.serial_number, sizeof(pinputTemp->info.serial_number));
+        size_t snLen = 0;
+        if(strlen(dutStruct.serial_number) >= sizeof(dutStruct.serial_number)) {
+            snLen = sizeof(dutStruct.serial_number);
+        } else {
+            snLen = strlen(dutStruct.serial_number);
+        }
+        memcpy(&dutStruct.serial_number, &pinputTemp->info.serial_number, snLen);
     }
+
     memcpy(&dutStruct.mcu_serial_number, &pinputTemp->info.mcu_serial_number, sizeof(pinputTemp->info.mcu_serial_number));
     memcpy(&dutStruct.program_version, &pinputTemp->info.program_version, sizeof(pinputTemp->info.program_version));
 
