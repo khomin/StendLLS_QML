@@ -42,7 +42,7 @@ Rectangle {
         onStendNotReply: {
             if(viewControl.stendRole == "firmware") {
                 toast.displayMessage(qsTr("Connection lost"), "bad")
-                viewControl.closeConnection()
+                stendInterface.close()
             }
         }
     }

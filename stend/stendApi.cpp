@@ -450,7 +450,14 @@ void StendApi::writeSerialNumToLls(QString qrCode,
     object.insert("qrCode", qrCode);
     object.insert("mcuNum", mcuNum);
     object.insert("resultJson", resultJson);
-    command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::write_serial_dut, object));
+
+    try {
+        if(DataBase::Instance().checkDeviceQrCode(qrCode)) {
+            command.push_back(QPair<StendProperty::eTypeCommand, QJsonObject> (StendProperty::write_serial_dut, object));
+        }
+    } catch (...) {
+        emit badMessage(tr("This device number is not in the database"));
+    }
 }
 
 void StendApi::saveAssemblyTestLlsToDb(QString mcuNum) {

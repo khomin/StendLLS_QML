@@ -159,7 +159,7 @@ bool DataBase::checkDeviceQrCode(QString qr_code) {
     dev_serial = qr_code.section("#", 3, 3);
     dev_serial.remove('\r');
     dev_serial.remove('\n');
-    //
+
     query.prepare("SELECT pr_check_device_qr_code(?, ?, ?, ?);");
     query.addBindValue(QVariant(prefix).toString());
     query.addBindValue(QVariant(client).toString());

@@ -201,6 +201,10 @@ SwipeView {
                                     color: stendQchDecision.powerCurrValid ? "black" : "red"
                                 }
                                 Label { text: "mA"}
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.powerCurrValid ? "green" : "red"
+                                }
                             }
 
                             Label {
@@ -212,30 +216,50 @@ SwipeView {
                                     color: stendQchDecision.levelValid ? "black" : "red"
                                 }
                                 Label { text: "Hz"}
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.levelValid ? "green" : "red"
+                                }
                             }
 
                             Label {
                                 text: qsTr("MCU SN:")
                             }
-                            Label { id:llsMcuSnLabel
-                                text: "NA"
-                                color: stendQchDecision.mcuSnValid ? "black" : "red"
+                            RowLayout {
+                                Label { id:llsMcuSnLabel
+                                    text: "NA"
+                                    color: stendQchDecision.mcuSnValid ? "black" : "red"
+                                }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.mcuSnValid ? "green" : "red"
+                                }
                             }
 
                             Label {
                                 text: qsTr("SN:")
                             }
-                            Label { id:llsSnLabel
-                                text: "NA"
-                                color: stendQchDecision.snValid ? "black" : "red"
+                            RowLayout {
+                                Label { id:llsSnLabel
+                                    text: "NA"
+                                    color: stendQchDecision.snValid ? "black" : "red"
+                                }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.snValid ? "green" : "red"
+                                }
                             }
 
-                            Label {
-                                text: qsTr("Scan.num:")
-                            }
-                            Label { id:llsScannedNumLabel;
-                                text: qrScaner.qrCodeSn
-                                color: qrScaner.isValid ? "black" : "red"
+                            Label { text: qsTr("Scan.num:") }
+                            RowLayout {
+                                Label { id:llsScannedNumLabel;
+                                    text: qrScaner.qrCodeSn
+                                    color: qrScaner.isValid ? "black" : "red"
+                                }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: qrScaner.isValid ? "green" : "red"
+                                }
                             }
 
                             Label { text: qsTr("Temperature:") }
@@ -243,6 +267,10 @@ SwipeView {
                                 Label { id:llsTempLabel; text: "NA"
                                     color: stendQchDecision.tempValid ? "black" : "red" }
                                 Label { text: "°C" }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.tempValid ? "green" : "red"
+                                }
                             }
 
                             Label { text: qsTr("RS485:") }
@@ -250,6 +278,10 @@ SwipeView {
                                 id:llsRs485StatusRectangle
                                 width: 32; height: 32
                                 color: stendQchDecision.rs485IsNormal ? "green" : "red"
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.rs485IsNormal ? "green" : "red"
+                                }
                             }
 
                             Label { text: qsTr("RS232:") }
@@ -257,17 +289,33 @@ SwipeView {
                                 id:llsRs232StatusRectangle
                                 width: 32; height: 32
                                 color: stendQchDecision.rs232IsNormal ? "green" : "red"
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.rs232IsNormal ? "green" : "red"
+                                }
                             }
 
                             Label { text: "Empty:" }
-                            Label { id:llsEmptyValueLabel;
-                                text:stendQchDecision.levelEmptyValue
-                                color: stendQchDecision.levelEmptyTriggered ? "black" : "red" }
+                            RowLayout {
+                                Label { id:llsEmptyValueLabel;
+                                    text:stendQchDecision.levelEmptyValue
+                                    color: stendQchDecision.levelEmptyTriggered ? "black" : "red" }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.levelEmptyTriggered ? "green" : "red"
+                                }
+                            }
 
                             Label { text: "Full:" }
-                            Label { id:llsfullValueLabel;
-                                text:stendQchDecision.levelFullValue
-                                color: stendQchDecision.levelFullTriggered ? "black" : "red" }
+                            RowLayout {
+                                Label { id:llsfullValueLabel;
+                                    text:stendQchDecision.levelFullValue
+                                    color: stendQchDecision.levelFullTriggered ? "black" : "red" }
+                                Rectangle {
+                                    width: 12; height: 12
+                                    color: stendQchDecision.levelFullTriggered ? "green" : "red"
+                                }
+                            }
                         }
 
                         ColumnLayout {
@@ -292,17 +340,17 @@ SwipeView {
                                     onClicked: {
                                         var resultJson = []
                                         resultJson.levelEmpty = stendQchDecision.getLevelEmptyTriggered()
-                                        resultJson.levelFull = stendQchDecision.getLevelFullTriggered()()
-                                        resultJson.current = stendQchDecision.getPowerCurrentValid()()
+                                        resultJson.levelFull = stendQchDecision.getLevelFullTriggered()
+                                        resultJson.current = stendQchDecision.getPowerCurrentValid()
                                         resultJson.rs485 = stendQchDecision.getRs232IsNormal()
                                         resultJson.rs232 = stendQchDecision.getRs485IsNormal()
-                                        resultJson.temp = stendQchDecision.getTempValid()()
+                                        resultJson.temp = stendQchDecision.getTempValid()
                                         resultJson.voltage = stendQchDecision.getVoltageValid()
 
                                         stendProp.writeSerialNumToLls(
                                                     qrScaner.getQrCode(),
                                                     llsMcuSnLabel.text,
-                                                    resultJson
+                                                    JSON.stringify(resultJson)
                                                     )
                                     }
                                 }

@@ -40,35 +40,41 @@ FindStend::FindStend(QObject *parent) : QObject(parent) {
     QObject::connect(mUdpSocket, &QUdpSocket::readyRead, this, [&]() {
         QHostAddress hostAddr;
         quint16 hostPort;
-        while (mUdpSocket->hasPendingDatagrams()) {
-            QByteArray buf(mUdpSocket->pendingDatagramSize(), Qt::Uninitialized);
-            QDataStream str(&buf, QIODevice::ReadOnly);
-            mUdpSocket->readDatagram(buf.data(), buf.size(), &hostAddr, &hostPort);
-            qDebug() << "udp from: " << hostAddr;
-            qDebug() << "udp port: " << hostPort;
+        if(mUdpSocket != nullptr) {
+            while (mUdpSocket->hasPendingDatagrams()) {
+                QByteArray buf(mUdpSocket->pendingDatagramSize(), Qt::Uninitialized);
+                QDataStream str(&buf, QIODevice::ReadOnly);
+                mUdpSocket->readDatagram(buf.data(), buf.size(), &hostAddr, &hostPort);
+                qDebug() << "udp from: " << hostAddr;
+                qDebug() << "udp port: " << hostPort;
 
-            QString dataStr(buf);
-            if(dataStr.toUtf8().contains(QByteArray(Globals::broadcast_call_reply))) {
-                Globals::sConnectSettings dest;
-                dest.dateReply = QDateTime::currentDateTime();
-                quint32 addr32 = hostAddr.toIPv4Address();
-                dest.ip.ip_addr[3] = (addr32 & 0xFF);
-                dest.ip.ip_addr[2] = ((addr32 & 0xFF00)>>8);
-                dest.ip.ip_addr[1] = ((addr32 & 0xFF0000)>>16);
-                dest.ip.ip_addr[0] = ((addr32 & 0xFF000000)>>24);
+                QString dataStr(buf);
+                if(dataStr.toUtf8().contains(QByteArray(Globals::broadcast_call_reply))) {
+                    Globals::sConnectSettings dest;
+                    dest.dateReply = QDateTime::currentDateTime();
+                    quint32 addr32 = hostAddr.toIPv4Address();
+                    dest.ip.ip_addr[3] = (addr32 & 0xFF);
+                    dest.ip.ip_addr[2] = ((addr32 & 0xFF00)>>8);
+                    dest.ip.ip_addr[1] = ((addr32 & 0xFF0000)>>16);
+                    dest.ip.ip_addr[0] = ((addr32 & 0xFF000000)>>24);
 
-                /* ищем ответы раньше */
-                auto modelList = mFindStendModel.getAll();
-                for(auto i: modelList) {
-                    // if it copy -> return
-                    if((i->getValue().ip.ip_addr[0] == dest.ip.ip_addr[0])
-                            && (i->getValue().ip.ip_addr[1] == dest.ip.ip_addr[1])
-                            && (i->getValue().ip.ip_addr[2] == dest.ip.ip_addr[2])
-                            && (i->getValue().ip.ip_addr[3] == dest.ip.ip_addr[3]) ) {
-                        return;
+                    /* ищем ответы раньше */
+                    auto modelList = mFindStendModel.getAll();
+                    for(auto i: modelList) {
+                        // if it copy -> return
+                        if((i->getValue().ip.ip_addr[0] == dest.ip.ip_addr[0])
+                                && (i->getValue().ip.ip_addr[1] == dest.ip.ip_addr[1])
+                                && (i->getValue().ip.ip_addr[2] == dest.ip.ip_addr[2])
+                                && (i->getValue().ip.ip_addr[3] == dest.ip.ip_addr[3]) ) {
+                            return;
+                        }
                     }
+                    mFindStendModel.addItem(dest);
                 }
-                mFindStendModel.addItem(dest);
+
+                if(mUdpSocket == nullptr) {
+                    return;
+                }
             }
         }
     });
@@ -101,6 +107,7 @@ void FindStend::startfind() {
             ip.ip_addr[3] = (uint8_t)address_str.section(".",3,3).toInt();
             if(ip.ip_addr[0] != 127 && ip.ip_addr[1] != 0
                     && ip.ip_addr[2] != 0 && ip.ip_addr[3] != 1) {
+                qDebug() << "Find stend: add adapter" << address_str;
                 ip_list.push_back(ip);
             }
         }

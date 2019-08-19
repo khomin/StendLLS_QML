@@ -47,7 +47,14 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
                 );
 #endif
 
-    setSnValid(matchNumber(QString::fromLocal8Bit(llsData.serial_number, strlen(llsData.serial_number)-1)));
+    size_t snLen = 0;
+    if(strlen(llsData.serial_number) >= sizeof(llsData.serial_number)) {
+        snLen = sizeof(llsData.serial_number);
+    } else {
+        snLen = strlen(llsData.serial_number);
+    }
+
+    setSnValid(matchNumber(QString::fromLocal8Bit(llsData.serial_number, (int)snLen)));
 
     setMcuSnValid(matchNumber(Globals::hexToString(llsData.mcu_serial_number, sizeof(llsData.mcu_serial_number))));
 

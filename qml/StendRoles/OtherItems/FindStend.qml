@@ -46,7 +46,6 @@ Item {
                     onClicked: {
                         stendFind.startfind()
                         busyIndicator.visible = true;
-                        firmwareSwipeView.setCurrentIndex(4);
                     }
                 }
             }
