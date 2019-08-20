@@ -113,8 +113,6 @@ private:
     int mEmptyCompare = 0;
     int mFullCompare = 0;
 
-    static constexpr uint16_t fullMaxValueConst = 0xFFFF;
-
     SelectLlsTestType * mSelectLlsType = nullptr;
 };
 

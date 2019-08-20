@@ -9,8 +9,6 @@ ValidateQchValues::ValidateQchValues(SelectLlsTestType * pSelectLlsType) {
 }
 
 void ValidateQchValues::clearAllToFalse() {
-    mFullCompare = fullMaxValueConst;
-    mEmptyCompare = 0;
     setPowerCurrentValid(false);
     setLevelValid(false);
     setLevelFull(0);
@@ -22,7 +20,6 @@ void ValidateQchValues::clearAllToFalse() {
     setRs485IsNormal(false);
     setLevelFullTriggered(false);
     setLevelEmptyTriggered(false);
-
     emit invalidateValues();
 }
 
@@ -32,6 +29,10 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
             || (!getRs485IsNormal() && llsData.currentDataRs485.isValid)) {
         clearAllToFalse();
     }
+
+    /* pull compare values from database */
+    mFullCompare = mSelectLlsType->getLevelFull();
+    mEmptyCompare = mSelectLlsType->getLevelEmpty();
 
     setPowerCurrentValid(
                 llsData.power_current >= Settings::Instance().getCurMin().toFloat()
@@ -54,33 +55,42 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
         snLen = strlen(llsData.serial_number);
     }
 
+    /* sn validate  */
     setSnValid(matchSnNumber(QString::fromLocal8Bit(llsData.serial_number, (int)snLen)));
 
+    /* mcu validate */
     setMcuSnValid(matchMcuNumber(Globals::hexToString(llsData.mcu_serial_number, sizeof(llsData.mcu_serial_number))));
 
+    /* temp validate */
     setTempValid(
                 llsData.currentDataRs232.temperature >= mSelectLlsType->getTempMin()
                 && llsData.currentDataRs232.temperature <= mSelectLlsType->getTempMax()
                 );
 
+    /* frequency validate */
     auto freq = getValidFrequncy(llsData.currentDataRs485, llsData.currentDataRs232);
-
     if(freq > mEmptyCompare && freq != 0xFFFE) {
         mEmptyCompare = freq;
     }
+
+    /* level empty validate */
     setLevelEmpty(mEmptyCompare);
+    setLevelEmptyTriggered(valuesLevelIsNormal(mEmptyCompare,
+                                               mSelectLlsType->getLevelEmpty(),
+                                               mSelectLlsType->getTolerance()));
 
-    setLevelEmptyTriggered(true);
-
+    /* level empty validate */
     if(freq < mFullCompare && freq != 0xFFFE) {
         mFullCompare = freq;
     }
     setLevelFull(mFullCompare);
-
-    setLevelFullTriggered(true);
-
+    setLevelFullTriggered(valuesLevelIsNormal(mFullCompare,
+                                              mSelectLlsType->getLevelFull(),
+                                              mSelectLlsType->getTolerance()));
+    /* rs232 validate */
     setRs232IsNormal(llsData.currentDataRs232.isValid);
 
+    /* rs485 validate */
     setRs485IsNormal(llsData.currentDataRs485.isValid);
 }
 
