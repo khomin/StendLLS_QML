@@ -23,6 +23,8 @@ public:
     Q_PROPERTY(int levelEmptyMax READ getLevelEmpty NOTIFY levelEmptyChanged)
     Q_PROPERTY(int levelFullMax READ getLevelFull NOTIFY levelFullChanged)
     Q_PROPERTY(int tolerance READ getTolerance NOTIFY toleranceChanged)
+    Q_PROPERTY(int powerCurrentNormal READ getPowerCurrentNormal NOTIFY powerCurrentNormalChanged)
+    Q_PROPERTY(int powerCurrentTolerance READ getPowerCurrentTolerance NOTIFY powerCurrentToleranceChanged)
 
     SelectLlsTestModel* getModel() {
         return &mModel;
@@ -62,6 +64,12 @@ public:
     float getTolerance() { return mTolerance; }
     void setTolerance(float value) { mTolerance = value; emit toleranceChanged(); }
 
+    float getPowerCurrentNormal() { return mPowerCurrentNormal; }
+    void setPowerCurrentNormal(float value) { mPowerCurrentNormal = value; emit powerCurrentNormalChanged(); }
+
+    float getPowerCurrentTolerance() { return mPowerCurrentTolerance; }
+    void setPowerCurrentTolerance(float value) { mPowerCurrentTolerance = value; emit powerCurrentToleranceChanged(); }
+
 signals:
     void cntMaxChanged();
     void cntMinChanged();
@@ -73,6 +81,8 @@ signals:
     void levelFullChanged();
     void toleranceChanged();
     void activeProfileChanged();
+    void powerCurrentNormalChanged();
+    void powerCurrentToleranceChanged();
 
     void dataBaseError(QString err);
 
@@ -87,6 +97,8 @@ private:
     float mTempMin;
     int mLevelEmpty;
     int mLevelFull;
+    float mPowerCurrentNormal;
+    float mPowerCurrentTolerance;
     float mTolerance;
 };
 

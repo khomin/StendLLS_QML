@@ -94,7 +94,7 @@ private:
     bool matchSnNumber(QString number);
     bool matchMcuNumber(QString number);
 
-    bool valuesLevelIsNormal(int value, int constCompVal, float tollerance);
+    bool valueIsNormal(float value, float constCompVal, float tollerance);
 
     int getValidFrequncy(Globals::sLlsCurrentData rs485, Globals::sLlsCurrentData rs232);
 

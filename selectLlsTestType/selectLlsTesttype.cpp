@@ -34,6 +34,8 @@ void SelectLlsTestType::makeSelectedAsActive(int index) {
             setLevelEmpty(it.second.values.empty_value_minumum_correct);
             setLevelFull(it.second.values.full_value_minumum_correct);
             setTolerance(it.second.values.tolerance_level);
+            setPowerCurrentNormal(it.second.values.nominal_current);
+            setPowerCurrentTolerance(it.second.values.tolerance_current);
         }
     }
 }

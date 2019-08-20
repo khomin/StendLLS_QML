@@ -276,23 +276,15 @@ SwipeView {
                             Label { text: qsTr("RS485:") }
                             Rectangle {
                                 id:llsRs485StatusRectangle
-                                width: 32; height: 32
+                                width: 12; height: 12
                                 color: stendQchDecision.rs485IsNormal ? "green" : "red"
-                                Rectangle {
-                                    width: 12; height: 12
-                                    color: stendQchDecision.rs485IsNormal ? "green" : "red"
-                                }
                             }
 
                             Label { text: qsTr("RS232:") }
                             Rectangle {
                                 id:llsRs232StatusRectangle
-                                width: 32; height: 32
+                                width: 12; height: 12
                                 color: stendQchDecision.rs232IsNormal ? "green" : "red"
-                                Rectangle {
-                                    width: 12; height: 12
-                                    color: stendQchDecision.rs232IsNormal ? "green" : "red"
-                                }
                             }
 
                             Label { text: "Empty:" }

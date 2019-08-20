@@ -34,10 +34,11 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
     mFullCompare = mSelectLlsType->getLevelFull();
     mEmptyCompare = mSelectLlsType->getLevelEmpty();
 
-    setPowerCurrentValid(
-                llsData.power_current >= Settings::Instance().getCurMin().toFloat()
-                && llsData.power_current <= Settings::Instance().getCurMax().toFloat()
-                );
+    setPowerCurrentValid(valueIsNormal(
+                             llsData.power_current,
+                             mSelectLlsType->getPowerCurrentNormal(),
+                             mSelectLlsType->getPowerCurrentTolerance()));
+
     setLevelValid(
                 llsData.cnt >= mSelectLlsType->getCntMin()
                 && llsData.cnt <= mSelectLlsType->getCntMax()
@@ -48,14 +49,13 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
                 );
 #endif
 
+    /* sn validate  */
     size_t snLen = 0;
     if(strlen(llsData.serial_number) >= sizeof(llsData.serial_number)) {
         snLen = sizeof(llsData.serial_number);
     } else {
         snLen = strlen(llsData.serial_number);
     }
-
-    /* sn validate  */
     setSnValid(matchSnNumber(QString::fromLocal8Bit(llsData.serial_number, (int)snLen)));
 
     /* mcu validate */
@@ -75,7 +75,7 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
 
     /* level empty validate */
     setLevelEmpty(mEmptyCompare);
-    setLevelEmptyTriggered(valuesLevelIsNormal(mEmptyCompare,
+    setLevelEmptyTriggered(valueIsNormal(mEmptyCompare,
                                                mSelectLlsType->getLevelEmpty(),
                                                mSelectLlsType->getTolerance()));
 
@@ -84,7 +84,7 @@ void ValidateQchValues::insertLlsData(Globals::sDutBaseStruct llsData) {
         mFullCompare = freq;
     }
     setLevelFull(mFullCompare);
-    setLevelFullTriggered(valuesLevelIsNormal(mFullCompare,
+    setLevelFullTriggered(valueIsNormal(mFullCompare,
                                               mSelectLlsType->getLevelFull(),
                                               mSelectLlsType->getTolerance()));
     /* rs232 validate */
@@ -104,7 +104,7 @@ int ValidateQchValues::getValidFrequncy(Globals::sLlsCurrentData rs485, Globals:
     return res;
 }
 
-bool ValidateQchValues::valuesLevelIsNormal(int value, int constCompVal, float tollerance) {
+bool ValidateQchValues::valueIsNormal(float value, float constCompVal, float tollerance) {
     float minValue = constCompVal * (1 - tollerance);
     float maxValue = constCompVal * (1 + tollerance);
     if(value >= minValue &&
