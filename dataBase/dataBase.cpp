@@ -316,14 +316,13 @@ void DataBase::checkUserPermission(QString login, QString password) {
     query.addBindValue(password);
     if(query.exec()) {
         query.next();
-        if(query.record().value(0).toInt() == 1) {
-            res = "admin";
-        } else if(query.record().value(0).toInt() == 2) {
-            res = "user";
+        if(!query.record().isEmpty()) {
+            if(query.record().value(0).toInt() == 1) {
+                res = "admin";
+            } else if(query.record().value(0).toInt() == 2) {
+                res = "user";
+            }
         }
-    } else {
-        qDebug() << query.lastError();
-        throw ((tr("Database error")) + ": " + query.lastError().databaseText());
     }
     qDebug() << "userRole: " << res;
     emit userPermissionReadyRead(res);
