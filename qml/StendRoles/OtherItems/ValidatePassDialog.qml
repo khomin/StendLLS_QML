@@ -53,6 +53,7 @@ Dialog {
                 maximumLength: 128
                 validator: RegExpValidator { regExp: /[\w]{1,128}/ }
                 placeholderText: qsTr("Login")
+                implicitWidth: parent.width
                 onAccepted: {
                     if(passwordTextField.length !== 0) {
                         DataBase.checkUserPermission(loginTextField.text, passwordTextField.text)
@@ -65,6 +66,7 @@ Dialog {
                 echoMode: TextInput.Password
                 validator: RegExpValidator { regExp: /[\w]{1,128}/ }
                 placeholderText: qsTr("Password")
+                implicitWidth: parent.width
                 onAccepted: {
                     if(loginTextField.length !== 0) {
                         DataBase.checkUserPermission(loginTextField.text, passwordTextField.text)
