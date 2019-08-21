@@ -14,6 +14,7 @@
 #include "QDebug"
 #include "globals.h"
 #include "dataBaseProperty.h"
+#include <QQmlEngine>
 
 class DataBase : public QObject
 {
@@ -23,10 +24,19 @@ public:
         static DataBase mIntance;
         return mIntance;
     }
+
+    static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine) {
+        Q_UNUSED(engine);
+        Q_UNUSED(scriptEngine);
+        return &Instance();
+    }
+
     DataBase(DataBase const &) = delete;
     DataBase(DataBase &&) = delete;
     DataBase& operator=(DataBase const &) = delete;
     DataBase& operator=(DataBase &&) = delete;
+
+    Q_PROPERTY(bool isOpened READ getIsOpened NOTIFY isOpenedChanged)
 
 protected:
     DataBase();
@@ -34,6 +44,7 @@ protected:
 
 public:
     bool openConnection(QString *error);
+    bool isConnected();
     bool closeConnection();
     bool testCconnect();
     bool insertPcbTestData(QString mcu, QString dev_test_state, Globals::sDutTestStruct res_data_test, bool res_test);
@@ -48,10 +59,22 @@ public:
                             uint32_t *empty_value_minumum_correct,
                             uint32_t *full_value_minumum_correct,
                             float *tolerance_current);
+    Q_INVOKABLE void checkUserPermission(QString login, QString password);
 
     QVector <Globals::sTypeDevicesList> getDeviceFullDeviceList();
 
+signals:
+    void isOpenedChanged();
+    void userPermissionReadyRead(QString permission);
+
 private:
+    bool getIsOpened() {
+        mIsConnected = DataBase::Instance().isConnected();
+        return mIsConnected;
+    }
+
+    bool mIsConnected = false;
+
     static constexpr int USER_ID = 1;
     QSqlDatabase base;
     DataBaseProperty::sDataBase dataBaseStruct;

@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<Settings>("Settings", 1, 0, "Settings", Settings::qmlInstance);
 
+    qmlRegisterSingletonType<DataBase>("DataBase", 1, 0, "DataBase", DataBase::qmlInstance);
+
     engine.rootContext()->setContextProperty("stendProp", QVariant::fromValue(viewControl.getStendProp()));
     engine.rootContext()->setContextProperty("stendInterface", QVariant::fromValue(viewControl.getStendInterface()));
     engine.rootContext()->setContextProperty("stendQchDecision", QVariant::fromValue(viewControl.getStendQchDecision()));

@@ -66,6 +66,7 @@ Rectangle {
                             }
                             TabButton {
                                 text: qsTr("DataBase"); font.pointSize: 8
+                                visible: viewControl.userRole === "admin"
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
                                 icon.width: 10; icon.height: 10; height: 40
                                 onClicked: { qchSwipeView.currentIndex = 1 }
@@ -73,6 +74,7 @@ Rectangle {
                             }
                             TabButton {
                                 text: qsTr("Testing"); font.pointSize: 8
+                                visible: viewControl.userRole === "admin"
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
                                 icon.width: 10; icon.height: 10; height: 40
                                 onClicked: { qchSwipeView.currentIndex = 2 }
@@ -80,6 +82,7 @@ Rectangle {
                             }
                             TabButton {
                                 text: qsTr("Scaner"); font.pointSize: 8
+                                visible: viewControl.userRole === "admin"
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/qrcode.svg"
                                 icon.width: 10; icon.height: 10; height: 40
                                 onClicked: { qchSwipeView.currentIndex = 4 }

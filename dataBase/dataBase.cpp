@@ -18,6 +18,7 @@ bool DataBase::openConnection(QString *error) {
         if(error != nullptr) {
             *error = tr("Driver QPSQL not available");
         }
+        emit isOpenedChanged();
         return false;
     }
     base = QSqlDatabase::addDatabase("QPSQL");
@@ -37,12 +38,18 @@ bool DataBase::openConnection(QString *error) {
             *error = QString(base.lastError().text());
         }
     }
+    emit isOpenedChanged();
     return res;
+}
+
+bool DataBase::isConnected() {
+    return base.isOpen();
 }
 
 bool DataBase::closeConnection() {
     if(base.isOpen()==true)
         base.close();
+    emit isOpenedChanged();
     return true;
 }
 
@@ -274,7 +281,6 @@ bool DataBase::getLlsMaxMinValues(int dts_id, float *cnt_value_min, float *cnt_v
     query.prepare("SELECT dts_other FROM public.device_subtype INNER JOIN device_type ON dts_dt_id = dt_id WHERE dts_id =? AND dt_prefix = 'FLS';");
     query.addBindValue(dts_id);
     res = query.exec();
-    qDebug() << query.boundValue(6);
     if(res) {
         query.next();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(query.record().value(0).toString().toLocal8Bit());
@@ -297,4 +303,28 @@ bool DataBase::getLlsMaxMinValues(int dts_id, float *cnt_value_min, float *cnt_v
         throw ((tr("Database error")) + ": " + query.lastError().databaseText());
     }
     return res;
+}
+
+void DataBase::checkUserPermission(QString login, QString password) {
+    QString res;
+    if(!base.isOpen()) {
+        openConnection(nullptr);
+    }
+    QSqlQuery query(base);
+    query.prepare("SELECT user_role FROM public.\"user\" WHERE user_login = ? AND user_hash = ?;");
+    query.addBindValue(login);
+    query.addBindValue(password);
+    if(query.exec()) {
+        query.next();
+        if(query.record().value(0).toInt() == 1) {
+            res = "admin";
+        } else if(query.record().value(0).toInt() == 2) {
+            res = "user";
+        }
+    } else {
+        qDebug() << query.lastError();
+        throw ((tr("Database error")) + ": " + query.lastError().databaseText());
+    }
+    qDebug() << "userRole: " << res;
+    emit userPermissionReadyRead(res);
 }

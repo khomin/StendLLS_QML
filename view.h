@@ -22,6 +22,7 @@ public:
 
     /* stend property */
     Q_PROPERTY(QString stendRole READ getStendRole WRITE setStendRole NOTIFY stendRoleIsChanged)
+    Q_PROPERTY(QString userRole READ getUserRole WRITE setUserRole NOTIFY userRoleIsChanged)
 
 public slots:
 
@@ -62,6 +63,7 @@ signals:
     void signalUpdateRealTimeData(QString json);
 
     void stendRoleIsChanged();
+    void userRoleIsChanged();
 
     void signalDataBaseError(QString err);
 
@@ -70,12 +72,16 @@ signals:
     void normalMessage(QString text);
 
 private:
-    void setStendRole(QString role) { stendRole = role; emit stendRoleIsChanged(); }
-    QString getStendRole() { return stendRole; }
+    void setStendRole(QString role) { mStendRole = role; emit stendRoleIsChanged(); }
+    QString getStendRole() { return mStendRole; }
     bool getScanerIsAvailable();
 
+    QString getUserRole() { return mUserRole; }
+    void setUserRole(QString value) { mUserRole = value; emit userRoleIsChanged(); }
+
 private:
-    QString stendRole = "undefined";
+    QString mStendRole = "undefined";
+    QString mUserRole;
     Connection stendConnection;
     StendApi stendApi;
     Log log;

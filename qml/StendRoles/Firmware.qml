@@ -100,6 +100,7 @@ Rectangle {
                     }
                     TabButton {
                         text: qsTr("DataBase"); font.pointSize: 8
+                        visible: viewControl.userRole === "admin"
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
                         icon.width: 10; icon.height: 10; height: 40
                         onClicked: { firmwareSwipeView.currentIndex = 1 }
@@ -107,6 +108,7 @@ Rectangle {
                     }
                     TabButton {
                         text: qsTr("Testing"); font.pointSize: 8
+                        visible: viewControl.userRole === "admin"
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
                         icon.width: 10; icon.height: 10; height: 40
                         onClicked: { firmwareSwipeView.currentIndex = 2 }
@@ -114,6 +116,7 @@ Rectangle {
                     }
                     TabButton {
                         text: qsTr("Firmware programming"); font.pointSize: 8
+                        visible: viewControl.userRole === "admin"
                         icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
                         icon.width: 10; icon.height: 10; height: 40
                         onClicked: { firmwareSwipeView.currentIndex = 3 }

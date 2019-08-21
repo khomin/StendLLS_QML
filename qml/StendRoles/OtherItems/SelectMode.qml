@@ -9,6 +9,7 @@ import "qrc:/qml/delegates/" as Delegates
 import "qrc:/qml/toast/" as Toast
 import "qrc:/qml/StendRoles/" as StendRoles
 import "qrc:/qml/StendRoles/OtherItems" as StendOtherItems
+import DataBase 1.0
 
 Item {
     ColumnLayout {
@@ -18,17 +19,17 @@ Item {
         Connections {
             target: viewControl
             onSignalDataBaseError: {
-                if(viewControl.stendRole == "undefined") {
+                if(viewControl.stendRole === "undefined") {
                     toast.displayMessage(err, "bad")
                 }
             }
             onGoodMessage: {
-                if(viewControl.stendRole == "undefined") {
+                if(viewControl.stendRole === "undefined") {
                     toast.displayMessage(text, "good")
                 }
             }
             onBadMessage: {
-                if(viewControl.stendRole == "undefined") {
+                if(viewControl.stendRole === "undefined") {
                     toast.displayMessage(text, "bad")
                 }
             }
@@ -64,17 +65,9 @@ Item {
                         onClicked: { qchSwipeView.setCurrentIndex(0) }
                         contentItem: Delegates.TabButtonDelegate {}
                     }
-                    TabButton {
-                        text: qsTr("DataBase"); font.pointSize: 8
-                        icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
-                        icon.width: 10; icon.height: 10; height: 40
-                        onClicked: { qchSwipeView.setCurrentIndex(1) }
-                        contentItem: Delegates.TabButtonDelegate {}
-                    }
                 }
                 ToolBar {
                     id:toolBarButtonControl
-//                    anchors.right: parent.right
                     Layout.alignment: Qt.AlignRight
                     RowLayout {
                         anchors.fill: parent
@@ -88,6 +81,14 @@ Item {
                             }
                             Menu {
                                 id: toolButtonMenu
+                                MenuItem { text: qsTr("Database")
+                                    icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
+                                    icon.width: 14; icon.height: 14
+                                    font.pointSize: 8;
+                                    onClicked: {
+                                        onClicked: { qchSwipeView.setCurrentIndex(1) }
+                                    }
+                                }
                                 MenuItem { text: qsTr("Settings")
                                     icon.source: "qrc:/svg/resources/fonts/svgs/solid/address-card.svg"
                                     icon.width: 14; icon.height: 14
@@ -137,35 +138,35 @@ Item {
                             Button {
                                 implicitWidth: 200; implicitHeight: 200
                                 text: qsTr("Quality check 1"); font.pointSize: 12
+                                enabled: DataBase.isOpened
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/tasks.svg"
                                 onClicked: {
-                                    viewControl.stendRole = "qch1";
-                                    rootSwipeView.currentIndex = 1
+                                    authDialog.tryOpen("qch1", 1)
                                 }
                             }
                             Button {
                                 implicitWidth: 200; implicitHeight: 200
                                 text: qsTr("quality check 2"); font.pointSize: 12
+                                enabled: DataBase.isOpened
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/shopping-cart.svg"
                                 onClicked: {
-                                    viewControl.stendRole = "qch2";
-                                    rootSwipeView.currentIndex = 2
+                                    authDialog.tryOpen("qch2", 2)
                                 }
                             }
                             Button {
                                 implicitWidth: 200; implicitHeight: 200
                                 text: qsTr("Firmware"); font.pointSize: 12
+                                enabled: DataBase.isOpened
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/microchip.svg"
                                 onClicked: {
-                                    viewControl.stendRole = "firmware";
-                                    rootSwipeView.currentIndex = 3
+                                    authDialog.tryOpen("firmware", 3)
                                 }
                             }
                         }
                     }
 
                     //-- dataBase
-                    StendOtherItems.StendDataBaseSettings {}
+                    StendOtherItems.StendDataBaseSettings {}    // input after key
 
                     //-- language
                     StendOtherItems.Language {}
@@ -175,5 +176,36 @@ Item {
                 }
             }
         }
+    }
+
+    StendOtherItems.ValidatePassDialog {
+        id:authDialog
+        property string propRole: ""
+        property var propIndex: ""
+        function tryOpen(role, viewIndex) {
+            propRole = role
+            propIndex = viewIndex
+            authDialog.open()
+        }
+        onOpened: {
+            authDialog.forceActiveFocus()
+        }
+        onSignalReady: {
+            var permission = authDialog.getUserPermission();
+            if(permission === "admin") {
+                viewControl.userRole = permission;
+                viewControl.stendRole = propRole;
+                rootSwipeView.currentIndex = propIndex
+            } else if (permission === "user") {
+                viewControl.userRole = permission;
+                viewControl.stendRole = propRole;
+                rootSwipeView.currentIndex = propIndex
+            } else {
+                toast.displayMessage(qsTr("Authorisation Error"), "bad");
+            }
+            authDialog.clear();
+            authDialog.close()
+        }
+        onSignalExit: {}
     }
 }

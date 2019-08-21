@@ -68,6 +68,7 @@ Rectangle {
                                 text: qsTr("DataBase"); font.pointSize: 8
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/tty.svg"
                                 icon.width: 10; icon.height: 10; height: 40
+                                visible: viewControl.userRole === "admin"
                                 onClicked: { qchSwipeView.currentIndex = 1 }
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
@@ -75,6 +76,7 @@ Rectangle {
                                 text: qsTr("Testing"); font.pointSize: 8
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/vial.svg"
                                 icon.width: 10; icon.height: 10; height: 40
+                                visible: viewControl.userRole === "admin"
                                 onClicked: { qchSwipeView.currentIndex = 2}
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
@@ -83,6 +85,7 @@ Rectangle {
                                 icon.source: "qrc:/svg/resources/fonts/svgs/solid/qrcode.svg"
                                 icon.width: 10; icon.height: 10; height: 40
                                 onClicked: { qchSwipeView.currentIndex = 4 }
+                                visible: viewControl.userRole === "admin"
                                 contentItem: Delegates.TabButtonDelegate {}
                             }
                         }

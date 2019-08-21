@@ -24,7 +24,7 @@ public:
     ~StendApi();
 
     Q_PROPERTY(bool isConnected READ getStendIsConnected WRITE setStendIsConnected NOTIFY stendIsConnectedChanged)
-    Q_PROPERTY(bool isProcessed READ getStendIsProcessed WRITE setStendIsisProcessed NOTIFY stendIsProcessedChanged)
+    Q_PROPERTY(bool isProcessed READ getStendIsProcessed WRITE setStendIsisProcessed NOTIFY stendIsProcessedChanged)   
 
 public slots:
     void startTest();

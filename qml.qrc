@@ -21,5 +21,6 @@
         <file>qml/StendRoles/OtherItems/SelectLlsType.qml</file>
         <file>qml/StendRoles/OtherItems/SelectMode.qml</file>
         <file>qml/StendRoles/OtherItems/Qch2Panel.qml</file>
+        <file>qml/StendRoles/OtherItems/ValidatePassDialog.qml</file>
     </qresource>
 </RCC>
